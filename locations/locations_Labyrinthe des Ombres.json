@@ -1,0 +1,53 @@
+{
+    "nom": "Labyrinthe des Ombres",
+    "description": "Un labyrinthe sombre et humide, aux murs couverts de mousses et de lichen. Les échos de gouttes d'eau résonnent dans les couloirs étroits, et une légère brume rend la visibilité difficile. Des ombres dansent au coin de l'œil, créant une atmosphère angoissante.",
+    "position": {
+        "x": 12,
+        "y": -8
+    },
+    "objets": [
+        {
+            "nom": "Lanternes anciennes",
+            "description": "Une série de lanternes en métal rouillé, offrant une faible lumière. Idéales pour éclairer les coins sombres du labyrinthe.",
+            "prix": 15
+        },
+        {
+            "nom": "Potion de clairvoyance",
+            "description": "Une potion scintillante qui permet de voir à travers les illusions et les obstacles pendant un court laps de temps.",
+            "prix": 25
+        },
+        {
+            "nom": "Carte du labyrinthe",
+            "description": "Une carte griffonnée à la main, indiquant quelques chemins connus et des dangers potentiels.",
+            "prix": 10
+        }
+    ],
+    "monstres": [
+        {
+            "nom": "Golem de l'ombre",
+            "description": "Une créature faite d'ombres et de ténèbres, capable d'absorber la lumière autour d'elle. Son toucher glacial peut paralyser ses ennemis.",
+            "puissance": 80,
+            "nombre": 2,
+            "objets": [
+                {
+                    "nom": "Cœur d'ombre",
+                    "description": "Un artefact rare, pulsant d'une énergie sombre. Peut être utilisé pour créer des potions ou des enchantements.",
+                    "prix": 50
+                }
+            ]
+        },
+        {
+            "nom": "Spectre errant",
+            "description": "L'âme tourmentée d'un ancien aventurier, cherchant désespérément la paix. Son cri peut terrifier quiconque s'en approche.",
+            "puissance": 50,
+            "nombre": 3,
+            "objets": [
+                {
+                    "nom": "Étreinte spectrale",
+                    "description": "Un objet intangible qui permet à son porteur de se déplacer silencieusement et d'éviter les détections.",
+                    "prix": 30
+                }
+            ]
+        }
+    ]
+}
