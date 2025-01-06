@@ -1,0 +1,23 @@
+{
+    "nom": "Tenzin le Fort",
+    "force": 18,
+    "dextérité": 14,
+    "constitution": 16,
+    "sagesse": 20,
+    "intelligence": 12,
+    "charisme": 10,
+    "pv": 45,
+    "etat": "En bonne santée",
+    "description": "Tenzin est un moine musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales. Sa discipline et son entraînement rigoureux lui permettent d'exécuter des mouvements fluides et puissants, tout en restant en harmonie avec l'esprit et le corps.",
+    "inventaire": [
+        "Bâton de bois",
+        "Amulette de protection",
+        "Potion de soins",
+        "Sandales légères"
+    ],
+    "or": 50,
+    "position": {
+        "x": 0,
+        "y": 0
+    }
+}
