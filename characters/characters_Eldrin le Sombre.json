@@ -1,0 +1,23 @@
+{
+    "nom": "Eldrin le Sombre",
+    "force": 10,
+    "dextérité": 18,
+    "constitution": 8,
+    "sagesse": 15,
+    "intelligence": 14,
+    "charisme": 12,
+    "pv": 20,
+    "etat": "mal en point",
+    "description": "Eldrin est un sage vieux au regard perçant, marqué par les années et les épreuves. Bien qu'il soit affaibli par la maladie, son esprit reste vif. Ancien assassin de la nuit, il manie des dagues magiques qui semblent danser entre ses doigts.",
+    "inventaire": [
+        "Dague magique du silence",
+        "Dague de l'ombre",
+        "Potion de soin",
+        "Grimoire des secrets anciens"
+    ],
+    "or": 150,
+    "position": {
+        "x": 0,
+        "y": 0
+    }
+}
