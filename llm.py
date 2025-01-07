@@ -41,6 +41,7 @@ def completion(prompt):
     #prompt = """/create-char Un moine musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales."""
     #prompt = """/action /Tenzin le fort/ donner un coup d'épée au goblin devant lui. /TODO context json à définir avec character_name et position => lieux où il se trouve/"""
     #prompt = """/speed /Tenzin le fort/ /TODO context json à définir avec character_name/"""
+    #prompt = """/time 1"""
 
     #repérer la commande
     _response = "command not recognized"
@@ -80,6 +81,9 @@ def completion(prompt):
         type = "speed"
         character_name = prompt.split("/")[2].strip()
         prompt = prompt.replace("/speed", "").strip() + """ "Estime la vitesse de déplacement du personnage en m/s en fonction de ses caractéristiques, en prenant comme base qu'un humain moyen se déplace à 2 m/s. Nous sommes dans dnd5. Répondez sous la forme d'un json qui contient les champs nom (du personnage) et vitesse. /TODO context json à définir avec character_name/"""
+    elif prompt.startswith("/time"):
+        context.advance_time(prompt.split(" ")[1])
+        return "Le temps a avancé de " + prompt.split(" ")[1] + " heure(s)."
 
     # Vérifier si la réponse est valide avant de sauvegarder
     try :
