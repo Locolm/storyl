@@ -39,7 +39,7 @@ def get_location_position(name):
     return data['position']['x'], data['position']['y']
 
 # Example usage:
-# x, y = get_location_position('Labyrinthe des Ombres')
+# x, y = get_location_position('L\'Atelier des Elixirs_1')
 # print(f"Position: x={x}, y={y}")
 
 def get_item_from_location(location_name, item_name, item_type):
@@ -97,6 +97,7 @@ def get_travel_time(x1, y1, x2, y2, speed_m_s):
 # Example usage:
 # time = get_travel_time(0, 0, 18, 0, 3)
 # print(f"Travel time: {time} hours")
+
 def update_character_state_with_travel_time(character_name, speed_m_s, destination_x, destination_y):
     # Get the current position of the character
     x, y = get_character_position(character_name)
@@ -113,10 +114,10 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
     # Update the character's state
     if 'etat' in data and 'en deplacement' in data['etat']:
         # Remove existing "en deplacement" state
-        data['etat'] = re.sub(r"en deplacement reste \d+ heures", "", data['etat']).strip()
+        data['etat'] = re.sub(r"en deplacement vers \(\d+, \d+\) reste \d+ heures", "", data['etat']).strip()
     
     if travel_time_hours != 0:
-        data['etat'] = f"{data['etat']} en deplacement reste {travel_time_hours} heures".strip()
+        data['etat'] = f"{data['etat']} en deplacement vers ({destination_x}, {destination_y}) reste {travel_time_hours} heures".strip()
     
     # Save the updated JSON file
     with open(file_path, "w", encoding="utf-8") as file:
@@ -153,7 +154,7 @@ def get_nearby_locations(x,y, radius_km=10):
     # Iterate over all location files in the locations directory
     for filename in os.listdir(locations_dir):
         if filename.endswith('.json'):
-            location_name = filename.split('_')[1].split('.')[0]
+            location_name = filename[len('locations_'):-len('.json')]
             loc_x, loc_y = get_location_position(location_name)
             
             # Calculate the distance to the location
@@ -166,15 +167,15 @@ def get_nearby_locations(x,y, radius_km=10):
     return json.dumps(nearby_locations, ensure_ascii=False, indent=4)
 
 # Example usage:
-# nearby = get_nearby_locations(42, 14)
-# print(nearby)
+nearby = get_nearby_locations(12, 5)
+print(nearby)
 
 def advance_time(n):
     try:
         n = int(float(n))
         if n < 0:
             n = -n
-        elif n==0:
+        elif n == 0:
             return "Le temps n'a pas avancé."
     except ValueError:
         n = 1
@@ -188,18 +189,81 @@ def advance_time(n):
                 data = json.load(file)
             
             if 'etat' in data and 'en deplacement' in data['etat']:
-                match = re.search(r"en deplacement reste (\d+) heures", data['etat'])
+                match = re.search(r"en deplacement vers \((\d+), (\d+)\) reste (\d+) heures", data['etat'])
                 if match:
-                    remaining_hours = int(match.group(1))
+                    destination_x, destination_y, remaining_hours = map(int, match.groups())
                     remaining_hours = max(0, remaining_hours - n)
                     if remaining_hours == 0:
-                        data['etat'] = re.sub(r"en deplacement reste \d+ heures", "", data['etat']).strip()
+                        data['etat'] = re.sub(r"en deplacement vers \(\d+, \d+\) reste \d+ heures", "", data['etat']).strip()
+                        data['position'] = {'x': destination_x, 'y': destination_y}
                     else:
-                        data['etat'] = re.sub(r"en deplacement reste \d+ heures", f"en deplacement reste {remaining_hours} heures", data['etat']).strip()
+                        data['etat'] = re.sub(r"en deplacement vers \(\d+, \d+\) reste \d+ heures", f"en deplacement vers ({destination_x}, {destination_y}) reste {remaining_hours} heures", data['etat']).strip()
             
             with open(file_path, "w", encoding="utf-8") as file:
                 json.dump(data, file, indent=4, ensure_ascii=False)
     return f"Le temps a avancé de {n} heures."
 
 # Example usage:
-advance_time("3")
+#advance_time("3")
+
+def update_character_position(character_name, new_x, new_y):
+    # Load the character's JSON file
+    file_path = f'characters/characters_{character_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # Update the character's position
+    if 'position' not in data:
+        data['position'] = {}
+    data['position']['x'] = new_x
+    data['position']['y'] = new_y
+    
+    # Save the updated JSON file
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+# update_character_position('Tenzin le fort', 15, 25)
+
+
+def check_location_exists(x, y):
+    matching_locations = []
+    locations_dir = 'locations'
+    
+    # Iterate over all location files in the locations directory
+    for filename in os.listdir(locations_dir):
+        if filename.endswith('.json'):
+            # Extract the location name, handling both formats
+            location_name = '_'.join(filename.split('_')[1:]).split('.')[0]
+            loc_x, loc_y = get_location_position(location_name)
+            
+            # Check if the location matches the given coordinates
+            if loc_x == x and loc_y == y:
+                matching_locations.append(location_name)
+    
+    return matching_locations
+
+# Example usage:
+# locations = check_location_exists(12, 5)
+# print(locations)
+
+def moving_character_to_location(character_name, location_name, speed_m_s=2):
+    # Check if the character is already moving
+    if is_moving(character_name):
+        return "Impossible, le personnage est déjà en déplacement."
+    
+    # Get the destination location's position
+    destination_x, destination_y = get_location_position(location_name)
+    
+    # Update the character's state with the travel time to the destination
+    update_character_state_with_travel_time(character_name, speed_m_s, destination_x, destination_y)
+    
+    return f"Le personnage {character_name} est maintenant en déplacement vers {location_name}."
+
+# Example usage:
+# result = moving_character_to_location('Tenzin le fort', 'L\'Atelier des Elixirs', 2)
+# print(result)

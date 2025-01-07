@@ -70,6 +70,7 @@ def save_markdown_to_json(response_markdown, required_keys, output_dir="characte
             with open(filepath, "w", encoding="utf-8") as file:
                 json.dump(character, file, indent=4, ensure_ascii=False)
             print(f"Personnage sauvegardé dans le fichier : {filepath}")
+            return filepath
         except Exception as e:
             print(f"Une erreur s'est produite : {e}")
             
@@ -95,3 +96,59 @@ def detect_encoding(json_file_path):
 # file_path = "characters/pj_Fizzlebang.json"  # Remplace ce chemin par le fichier JSON de ton choix
 # encoding = detect_encoding(file_path)
 # print(f"L'encodage du fichier est : {encoding}")
+
+def extract_last_part(command):
+    """Extrait la dernière partie d'une commande après '/'.
+
+    Args:
+        command (str): La commande à découper.
+
+    Returns:
+        str: La dernière partie de la commande.
+    """
+    parts = command.split('/')
+    if parts:
+        return parts[-1].strip()
+    return ""
+
+# Exemple d'utilisation
+# command = "/move-to /Tenzin le fort/ /x/ /y/ un donjon labyrinthe."
+# last_part = """Créer """ + extract_last_part(command) + """ Donne un nom, une description, une position (x, y en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le donjon est de type hostile). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description,type(boutique, donjon, sauvage,...) position, objets, et monstres. /TODO contexte des lieux à proximité/"""
+# print(f"'{last_part}'")
+
+
+def extract_speed_from_markdown(markdown):
+    """Extrait la vitesse d'une chaîne Markdown et la renvoie en entier.
+
+    Args:
+        markdown (str): La chaîne Markdown contenant les informations.
+
+    Returns:
+        int: La vitesse extraite ou 2 en cas d'erreur.
+    """
+    try:
+        # Rechercher la vitesse dans le markdown
+        speed_pattern = r"\"vitesse\":\s*([\d.]+),?"
+        match = re.search(speed_pattern, markdown)
+        
+        if match:
+            speed_str = match.group(1)
+            return int(float(speed_str))
+        else:
+            print("Warning: Vitesse non trouvée dans le markdown.")
+            return 2
+    except Exception as e:
+        print(f"Warning: Une erreur s'est produite lors de l'extraction de la vitesse: {e}")
+        return 2
+
+# Exemple d'utilisation
+# markdown = """
+# ```json
+# {
+#   "nom": "Fizzlebang",
+#   "vitesse": 7,
+# }
+# ```
+# """
+# speed = extract_speed_from_markdown(markdown)
+# print(f"Vitesse extraite: {speed}")
