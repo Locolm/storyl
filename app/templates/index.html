@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storyl</title>
+    <link href="{{ url_for('static', filename='css/tailwind.css') }}" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/papyrus.png') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen bg-gray-100">
+
+
+
+
+
+<nav class="bg-gray-800 p-4 flex items-center shadow-lg">
+    <!-- App Name -->
+    <div class="text-white text-2xl font-bold mx-auto">
+        STORYL
+    </div>
+
+
+</nav>
+
+<div class="h-full w-full flex relative">
+    <!-- Map Card -->
+<div class="absolute top-0 right-0 m-4 w-32 h-32 bg-gray-700 p-4 rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out hover:w-64 hover:h-48">
+    <!-- Card Content, such as map or other info -->
+</div>
+
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-800 text-white p-6 flex flex-col gap-8">
+        <div>
+            <h1 class="text-xl font-bold mb-8">Joueurs</h1>
+            <ul class="space-y-4">
+                {% for player in players %}
+                <li>
+                    <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ player.character
+                        }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <h1 class="text-xl font-bold mb-8">Lieux</h1>
+            <ul class="space-y-4">
+                {% for place in places %}
+                <li>
+                    <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ place }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Quest Summary Card Section -->
+        <div>
+            <h1 class="text-xl font-bold mb-4">Quête en cours</h1>
+            <a href="#">
+                <div class="bg-gray-700 p-4 rounded-lg shadow-lg hover:bg-gray-600 hover:shadow-xl transition duration-300 ease-in-out">
+                    <h2 class="text-lg font-semibold mb-2">Résumé de la quête</h2>
+                    <p class="text-sm text-gray-300 mb-4">
+                        {% if current_quest %}
+                        {{ current_quest.summary }}
+                        {% else %}
+                        Aucune quête en cours.
+                        {% endif %}
+                    </p>
+                </div>
+            </a>
+        </div>
+
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Chat Panel -->
+        <div id="chat" class="flex-1 flex flex-col p-6">
+            <div class="flex-1 overflow-auto p-4">
+                <div id="chat-window" class="space-y-4 overflow-y-auto max-h-[400px]">
+                    {% for message in messages %}
+                    <div class="flex {{ 'justify-center' if message.from_master else 'justify-start' }}">
+                        <div class="message
+                        bg-gray-200 text-gray-800
+                        {{ 'bg-transparent text-gray-600' if message.from_master else 'p-4 rounded-lg lg shadow-lg' }}
+                        {{ 'italic text-xl' if message.from_master else '' }}">
+
+                            {% if not message.from_master %}
+                            <p class="font-bold text-sm text-gray-700 mb-2">{{ message.player }}</p>
+                            {% endif %}
+
+                            <p>{{ message.message }}</p>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+                </div>
+
+
+            </div>
+            <div class="p-4 bg-white rounded-sm">
+                <form id="chat-form" class="flex items-center space-x-4">
+                    <!-- Input Bar with Dropdowns -->
+                    <div class="flex items-center w-full border rounded-md overflow-hidden focus-within:ring focus-within:ring-blue-300">
+                        <!-- Command Dropdown -->
+                        <select id="command-dropdown" class="bg-gray-100 p-2 border-r text-gray-700 focus:outline-none">
+                            {% for command in commands %}
+                            <option value="{{ loop.index0 }}">{{ command.command }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <!-- Player Dropdown -->
+                        <select id="player-dropdown"
+                                class="bg-gray-100 p-2 border-r text-gray-700 focus:outline-none hidden">
+                            <!-- Player options will be dynamically populated -->
+                        </select>
+
+                        <!-- Input Field -->
+                        <input type="text" id="user-input" class="flex-1 p-2 focus:outline-none"
+                               placeholder="Type your message..." required/>
+                    </div>
+
+                    <!-- Send Button -->
+                    <button type="submit"
+                            class="px-4 py-2 bg-gray-800 -blue-500 text-white rounded-md hover:bg-gray-700 focus:outline-none">
+                        Submit
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data passed from Flask
+    const commands = {{commands | tojson}};
+    const players = {{ players | tojson}};
+
+    // Select the dropdown elements
+    const commandDropdown = document.getElementById('command-dropdown');
+    const playerDropdown = document.getElementById('player-dropdown');
+
+    // Ensure the DOM is fully loaded before binding events
+    document.addEventListener('DOMContentLoaded', () => {
+        // Event Listener for Command Dropdown
+        commandDropdown.addEventListener('change', () => {
+            // Get the selected index
+            const selectedIndex = commandDropdown.value;
+
+            // Retrieve the selected command object
+            let selectedCommand = commands[selectedIndex];
+
+            console.log(selectedIndex, selectedCommand);
+
+            if (selectedCommand.playable) {
+                // Populate the player dropdown with players
+                playerDropdown.innerHTML = ''; // Clear existing options
+                players.forEach(player => {
+                    const option = document.createElement('option');
+                    option.value = player.character;
+                    option.textContent = player.character;
+                    playerDropdown.appendChild(option);
+                });
+
+                // Show the player dropdown
+                playerDropdown.classList.remove('hidden');
+            } else {
+                // Hide the player dropdown
+                playerDropdown.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+<!-- Tailwind JS for Dropdown -->
+<script>
+    const dropdownButton = document.querySelector('button');
+    const dropdownMenu = document.querySelector('.dropdown-content');
+
+    dropdownButton.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
+    });
+</script>
+
+
+</body>
+</html>
