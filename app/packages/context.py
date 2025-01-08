@@ -1,10 +1,9 @@
 import json
 import math
 import os
-from math import sqrt, floor
-
-import llm
 import re
+from math import sqrt
+
 
 def get_character_position(name):
     file_path = f'characters/characters_{name}.json'
@@ -281,14 +280,16 @@ def load_locations(path='locations'):
             file_path = os.path.join(path, filename)
             with open(file_path, 'r') as file:
                 data = json.load(file)
+                data['id'] = filename.split('.')[0]
                 locations.append(data)
 
     return locations
 
 def load_characters(path="characters"):
     """
-    Load all character files from the specified directory.
+    Load all character files from the specified relative directory.
     """
+
     characters = []
 
     # Iterate over all character files in the characters directory
@@ -297,6 +298,11 @@ def load_characters(path="characters"):
             file_path = os.path.join(path, filename)
             with open(file_path, 'r') as file:
                 data = json.load(file)
+                data['id'] = filename.split('.')[0]
                 characters.append(data)
 
     return characters
+
+if __name__ == "__main__":
+    print(load_locations())
+    print(load_characters())
