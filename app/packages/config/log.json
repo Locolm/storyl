@@ -1,14 +1,18 @@
 [
   {
-      "from_master": true,
-      "message": "Welcome, adventurer! How can I assist you in these lands filled with danger and mystery?"
+      "user": "SYSTEM",
+      "message": "Bienvenue dans le jeu, aventurier ! Préparez-vous à vivre une aventure épique pleine de mystères et de dangers."
   },
   {
-      "player": "Goodguy",
-      "message": "I'm looking for a way out of this dungeon. This place is cursed"
+      "user": "MASTER",
+      "message": "Bienvenue dans cette aventure, aventurier ! Le monde s'ouvre devant vous, rempli de mystères et de périls. Que votre voyage commence maintenant !"
   },
   {
-      "from_master": true,
-      "message": "Dungeons are ancient traps, filled with powerful creatures and treacherous traps. Be cautious, every step could be your last."
+      "user": "Goodguy",
+      "message": "Je cherche un moyen de sortir de ce donjon. Cet endroit est maudit."
+  },
+  {
+      "user": "MASTER",
+      "message": "Les donjons sont des pièges antiques, remplis de créatures puissantes et de pièges traîtres. Soyez prudent, chaque pas pourrait être votre dernier."
   }
 ]
