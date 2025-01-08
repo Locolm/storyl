@@ -128,6 +128,7 @@
                         <!-- Command Dropdown -->
                         <select id="command-dropdown" name="command"
                                 class="bg-gray-100 p-2 border-r text-gray-700 focus:outline-none">
+                            <option value="" disabled selected>Select a command</option>
                             {% for command in commands %}
                             <option value="{{ command.command }}">{{ command.command }}</option>
                             {% endfor %}
@@ -156,6 +157,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.addEventListener('load', function () {
+        const form = document.getElementById('chat-form');
+        form.reset();  // Resets all form elements to their default values
+    });
+</script>
 
 <script>
     // Data passed from Flask
