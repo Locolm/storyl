@@ -1,5 +1,7 @@
 import openai
 
+from packages import context, util
+
 # Remplacez "YOUR_API_KEY" par votre clé API OpenAI : # Remplacez par votre clé API OpenAI accessible ici https://platform.openai.com/settings/organization/api-keys
 openai.api_key = "YOUR_API_KEY"
 # Fonction pour générer un personnage
@@ -23,7 +25,7 @@ def response(prompt, purpose, tokens=300, temp=0.7, ):
 
         # Nettoyer la réponse pour enlever d'éventuels espaces supplémentaires
         content = content.strip()
-        
+
         # Retourner la réponse nettoyée
         return content
     except Exception as e:

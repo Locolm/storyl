@@ -24,5 +24,11 @@
     {
         "command": "time",
         "description": "Advance the time"
+    },
+    {
+        "command": "move-to",
+        "description": "Se déplacer vers",
+        "playable": true
     }
+
 ]

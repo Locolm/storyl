@@ -16,15 +16,12 @@ def load_log(path="config/log.json"):
     with open(path, 'r') as file:
         return json.load(file)
 
-
-commands = load_commands(path="app/packages/config/commands.json")
-locations = context.load_locations(path="app/packages/locations")
-players = context.load_characters(path="app/packages/characters")
-messages = load_log(path="app/packages/config/log.json")
-
-
 @app.route('/')
 def index():
+    commands = load_commands(path="app/packages/config/commands.json")
+    locations = context.load_locations(path="app/packages/locations")
+    players = context.load_characters(path="app/packages/characters")
+    messages = load_log(path="app/packages/config/log.json")
 
 
     return render_template(
@@ -40,6 +37,10 @@ def submit():
     """
     Process the incoming request and return the appropriate response.
     """
+
+    commands = load_commands(path="app/packages/config/commands.json")
+    players = context.load_characters(path="app/packages/characters")
+
     # Retrieve form data safely
     command_name = request.form.get('command')
     player = request.form.get('player')
@@ -66,19 +67,20 @@ def submit():
     else:
         prompt = f"/{command_name} {user_input}"
 
-    # Return the response with the constructed prompt
+    # Get the response from the Master
+    response = llm.completion(prompt)
+
+
     return [
         {
-            "from_master": True,
-            "message": prompt,
+            "player": player if player is not None else "Administrator",
+            "message": user_input,
         },
         {
-            "player": "Goodguy",
-            "message": prompt,
+            "from_master": True,
+            "message": response,
         }
     ]
-
-
 
 
 
