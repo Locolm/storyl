@@ -84,9 +84,11 @@
         <!-- Chat Panel -->
         <div id="chat" class="flex-1 flex flex-col p-6 relative">
 
-            <!-- Map Card -->
-    <div class="absolute top-0 right-0 m-4 w-32 h-32 bg-gray-700 p-4 rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out hover:w-64 hover:h-48">
+            <div id="map-card" class="map-card absolute top-0 right-0 m-4 w-32 h-32 bg-gray-700 p-4 rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out">
         <!-- Card Content, such as map or other info -->
+                <svg id="map-svg" class="w-full h-full">
+
+                </svg>
     </div>
 
 
@@ -259,6 +261,57 @@
         }
     });
 </script>
+
+ <script>
+        // Select the map card element
+        const mapCard = document.getElementById('map-card');
+
+        // Variable to keep track of whether the card has been clicked
+        let isClicked = false;
+
+        // Hover effect using Tailwind classes (increased length on hover)
+        mapCard.addEventListener('mouseenter', function() {
+            if (!isClicked) {
+                mapCard.classList.add('hover:w-64', 'hover:h-48'); // Grow in width and height on hover
+            }
+        });
+
+        mapCard.addEventListener('mouseleave', function() {
+            if (!isClicked) {
+                mapCard.classList.remove('hover:w-64', 'hover:h-48'); // Revert to normal size on hover out
+            }
+        });
+
+        // Expand the card further on click
+        mapCard.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent event from bubbling to document
+
+            // Set the card to clicked state
+            isClicked = true;
+
+            // Expand the card even more on click
+            mapCard.classList.add('w-10/12', 'h-5/6');
+            mapCard.classList.remove('w-32', 'h-32');
+                mapCard.classList.remove('hover:w-64', 'hover:h-48');
+
+        });
+
+        // Shrink the card back to default size when clicking outside
+        document.addEventListener('click', function() {
+            if (isClicked) {
+                // Reset to original size
+                mapCard.classList.remove('w-10/12', 'h-5/6');
+                mapCard.classList.add('w-32', 'h-32');
+                mapCard.classList.add('hover:w-64', 'hover:h-48');
+                isClicked = false;
+            }
+        });
+
+        // Prevent clicks inside the map card from triggering the document event
+        mapCard.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    </script>
 
 
 
