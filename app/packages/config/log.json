@@ -1,0 +1,14 @@
+[
+  {
+      "from_master": true,
+      "message": "Welcome, adventurer! How can I assist you in these lands filled with danger and mystery?"
+  },
+  {
+      "player": "Goodguy",
+      "message": "I'm looking for a way out of this dungeon. This place is cursed"
+  },
+  {
+      "from_master": true,
+      "message": "Dungeons are ancient traps, filled with powerful creatures and treacherous traps. Be cautious, every step could be your last."
+  }
+]

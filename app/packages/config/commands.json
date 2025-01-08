@@ -1,0 +1,28 @@
+[
+    {
+        "command": "create-char",
+        "description": "Create a new character"
+    },
+    {
+        "command": "create-loc",
+        "description": "Create a new location"
+    },
+    {
+        "command": "create-object",
+        "description": "Create a new object"
+    },
+    {
+        "command": "action",
+        "description": "Perform an action",
+        "playable": true
+    },
+    {
+        "command": "talk",
+        "description": "Talk to other characters",
+        "playable": true
+    },
+    {
+        "command": "time",
+        "description": "Advance the time"
+    }
+]
