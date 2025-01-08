@@ -1,0 +1,27 @@
+{
+    "nom": "Elaria",
+    "force": 5,
+    "dextérité": 7,
+    "constitution": 6,
+    "sagesse": 18,
+    "intelligence": 15,
+    "charisme": 12,
+    "pv": 30,
+    "etat": {
+        "santé": "en bonne santé",
+        "sommeil": "reposé",
+        "déplacement": "non"
+    },
+    "description": "Elaria est une voyante aveugle, sourde et muette. Elle utilise les vibrations et les énergies des êtres vivants autour d'elle pour percevoir le monde. Sa sagesse et sa connexion avec la nature lui permettent de guider ceux qui cherchent des réponses.",
+    "inventaire": [
+        "cristal de clairvoyance",
+        "herbes médicinales",
+        "bâton de guidance",
+        "carte des étoiles"
+    ],
+    "or": 50,
+    "position": {
+        "x": 0,
+        "y": 0
+    }
+}

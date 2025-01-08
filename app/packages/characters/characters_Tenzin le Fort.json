@@ -7,7 +7,11 @@
     "intelligence": 12,
     "charisme": 10,
     "pv": 45,
-    "etat": "En bonne santée",
+    "etat": {
+        "santé": "en bonne santé",
+        "sommeil": "reposé",
+        "déplacement": "non"
+    },
     "description": "Tenzin est un moine musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales. Sa discipline et son entraînement rigoureux lui permettent d'exécuter des mouvements fluides et puissants, tout en restant en harmonie avec l'esprit et le corps.",
     "inventaire": [
         "Bâton de bois",
@@ -17,7 +21,7 @@
     ],
     "or": 50,
     "position": {
-        "x": 42,
-        "y": 17
+        "x": 18,
+        "y": 0
     }
 }

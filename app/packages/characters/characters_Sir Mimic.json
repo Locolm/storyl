@@ -1,0 +1,27 @@
+{
+    "nom": "Sir Mimic",
+    "force": 18,
+    "dextérité": 14,
+    "constitution": 16,
+    "sagesse": 12,
+    "intelligence": 10,
+    "charisme": 15,
+    "pv": 50,
+    "etat": {
+        "santé": "en bonne santé",
+        "sommeil": "reposé",
+        "déplacement": "non"
+    },
+    "description": "Un chevalier mystérieux vêtu entièrement d'une armure en mimique, capable de se camoufler et de surprendre ses ennemis. Sa présence inspire à la fois la peur et l'admiration.",
+    "inventaire": [
+        "épée en mimique",
+        "bouclier en mimique",
+        "potion de soins",
+        "amulette de camouflage"
+    ],
+    "or": 100,
+    "position": {
+        "x": 0,
+        "y": 0
+    }
+}
