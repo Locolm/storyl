@@ -267,3 +267,36 @@ def moving_character_to_location(character_name, location_name, speed_m_s=2):
 # Example usage:
 # result = moving_character_to_location('Tenzin le fort', 'L\'Atelier des Elixirs', 2)
 # print(result)
+
+
+def load_locations(path='locations'):
+    """
+    Load all location files from the specified directory.
+    """
+    locations = []
+
+    # Iterate over all location files in the locations directory
+    for filename in os.listdir(path):
+        if filename.endswith('.json'):
+            file_path = os.path.join(path, filename)
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+                locations.append(data)
+
+    return locations
+
+def load_characters(path="characters"):
+    """
+    Load all character files from the specified directory.
+    """
+    characters = []
+
+    # Iterate over all character files in the characters directory
+    for filename in os.listdir(path):
+        if filename.endswith('.json'):
+            file_path = os.path.join(path, filename)
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+                characters.append(data)
+
+    return characters

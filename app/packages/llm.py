@@ -1,6 +1,4 @@
 import openai
-import json
-import os
 import context
 import util
 
@@ -91,7 +89,7 @@ def completion(prompt):
                 _response = response(prompt,"Tu es un assistant qui génère des personnages pour un jeu de rôle sous forme de JSON bien structuré.",tokens=300)
                 # Tentative de conversion en JSON
                 required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
-                util.save_markdown_to_json(_response,required_keys,"characters")
+                util.save_markdown_to_json(_response, required_keys, "characters")
         elif (type =="locations"):
                 _response = response(prompt,"Tu es un assistant qui génère des lieux pour un jeu de rôle sous forme de JSON bien structuré.",tokens=600)
                 # Tentative de conversion en JSON
@@ -102,9 +100,12 @@ def completion(prompt):
         elif (type =="actions"):
                 return response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de phrase.",tokens=300)
         elif (type =="speed"):
-                return util.extract_speed_from_markdown(response(prompt,"Tu es un assistant qui estime la vitesse de déplacement des personnages en m/s et qui le renvoie avec leur nom sous forme de json",tokens=300))
+                return util.extract_speed_from_markdown(response(prompt, "Tu es un assistant qui estime la vitesse de déplacement des personnages en m/s et qui le renvoie avec leur nom sous forme de json", tokens=300))
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
+
+def ping():
+    return "pong"
 
 # Exécution du script
 if __name__ == "__main__":
