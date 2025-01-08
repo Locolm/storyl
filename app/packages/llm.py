@@ -1,6 +1,4 @@
 import openai
-import context
-import util
 
 # Remplacez "YOUR_API_KEY" par votre clé API OpenAI : # Remplacez par votre clé API OpenAI accessible ici https://platform.openai.com/settings/organization/api-keys
 openai.api_key = "YOUR_API_KEY"
@@ -103,9 +101,6 @@ def completion(prompt):
                 return util.extract_speed_from_markdown(response(prompt, "Tu es un assistant qui estime la vitesse de déplacement des personnages en m/s et qui le renvoie avec leur nom sous forme de json", tokens=300))
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
-
-def ping():
-    return "pong"
 
 # Exécution du script
 if __name__ == "__main__":
