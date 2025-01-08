@@ -35,13 +35,7 @@ def response(prompt, purpose, tokens=300, temp=0.7, ):
 
 def completion(prompt):
     type = "stop"
-
-    #prompt = input("Entrez votre commande : ")
-    #prompt = """/move-to /Tenzin le fort/ /x/ /y/ Créer un donjon labyrinthe."""
     #prompt = """/create-char Un moine musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales."""
-    #prompt = """/action /Tenzin le fort/ donner un coup d'épée au goblin devant lui. /TODO context json à définir avec character_name et position => lieux où il se trouve/"""
-    #prompt = """/speed /Tenzin le fort/ /TODO context json à définir avec character_name/"""
-    #prompt = """/time 1"""
 
     #repérer la commande
     _response = "command not recognized"
@@ -64,7 +58,13 @@ def completion(prompt):
             if matching_location is None or matching_location == []:
                 type = "locations"
                 locations_context = context.get_nearby_locations(x, y)
-                prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x, y en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le donjon est de type hostile). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres. /TODO contexte des lieux à proximité (locations_context)/"""
+                
+                locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]             
+                
+                prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x, y en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le donjon est de type hostile). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
+                
+                prompt =    f"Contexte des lieux alentours : {locations_data}\n"\
+                            f"Prompt : " + prompt.strip() + "\n"
             else :
                 context.moving_character_to_location(character_name, matching_location[0]) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
         else:
@@ -74,16 +74,32 @@ def completion(prompt):
         if not context.is_moving(character_name):
             type = "actions"
             prompt = prompt.replace("/action", "").replace(f"""/{character_name}/""", "").strip()
-            prompt = f"""{character_name} essaye de """ + prompt.strip() + """"Décrivez sous forme d'une phrase l'issue de l'action demandée. Assurez-vous de vérifier l'inventaire du personnage avant de répondre à l'action. /TODO context json à définir avec character_name et position => lieux où il se trouve/"""
+            
+            character_data = context.load_json(f"./characters/characters_{character_name}.json")
+            character_position = character_data["position"]
+            matching_location = context.check_location_exists(character_position["x"], character_position["y"])[0]
+            
+            if matching_location is not None:
+                location_data = context.load_json(f"./locations/locations_{matching_location}.json")
+            
+            prompt =    f"Contexte du personnage : {character_data}\n"\
+                        f"Contexte du lieu : {location_data}\n"\
+                        f"Prompt : {character_name} essaye de " + prompt.strip() + "Décrivez sous forme d'une phrase l'issue de l'action demandée. Assurez-vous de vérifier l'inventaire du personnage avant de répondre à l'action.\n"
         else:
             return "Le personnage est en mouvement, il ne peut pas effectuer d'action pour le moment."
     elif prompt.startswith("/speed"):
         type = "speed"
         character_name = prompt.split("/")[2].strip()
-        prompt = prompt.replace("/speed", "").strip() + """ "Estime la vitesse de déplacement du personnage en m/s en fonction de ses caractéristiques, en prenant comme base qu'un humain moyen se déplace à 2 m/s. Nous sommes dans dnd5. Répondez sous la forme d'un json qui contient les champs nom (du personnage) et vitesse. /TODO context json à définir avec character_name/"""
+        character_data = context.load_json(f"./characters/characters_{character_name}.json")
+        
+        prompt = prompt.replace("/speed", "").strip() + """ "Estime la vitesse de déplacement du personnage en m/s en fonction de ses caractéristiques, en prenant comme base qu'un humain moyen se déplace à 2 m/s. Nous sommes dans dnd5. Répondez sous la forme d'un json qui contient les champs nom (du personnage) et vitesse."""
+        prompt =    f"Contexte du personnage : {character_data}\n"\
+                    f"Prompt : " + prompt.strip() + "\n"
+
     elif prompt.startswith("/time"):
         context.advance_time(prompt.split(" ")[1])
         return "Le temps a avancé de " + prompt.split(" ")[1] + " heure(s)."
+
 
     # Vérifier si la réponse est valide avant de sauvegarder
     try :

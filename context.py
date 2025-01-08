@@ -6,6 +6,14 @@ from math import sqrt, floor
 import llm
 import re
 
+# Charger un fichier JSON spécifique
+def load_json(file_path):
+    try:
+        with open(file_path, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return None
+
 def get_character_position(name):
     file_path = f'characters/characters_{name}.json'
     
