@@ -76,7 +76,7 @@ def completion(prompt):
                 type = "locations"
                 locations_context = context.get_nearby_locations(x, y)
                 
-                locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]             
+                locations_data = [context.load_json(f"app/packages/locations/locations_{matching_location}.json") for matching_location in locations_context]
                 
                 prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x, y en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le donjon est de type hostile). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
                 
@@ -93,12 +93,25 @@ def completion(prompt):
             type = "actions"
             prompt = prompt.replace("/action", "").replace(f"""/{character_name}/""", "").strip()
             
-            character_data = context.load_json(f"./characters/characters_{character_name}.json")
+            character_data = context.load_json(f"app/packages/characters/characters_{character_name}.json")
             character_position = character_data["position"]
-            matching_location = context.check_location_exists(character_position["x"], character_position["y"])[0]
+
+            location_list = context.check_location_exists(character_position["x"], character_position["y"])
+
+            if len(location_list) == 0:
+                # Blindage temp : récupérer le premier lieu enregistré
+                for filename in os.listdir("app/packages/locations"):
+                    if filename.endswith('.json'):
+                        file_path = os.path.join("app/packages/locations", filename)
+                        with open(file_path, 'r') as file:
+                            location_list = [filename.split(".")[0].replace("locations_", "")]
+                            break
+
+
+            matching_location = location_list[0]
             
             if matching_location is not None:
-                location_data = context.load_json(f"./locations/locations_{matching_location}.json")
+                location_data = context.load_json(f"app/packages/locations/locations_{matching_location}.json")
             
             prompt =    f"Contexte du personnage : {character_data}\n"\
                         f"Contexte du lieu : {location_data}\n"\
@@ -108,7 +121,7 @@ def completion(prompt):
     elif prompt.startswith("/speed"):
         type = "speed"
         character_name = prompt.split("/")[2].strip()
-        character_data = context.load_json(f"./characters/characters_{character_name}.json")
+        character_data = context.load_json(f"app/packages/characters/characters_{character_name}.json")
         
         prompt = prompt.replace("/speed", "").strip() + """ "Estime la vitesse de déplacement du personnage en m/s en fonction de ses caractéristiques, en prenant comme base qu'un humain moyen se déplace à 2 m/s. Nous sommes dans dnd5. Répondez sous la forme d'un json qui contient les champs nom (du personnage) et vitesse."""
         prompt =    f"Contexte du personnage : {character_data}\n"\

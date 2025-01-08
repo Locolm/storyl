@@ -14,8 +14,8 @@ def load_json(file_path):
         return None
 
 def get_character_position(name):
-    file_path = f'characters/characters_{name}.json'
-    
+    file_path = f'app/packages/characters/characters_{name}.json'
+
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
     
@@ -32,7 +32,7 @@ def get_character_position(name):
 # print(f"Position: x={x}, y={y}")
 
 def get_location_position(name):
-    file_path = f'locations/locations_{name}.json'
+    file_path = f'app/packages/locations/locations_{name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -53,7 +53,7 @@ def get_item_from_location(location_name, item_name, item_type):
     if item_type not in ['monster', 'object']:
         raise ValueError("item_type must be either 'monster' or 'object'")
     
-    file_path = f'locations/locations_{location_name}.json'
+    file_path = f'app/packages/locations/locations_{location_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -114,7 +114,7 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
     print(travel_time_hours)
     
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
@@ -135,7 +135,7 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
 
 def is_moving(character_name):
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -156,7 +156,7 @@ def is_moving(character_name):
 def get_nearby_locations(x,y, radius_km=10):
     
     nearby_locations = []
-    locations_dir = 'locations'
+    locations_dir = 'app/packages/locations'
     
     # Iterate over all location files in the locations directory
     for filename in os.listdir(locations_dir):
@@ -180,7 +180,7 @@ def get_nearby_locations(x,y, radius_km=10):
 
 def update_character_position(character_name, new_x, new_y):
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -204,7 +204,9 @@ def update_character_position(character_name, new_x, new_y):
 
 def check_location_exists(x, y):
     matching_locations = []
-    locations_dir = 'locations'
+    locations_dir = 'app/packages/locations'
+
+    print("hkjhkjhjh", os.path.exists(locations_dir))
     
     # Iterate over all location files in the locations directory
     for filename in os.listdir(locations_dir):
@@ -242,7 +244,7 @@ def moving_character_to_location(character_name, location_name, speed_m_s=2):
 
 def is_sleeping(character_name):
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -277,7 +279,7 @@ def update_character_state_with_sleep(character_name, sleep_hours):
         sleep_hours = 8
 
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -316,7 +318,7 @@ def load_locations(path='locations'):
     for filename in os.listdir(path):
         if filename.endswith('.json'):
             file_path = os.path.join(path, filename)
-            with open(file_path, 'r') as file:
+            with open(file_path, 'r', encoding='utf-8') as file:
                 try:
                     data = json.load(file)
                     data['id'] = filename.split('.')[0]
@@ -337,7 +339,7 @@ def load_characters(path="characters"):
     for filename in os.listdir(path):
         if filename.endswith('.json'):
             file_path = os.path.join(path, filename)
-            with open(file_path, 'r') as file:
+            with open(file_path, 'r', encoding='utf-8') as file:
                 try :
                     data = json.load(file)
                     data['id'] = filename.split('.')[0]
