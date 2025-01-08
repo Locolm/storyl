@@ -152,3 +152,92 @@ def extract_speed_from_markdown(markdown):
 # """
 # speed = extract_speed_from_markdown(markdown)
 # print(f"Vitesse extraite: {speed}")
+
+def save_markdown_to_json_return_filename(response_markdown, required_keys, output_dir="characters"):
+    """Extrait le JSON d'une chaîne Markdown et le sauvegarde dans un fichier, puis renvoie le nom du fichier.
+
+    Args:
+        response_markdown (str): La chaîne Markdown contenant le JSON.
+        output_dir (str, optional): Le répertoire de sortie. Defaults to "characters".
+
+    Returns:
+        str: Le nom complet du fichier créé.
+    """
+
+    json_pattern = r"`json\n(.*?)\n`"
+    matches = re.findall(json_pattern, response_markdown, re.DOTALL)
+
+    for json_str in matches:
+        try:
+            character = json.loads(json_str)
+
+            # Validation minimale des données
+            if not all(key in character for key in required_keys):
+                print("Le JSON ne contient pas toutes les clés requises.")
+                continue
+
+            # Obtenir le nom du personnage, avec une valeur par défaut
+            character_name = character.get("nom", "default")
+
+            # Construire le nom de fichier de base
+            base_filename = f"{output_dir}_{character_name}"
+            filepath = os.path.join(output_dir, base_filename + ".json") 
+
+            # Gestion des doublons
+            counter = 1
+            while os.path.exists(filepath):
+                filepath = os.path.join(output_dir, f"{base_filename}_{counter}.json")
+                counter += 1
+
+            # Enregistrer le personnage
+            with open(filepath, "w", encoding="utf-8") as file:
+                json.dump(character, file, indent=4, ensure_ascii=False)
+            print(f"Personnage sauvegardé dans le fichier : {filepath}")
+            return os.path.basename(filepath)
+        except Exception as e:
+            print(f"Une erreur s'est produite : {e}")
+            return None
+        
+# Exemple d'utilisation
+# required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
+# file_path = save_markdown_to_json_return_filename(response_markdown,required_keys)
+# print(file_path)
+
+def process_json_file(json_file_path):
+    """Traite un fichier JSON pour modifier les monstres en ajoutant des noms uniques et des caractéristiques supplémentaires.
+
+    Args:
+        json_file_path (str): Le chemin du fichier JSON à traiter.
+    """
+    try:
+        # Lire le fichier JSON
+        with open(json_file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+
+        # Traiter les monstres
+        new_monstres = []
+        for monstre in data.get("monstres", []):
+            nombre = monstre.pop("nombre", 1)
+            for i in range(nombre):
+                new_monstre = monstre.copy()
+                if i > 0:
+                    new_monstre["nom"] = f"{monstre['nom']}_{i}"
+                new_monstre["etat"] = "en bonne santé"
+                new_monstre["tape"] = ""
+                new_monstre["se_fait_taper_par"] = ""
+                new_monstres.append(new_monstre)
+
+        # Mettre à jour les monstres dans les données
+        data["monstres"] = new_monstres
+
+        # Sauvegarder les modifications dans le fichier JSON
+        with open(json_file_path, 'w', encoding='utf-8') as file:
+            json.dump(data, file, indent=4, ensure_ascii=False)
+        print(f"Fichier JSON traité et sauvegardé : {json_file_path}")
+
+    except Exception as e:
+        print(f"Une erreur s'est produite lors du traitement du fichier JSON : {e}")
+
+# Exemple d'utilisation
+# json_file_path = "locations/locations_test.json"
+# process_json_file(json_file_path)
