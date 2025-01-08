@@ -13,7 +13,7 @@ def load_commands(path="config/commands.json"):
         return json.load(file)
 
 def load_log(path="config/log.json"):
-    with open(path, 'r') as file:
+    with open(path, 'r', encoding='utf-8') as file:
         return json.load(file)
 
 @app.route('/')
@@ -21,7 +21,7 @@ def index():
     commands = load_commands(path="app/packages/config/commands.json")
     locations = context.load_locations(path="app/packages/locations")
     players = context.load_characters(path="app/packages/characters")
-    messages = load_log(path="app/packages/config/log.json")
+    logs = load_log(path="app/packages/config/log.json")
 
 
     return render_template(
@@ -29,7 +29,7 @@ def index():
         locations=locations,
         commands=commands,
         players=players,
-        messages=messages
+        logs=logs
     )
 
 @app.route('/submit', methods=['POST'])
