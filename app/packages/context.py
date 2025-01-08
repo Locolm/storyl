@@ -317,9 +317,12 @@ def load_locations(path='locations'):
         if filename.endswith('.json'):
             file_path = os.path.join(path, filename)
             with open(file_path, 'r') as file:
-                data = json.load(file)
-                data['id'] = filename.split('.')[0]
-                locations.append(data)
+                try:
+                    data = json.load(file)
+                    data['id'] = filename.split('.')[0]
+                    locations.append(data)
+                except :
+                    pass
 
     return locations
 
@@ -335,9 +338,12 @@ def load_characters(path="characters"):
         if filename.endswith('.json'):
             file_path = os.path.join(path, filename)
             with open(file_path, 'r') as file:
-                data = json.load(file)
-                data['id'] = filename.split('.')[0]
-                characters.append(data)
+                try :
+                    data = json.load(file)
+                    data['id'] = filename.split('.')[0]
+                    characters.append(data)
+                except :
+                    pass
 
     return characters
 
