@@ -93,9 +93,14 @@ def completion(prompt):
         character_data = context.load_json(f"./characters/characters_{character_name}.json")
         
         prompt = prompt.replace("/speed", "").strip() + """ "Estime la vitesse de déplacement du personnage en m/s en fonction de ses caractéristiques, en prenant comme base qu'un humain moyen se déplace à 2 m/s. Nous sommes dans dnd5. Répondez sous la forme d'un json qui contient les champs nom (du personnage) et vitesse."""
-
         prompt =    f"Contexte du personnage : {character_data}\n"\
                     f"Prompt : " + prompt.strip() + "\n"
+
+    elif prompt.startswith("/time"):
+        context.advance_time(prompt.split(" ")[1])
+        return "Le temps a avancé de " + prompt.split(" ")[1] + " heure(s)."
+
+
     # Vérifier si la réponse est valide avant de sauvegarder
     try :
         if (type =="characters"):
