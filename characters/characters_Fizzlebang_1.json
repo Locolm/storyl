@@ -7,7 +7,11 @@
     "intelligence": 18,
     "charisme": 16,
     "pv": 30,
-    "etat": "en bonne santé",
+    "etat": {
+        "santé": "en bonne santé",
+        "sommeil": "reposé",
+        "déplacement": "non"
+    },
     "description": "Fizzlebang est un gnome illusionniste astucieux, capable de créer des copies parfaites de lui-même. Il se fond facilement dans la foule et utilise ses illusions pour tromper et déstabiliser ses ennemis. Toujours avec un sourire malicieux, il porte une baguette magique qui lui permet de projeter des illusions d'une grande réalisme.",
     "inventaire": [
         "Baguette magique des illusions",
@@ -18,7 +22,7 @@
     ],
     "or": 150,
     "position": {
-        "x": 0,
+        "x": 18,
         "y": 0
     }
 }

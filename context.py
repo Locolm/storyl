@@ -120,12 +120,12 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
         data = json.load(file)
     
     # Update the character's state
-    if 'etat' in data and 'en deplacement' in data['etat']:
-        # Remove existing "en deplacement" state
-        data['etat'] = re.sub(r"en deplacement vers \(\d+, \d+\) reste \d+ heures", "", data['etat']).strip()
+    if 'etat' in data and data["etat"]["déplacement"].startswith("en déplacement"):
+        # Remove existing "en déplacement" state
+        data['etat']["déplacement"] = re.sub(r"en déplacement vers \(\d+, \d+\) reste \d+ heures", "", data['etat']["déplacement"]).strip()
     
     if travel_time_hours != 0:
-        data['etat'] = f"{data['etat']} en deplacement vers ({destination_x}, {destination_y}) reste {travel_time_hours} heures".strip()
+        data['etat']["déplacement"] = f"en déplacement vers ({destination_x}, {destination_y}) reste {travel_time_hours} heures".strip()
     
     # Save the updated JSON file
     with open(file_path, "w", encoding="utf-8") as file:
@@ -141,11 +141,11 @@ def is_moving(character_name):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
     
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
-    
-    # Check if the character's state contains "en deplacement"
-    if 'etat' in data and 'en deplacement' in data['etat']:
+
+    # Check if the character's state contains "en déplacement" and if it is not empty
+    if 'etat' in data and data["etat"]["déplacement"].startswith("en déplacement"):
         return True
     
     return False
@@ -178,41 +178,6 @@ def get_nearby_locations(x,y, radius_km=10):
 # nearby = get_nearby_locations(12, 5)
 # print(nearby)
 
-def advance_time(n):
-    try:
-        n = int(float(n))
-        if n < 0:
-            n = -n
-        elif n == 0:
-            return "Le temps n'a pas avancé."
-    except ValueError:
-        n = 1
-
-    characters_dir = 'characters'
-    
-    for filename in os.listdir(characters_dir):
-        if filename.endswith('.json'):
-            file_path = os.path.join(characters_dir, filename)
-            with open(file_path, 'r', encoding='utf-8') as file:
-                data = json.load(file)
-            
-            if 'etat' in data and 'en deplacement' in data['etat']:
-                match = re.search(r"en deplacement vers \((\d+), (\d+)\) reste (\d+) heures", data['etat'])
-                if match:
-                    destination_x, destination_y, remaining_hours = map(int, match.groups())
-                    remaining_hours = max(0, remaining_hours - n)
-                    if remaining_hours == 0:
-                        data['etat'] = re.sub(r"en deplacement vers \(\d+, \d+\) reste \d+ heures", "", data['etat']).strip()
-                        data['position'] = {'x': destination_x, 'y': destination_y}
-                    else:
-                        data['etat'] = re.sub(r"en deplacement vers \(\d+, \d+\) reste \d+ heures", f"en deplacement vers ({destination_x}, {destination_y}) reste {remaining_hours} heures", data['etat']).strip()
-            
-            with open(file_path, "w", encoding="utf-8") as file:
-                json.dump(data, file, indent=4, ensure_ascii=False)
-    return f"Le temps a avancé de {n} heures."
-
-# Example usage:
-#advance_time("3")
 
 def update_character_position(character_name, new_x, new_y):
     # Load the character's JSON file
@@ -275,3 +240,69 @@ def moving_character_to_location(character_name, location_name, speed_m_s=2):
 # Example usage:
 # result = moving_character_to_location('Tenzin le fort', 'L\'Atelier des Elixirs', 2)
 # print(result)
+
+def is_sleeping(character_name):
+    # Load the character's JSON file
+    file_path = f'characters/characters_{character_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # Check if the character's state contains "en train de dormir"
+    if 'etat' in data and 'sommeil' in data['etat']:
+        match = re.search(r"en train de dormir reste (\d+) heures", data['etat']['sommeil'])
+        if match:
+            return int(match.group(1))
+    
+    return 0
+
+# Example usage:
+# sleep_hours = is_sleeping('Tenzin le fort')
+# print(f"Sleeping hours remaining: {sleep_hours}")
+
+def update_character_state_with_sleep(character_name, sleep_hours):
+    number = is_sleeping(character_name)
+    if number > 0:
+        return f"Le personnage est déjà en train de dormir, reste {number} heures."
+
+    try:
+        sleep_hours = int(float(sleep_hours))
+        if sleep_hours < 0:
+            sleep_hours = 0
+        elif sleep_hours == 0:
+            sleep_hours = 8
+    except ValueError:
+        sleep_hours = 8
+
+    # Load the character's JSON file
+    file_path = f'characters/characters_{character_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # Update the character's state
+    if 'etat' in data:
+        if data['etat'].get('déplacement')=="non":
+            # Extract the remaining hours of travel
+            match = re.search(r"en déplacement vers \((\d+), (\d+)\) reste (\d+) heures", data['etat']['déplacement'])
+            if match:
+                destination_x, destination_y, remaining_hours = map(int, match.groups())
+                remaining_hours = max(0, remaining_hours + sleep_hours)
+            data['etat']['déplacement'] = f"en déplacement vers ({destination_x}, {destination_y}) reste {remaining_hours} heures"
+        
+        # Replace the sleep state
+        data['etat']['sommeil'] = f"en train de dormir reste {sleep_hours} heures"
+        
+        # Save the updated JSON file
+        with open(file_path, "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=4, ensure_ascii=False)
+        return f"Le personnage {character_name} est en train de dormir reste {sleep_hours} heures."
+
+# Example usage:
+# print(update_character_state_with_sleep('Tenzin le fort', 8))

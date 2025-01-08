@@ -1,11 +1,15 @@
+import re
 import openai
 import json
 import os
 import context
+import time_of_day
 import util
 
 # Remplacez "YOUR_API_KEY" par votre clé API OpenAI : # Remplacez par votre clé API OpenAI accessible ici https://platform.openai.com/settings/organization/api-keys
 openai.api_key = "YOUR_API_KEY"
+count_time = 0
+
 # Fonction pour générer un personnage
 def response(prompt, purpose, tokens=300, temp=0.7, ):
     try:
@@ -34,14 +38,27 @@ def response(prompt, purpose, tokens=300, temp=0.7, ):
         return f"Une erreur s'est produite : {e}"
 
 def completion(prompt):
+    global count_time
     type = "stop"
+    if (count_time>=20):
+        completion("""/time 1""")
+        count_time=0
+
+    #prompt = """/move-to /Tenzin le fort/ /x/ /y/ Créer un donjon labyrinthe."""
     #prompt = """/create-char Un moine musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales."""
+    #prompt = """/action /Tenzin le fort/ donner un coup d'épée au goblin devant lui. /TODO context json à définir avec character_name et position => lieux où il se trouve/"""
+    #prompt = """/speed /Tenzin le fort/ /TODO context json à définir avec character_name/"""
+    #prompt = """/time 1"""
+    #prompt = """/create-pnj /location_name/"""
+    #prompt = """/sleep /Tenzin le fort/ 7""""
+    #prompt = """/create-char Un moine musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales."""
+
 
     #repérer la commande
     _response = "command not recognized"
     if prompt.startswith("/create-char"):
         type = "characters"
-        prompt = """Créer un personnage avec cette description :"""+prompt.replace("/create-char", "").strip() + """"Répondez sous la forme d'un JSON contenant les champs suivants : nom, force, dextérité, constitution, sagesse, intelligence, charisme, pv, etat, description, inventaire (liste), or et position (coordonnées x=0 et y=0)."""
+        prompt = """Créer un personnage avec cette description :"""+prompt.replace("/create-char", "").strip() + """"Répondez sous la forme d'un JSON contenant les champs suivants : nom, force, dextérité, constitution, sagesse, intelligence, charisme, pv, etat : [santé :en bonne santé, sommeil: reposé, déplacement: non], description, inventaire (liste), or et position (coordonnées x=0 et y=0)."""
     elif prompt.startswith("/move-to"):
         character_name = prompt.split("/")[2].strip()
         if not context.is_moving(character_name):
@@ -70,6 +87,7 @@ def completion(prompt):
         else:
             return "Le personnage est déjà en mouvement."
     elif prompt.startswith("/action"):
+        count_time+=1
         character_name = prompt.split("/")[2].strip()
         if not context.is_moving(character_name):
             type = "actions"
@@ -97,10 +115,32 @@ def completion(prompt):
                     f"Prompt : " + prompt.strip() + "\n"
 
     elif prompt.startswith("/time"):
-        context.advance_time(prompt.split(" ")[1])
+        count_time = 0
+        time_of_day.advance_time(prompt.split(" ")[1])
         return "Le temps a avancé de " + prompt.split(" ")[1] + " heure(s)."
-
-
+    elif prompt.startswith("/create-pnj"):
+        type = "pnjs"
+        location_name = prompt.split("/")[2].strip()
+        prompt = """Crée un personnage non-joueur. Répondez sous la forme d'un JSON contenant les champs suivants :
+- nom : le nom du PNJ.
+- puissance : un entier représentant la force ou l'influence du PNJ.
+- etat : un objet décrivant des éléments comme la santé ou d'autres états (ex. : santé : "en bonne santé", sommeil : "en train de dormir").
+- description : une description détaillée de la personnalité, de l'apparence et du rôle du PNJ.
+- inventaire : une liste d'objets que possède le PNJ.
+- or : un entier représentant la quantité d'or que possède le PNJ.
+- routine : un objet contenant deux champs :
+    - time : l'heure en entier de la journée à laquelle le PNJ change de lieu (au format 24h).
+    - locations : une liste des lieux que le PNJ visite.
+- position : les coordonnées actuelles du PNJ, qui correspondent à celles du lieu."""
+    elif prompt.startswith("/sleep"):
+        type = "sleep"
+        character_name = prompt.split("/")[2].strip()
+        match = re.search(r'\d+', prompt)
+        if match:
+            number = match.group()
+        else:
+            number = "7"
+        return f"""{character_name} se repose pour la nuit."""
     # Vérifier si la réponse est valide avant de sauvegarder
     try :
         if (type =="characters"):
@@ -112,13 +152,30 @@ def completion(prompt):
                 _response = response(prompt,"Tu es un assistant qui génère des lieux pour un jeu de rôle sous forme de JSON bien structuré.",tokens=600)
                 # Tentative de conversion en JSON
                 required_keys = ["nom", "position", "description"]
-                location_to_go = util.save_markdown_to_json(_response, required_keys, "locations")
+                location_to_go = util.save_markdown_to_json_return_filename(_response, required_keys, "locations")
+
+                # on vient de créer un lieux, on va maintenant créer un personnage sur ce lieux avec une probabilité
+                if location_to_go is not None:
+                    location_name = location_to_go.split("locations_")[1].split(".json")[0]
+                    if context.random.randint(1, 5) == 1:
+                        _response = completion("/create-pnj /" + location_name + "/")
+                        # Tentative de conversion en JSON
+                        required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
+                        util.save_markdown_to_json(_response,required_keys,"pnjs")
+                
+                util.process_json_file(location_to_go) #modifie les données des monstres
+
                 location_name = location_to_go.split("locations_")[1].split(".json")[0]
-                context.moving_character_to_location(character_name, location_name) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
+                return context.moving_character_to_location(character_name, location_name) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
         elif (type =="actions"):
                 return response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de phrase.",tokens=300)
         elif (type =="speed"):
                 return util.extract_speed_from_markdown(response(prompt,"Tu es un assistant qui estime la vitesse de déplacement des personnages en m/s et qui le renvoie avec leur nom sous forme de json",tokens=300))
+        elif (type =="pnjs"):
+                _response = response(prompt,"Tu es un assistant qui génère des personnages non-joueurs pour un jeu de rôle sous forme de JSON bien structuré.",tokens=400)
+                # Tentative de conversion en JSON
+                required_keys = ["nom","puissance","description","inventaire","or","position"]
+                util.save_markdown_to_json(_response,required_keys,"pnjs")
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
 
@@ -128,8 +185,5 @@ if __name__ == "__main__":
         openai.api_key = input("Enter your OpenAI API key: ")
 
     prompt = input("Entrez votre commande : ")
-    if prompt.startswith("/time"):
-        _response = context.advance_time(prompt.split(" ")[1])
-    else:
-        _response = completion(prompt)
+    _response = completion(prompt)
     print(_response)
