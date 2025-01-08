@@ -20,23 +20,11 @@
 
 
 
-<nav class="bg-gray-800 p-4 flex items-center shadow-lg">
-    <!-- App Name -->
-    <div class="text-white text-2xl font-bold mx-auto">
-        STORYL
-    </div>
+<div class="h-full w-full flex">
 
-
-</nav>
-
-<div class="h-full w-full flex relative">
-    <!-- Map Card -->
-    <div class="absolute top-0 right-0 m-4 w-32 h-32 bg-gray-700 p-4 rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out hover:w-64 hover:h-48">
-        <!-- Card Content, such as map or other info -->
-    </div>
 
     <!-- Sidebar -->
-    <div class="w-64 bg-gray-800 text-white p-6 flex flex-col gap-8">
+    <div class="w-64 bg-gray-800 text-white p-6 flex flex-col gap-8 pt-20">
         <div>
             <h1 class="text-xl font-bold mb-4">Joueurs</h1>
             <div class="h-64 py-8 overflow-y-auto">
@@ -87,8 +75,21 @@
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
+        <nav class="bg-gray-800 p-4 flex items-center shadow-lg">
+    <!-- App Name -->
+    <div class="text-white text-2xl font-bold mx-auto">
+        STORYL
+    </div>
+</nav>
         <!-- Chat Panel -->
-        <div id="chat" class="flex-1 flex flex-col p-6">
+        <div id="chat" class="flex-1 flex flex-col p-6 relative">
+
+            <!-- Map Card -->
+    <div class="absolute top-0 right-0 m-4 w-32 h-32 bg-gray-700 p-4 rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out hover:w-64 hover:h-48">
+        <!-- Card Content, such as map or other info -->
+    </div>
+
+
             <div class="flex-1 overflow-auto p-4">
                 <div id="chat-window" class="space-y-4 overflow-y-auto max-h-[75vh]">
                     {% for message in logs %}
