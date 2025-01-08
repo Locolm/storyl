@@ -157,7 +157,7 @@ def completion(prompt):
                 # on vient de créer un lieux, on va maintenant créer un personnage sur ce lieux avec une probabilité
                 if location_to_go is not None:
                     location_name = location_to_go.split("locations_")[1].split(".json")[0]
-                    if context.random.randint(1, 5) == 1:
+                    if context.random.randint(1, 3) == 1:
                         _response = completion("/create-pnj /" + location_name + "/")
                         # Tentative de conversion en JSON
                         required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]

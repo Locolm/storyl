@@ -175,7 +175,7 @@ def get_nearby_locations(x,y, radius_km=10):
     return json.dumps(nearby_locations, ensure_ascii=False, indent=4)
 
 # Example usage:
-# nearby = get_nearby_locations(12, 5)
+# nearby = get_nearby_locations(42, 17)
 # print(nearby)
 
 
@@ -306,3 +306,145 @@ def update_character_state_with_sleep(character_name, sleep_hours):
 
 # Example usage:
 # print(update_character_state_with_sleep('Tenzin le fort', 8))
+
+def get_location_name(x, y):
+    locations_dir = 'locations'
+    
+    # Iterate over all location files in the locations directory
+    for filename in os.listdir(locations_dir):
+        if filename.endswith('.json'):
+            location_name = filename[len('locations_'):-len('.json')]
+            loc_x, loc_y = get_location_position(location_name)
+            
+            # Check if the coordinates match
+            if loc_x == x and loc_y == y:
+                return location_name
+    
+    raise ValueError(f"No location found with coordinates x={x}, y={y}")
+
+# Example usage:
+# location_name = get_location_name(42, 17)
+# print(location_name)
+
+def update_all_pnj_routines():
+    # Implement the function to update PNJ routines
+    # For now, let's just return a message indicating the function was called
+    pnjs_dir = 'pnjs'
+    
+    # Iterate over all PNJ files in the pnjs directory
+    for filename in os.listdir(pnjs_dir):
+        if filename.endswith('.json'):
+            pnj_name = filename[len('pnjs_'):-len('.json')]
+            file_path = os.path.join(pnjs_dir, filename)
+            
+            # Load the PNJ's JSON file
+            with open(file_path, 'r', encoding='utf-8') as file:
+                data = json.load(file)
+            
+            if 'position' in data:
+                loc_x, loc_y = data['position']['x'], data['position']['y']
+                location_name = get_location_name(loc_x, loc_y)
+                
+                # Find the index of the current location in the PNJ's routine
+                if 'routine' in data and 'locations' in data['routine']:
+                    locations = data['routine']['locations']
+                    if location_name in locations:
+                        current_index = locations.index(location_name)
+                        next_index = (current_index + 1) % len(locations)
+                        next_location_name = locations[next_index]
+                        
+                        # Get the position of the next location
+                        next_loc_x, next_loc_y = get_location_position(next_location_name)
+                        
+                        # Update the PNJ's position to the next location's position
+                        data['position']['x'] = next_loc_x
+                        data['position']['y'] = next_loc_y
+
+            
+            # Save the updated JSON file
+            with open(file_path, "w", encoding="utf-8") as file:
+                json.dump(data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+# result = update_all_pnj_routines()
+# print(result)
+
+def update_pnj_routine(pnj_name):
+    pnjs_dir = 'pnjs'
+    file_path = os.path.join(pnjs_dir, f'pnjs_{pnj_name}.json')
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    # Load the PNJ's JSON file
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    if 'position' in data:
+        loc_x, loc_y = data['position']['x'], data['position']['y']
+        location_name = get_location_name(loc_x, loc_y)
+        
+        # Find the index of the current location in the PNJ's routine
+        if 'routine' in data and 'locations' in data['routine']:
+            locations = data['routine']['locations']
+            if location_name in locations:
+                current_index = locations.index(location_name)
+                next_index = (current_index + 1) % len(locations)
+                next_location_name = locations[next_index]
+                
+                # Get the position of the next location
+                next_loc_x, next_loc_y = get_location_position(next_location_name)
+                
+                # Update the PNJ's position to the next location's position
+                data['position']['x'] = next_loc_x
+                data['position']['y'] = next_loc_y
+    
+    # Save the updated JSON file
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+# update_pnj_routine('test')
+
+def get_all_pnj_routine_times():
+    pnjs_dir = 'pnjs'
+    pnj_routine_times = {}
+
+    # Iterate over all PNJ files in the pnjs directory
+    for filename in os.listdir(pnjs_dir):
+        if filename.endswith('.json'):
+            pnj_name = filename[len('pnjs_'):-len('.json')]
+            file_path = os.path.join(pnjs_dir, filename)
+            
+            # Load the PNJ's JSON file
+            with open(file_path, 'r', encoding='utf-8') as file:
+                data = json.load(file)
+            
+            if 'routine' in data and 'time' in data['routine']:
+                pnj_routine_times[pnj_name] = data['routine']['time']
+    
+    return pnj_routine_times
+
+# Example usage:
+# routine_times = get_all_pnj_routine_times()
+# print(routine_times)
+
+def get_pnj_routine_time(pnj_name):
+    pnjs_dir = 'pnjs'
+    file_path = os.path.join(pnjs_dir, f'pnjs_{pnj_name}.json')
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    # Load the PNJ's JSON file
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    if 'routine' in data and 'time' in data['routine']:
+        return data['routine']['time']
+    
+    raise KeyError(f"No routine time found for PNJ {pnj_name}")
+
+# Example usage:
+# routine_time = get_pnj_routine_time('test')
+# print(routine_time)
