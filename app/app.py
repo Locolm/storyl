@@ -37,33 +37,41 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    """Process the information, request and return the response"""
-
-    # Retrieve the information from the form
-    # Retrieve the information from the form
-    command_name = request.form.get('command')  # Safely retrieve the command
+    """
+    Process the incoming request and return the appropriate response.
+    """
+    # Retrieve form data safely
+    command_name = request.form.get('command')
     player = request.form.get('player')
     user_input = request.form.get('prompt')
 
+    # Find the matching command
     command = next((cmd for cmd in commands if cmd["command"] == command_name), None)
 
-    prompt = None
+    # If the command is not found, return an error message
+    if not command:
+        return [{
+            "from_master": True,
+            "message": "Commande inconnue. Veuillez réessayer.",
+        }]
 
-    prompt = f"/{command_name} {user_input}"
-
+    # Construct the prompt based on command and parameters
     if command.get("playable", False):
-        if player is None: return [
-            {
-                "message": "Cette commande ne peut pas être effectuée",
-                "from_master": True
-            }
-        ]
+        if not player:  # Check if the command requires a player but none was provided
+            return [{
+                "from_master": True,
+                "message": "Cette commande nécessite un joueur. Veuillez en sélectionner un.",
+            }]
         prompt = f"/{command_name} /{player}/ {user_input}"
+    else:
+        prompt = f"/{command_name} {user_input}"
 
-    return [{
-        "from_master": True,
-        "message": prompt,
-    },
+    # Return the response with the constructed prompt
+    return [
+        {
+            "from_master": True,
+            "message": prompt,
+        },
         {
             "player": "Goodguy",
             "message": prompt,
