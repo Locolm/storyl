@@ -31,7 +31,7 @@
                 <ul class="space-y-4">
                     {% for player in players %}
                     <li>
-                        <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ player.nom
+                        <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ player.id
                             }}</a>
                     </li>
                     {% endfor %}
@@ -45,7 +45,7 @@
                 <ul class="space-y-4">
                     {% for location in locations %}
                     <li>
-                        <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ location.nom
+                        <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ location.id
                             }}</a>
                     </li>
                     {% endfor %}
@@ -191,8 +191,8 @@
                 playerDropdown.innerHTML = ''; // Clear existing options
                 players.forEach(player => {
                     const option = document.createElement('option');
-                    option.value = player.nom;
-                    option.textContent = player.nom;
+                    option.value = player.id;
+                    option.textContent = player.id;
                     playerDropdown.appendChild(option);
                 });
 

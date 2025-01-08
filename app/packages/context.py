@@ -321,7 +321,7 @@ def load_locations(path='locations'):
             with open(file_path, 'r', encoding='utf-8') as file:
                 try:
                     data = json.load(file)
-                    data['id'] = filename.split('.')[0]
+                    data['id'] = filename.replace('locations_', '').replace('.json', '')
                     locations.append(data)
                 except :
                     pass
@@ -342,7 +342,7 @@ def load_characters(path="characters"):
             with open(file_path, 'r', encoding='utf-8') as file:
                 try :
                     data = json.load(file)
-                    data['id'] = filename.split('.')[0]
+                    data['id'] = filename.replace('characters_', '').replace('.json', '')
                     characters.append(data)
                 except :
                     pass
