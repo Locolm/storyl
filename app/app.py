@@ -70,20 +70,17 @@ def submit():
     # Get the response from the Master
     response = llm.completion(prompt)
 
+    print(response)
+
+    if response is None:
+        return []
 
     return [
-        {
-            "player": player if player is not None else "Administrator",
-            "message": user_input,
-        },
         {
             "from_master": True,
             "message": response,
         }
     ]
-
-
-
 
 
 
