@@ -6,6 +6,14 @@ from math import sqrt, floor
 import llm
 import re
 
+# Charger un fichier JSON spécifique
+def load_json(file_path):
+    try:
+        with open(file_path, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return None
+
 def get_character_position(name):
     file_path = f'characters/characters_{name}.json'
     
@@ -169,6 +177,7 @@ def get_nearby_locations(x,y, radius_km=10):
 # Example usage:
 # nearby = get_nearby_locations(12, 5)
 # print(nearby)
+
 
 def update_character_position(character_name, new_x, new_y):
     # Load the character's JSON file
