@@ -179,7 +179,7 @@ def completion(prompt):
                 location_name = location_to_go.split("locations_")[1].split(".json")[0]
                 return context.moving_character_to_location(character_name, location_name) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
         elif (type =="actions"):
-                response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de phrase.",tokens=300)
+                return response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de phrase.",tokens=300)
         elif (type =="speed"):
                 return util.extract_speed_from_markdown(response(prompt,"Tu es un assistant qui estime la vitesse de déplacement des personnages en m/s et qui le renvoie avec leur nom sous forme de json",tokens=300))
         elif (type =="pnjs"):

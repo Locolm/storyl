@@ -1,8 +1,8 @@
 {
     "nom_location": "Labyrinthe des Ombres",
-    "turns": 1,
+    "turns": 0,
     "order":[
-        {"nom":"Eldrin le Sombre", "type":"characters"},
+        {"nom":"Eldrin le Sombre", "type":"characters", "command":"/fight"},
         {"nom":"Elaria", "type":"characters"},
         {"nom":"Ezran le Cartographe", "type":"pnjs"},
         {"nom":"Spectre errant", "type":"monsters"},
