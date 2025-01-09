@@ -223,8 +223,6 @@ def process_json_file(json_file_path):
                 if i > 0:
                     new_monstre["nom"] = f"{monstre['nom']}_{i}"
                 new_monstre["etat"] = "en bonne santé"
-                new_monstre["tape"] = ""
-                new_monstre["se_fait_taper_par"] = ""
                 new_monstres.append(new_monstre)
 
         # Mettre à jour les monstres dans les données
@@ -241,3 +239,58 @@ def process_json_file(json_file_path):
 # Exemple d'utilisation
 # json_file_path = "locations/locations_test.json"
 # process_json_file(json_file_path)
+
+def extract_json_from_markdown(markdown):
+    """Extrait le JSON d'une chaîne Markdown.
+
+    Args:
+        markdown (str): La chaîne Markdown contenant le JSON.
+
+    Returns:
+        dict: Le JSON extrait sous forme de dictionnaire.
+    """
+    try:
+        json_pattern = r"`json\n(.*?)\n`"
+        match = re.search(json_pattern, markdown, re.DOTALL)
+        
+        if match:
+            json_str = match.group(1)
+            return json.loads(json_str)
+        else:
+            print("Aucun JSON trouvé dans le markdown.")
+            return None
+    except Exception as e:
+        print(f"Une erreur s'est produite lors de l'extraction du JSON: {e}")
+        return None
+
+# Exemple d'utilisation
+# markdown = """
+# ```json
+# {
+#   "nom": "Fizzlebang",
+#   "force": 8,
+#   "dextérité": 14,
+#   "constitution": 10,
+#   "sagesse": 12,
+#   "intelligence": 18,
+#   "charisme": 16,
+#   "pv": 30,
+#   "etat": "en bonne santé",
+#   "description": "Fizzlebang est un gnome illusionniste astucieux, capable de créer des copies parfaites de lui-même. Il se fond facilement dans la foule et utilise ses illusions pour tromper et déstabiliser ses ennemis. Toujours avec un sourire malicieux, il porte une baguette magique qui lui permet de projeter des illusions d'une grande réalisme.",
+#   "inventaire": [
+#     "Baguette magique des illusions",
+#     "Chapeau pointu",
+#     "Potion de camouflage",
+#     "Livre de sorts d'illusion",
+#     "Pierre de téléportation"
+#   ],
+#   "or": 150,
+#   "position": {
+#     "x": 0,
+#     "y": 0
+#   }
+# }
+# ```
+# """
+# extracted_json = extract_json_from_markdown(markdown)
+# print(extracted_json)

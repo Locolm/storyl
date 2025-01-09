@@ -9,7 +9,7 @@
     "pv": 30,
     "etat": {
         "santé": "en bonne santé",
-        "sommeil": "reposé",
+        "sommeil": "nuit blanche",
         "déplacement": "non"
     },
     "description": "Elaria est une voyante aveugle, sourde et muette. Elle utilise les vibrations et les énergies des êtres vivants autour d'elle pour percevoir le monde. Sa sagesse et sa connexion avec la nature lui permettent de guider ceux qui cherchent des réponses.",
@@ -21,7 +21,7 @@
     ],
     "or": 50,
     "position": {
-        "x": 0,
-        "y": 0
+        "x": 42,
+        "y": 17
     }
 }
