@@ -42,7 +42,7 @@ def advance_time(n):
 
     CURRENT_HOUR = (get_const_value("CURRENT_HOUR") + n) % 24
     update_const_value("CURRENT_HOUR", CURRENT_HOUR)
-    update_const_value("HOURS_PLAYED", CURRENT_HOUR + n)
+    update_const_value("HOURS_PLAYED", get_const_value("HOURS_PLAYED") + n)
     if (update_time_of_day()):
         next_all_state()
 
@@ -70,19 +70,19 @@ def advance_time(n):
                     if remaining_hours == 0:
                         data['etat']["déplacement"] = "non"
                         data['position'] = {'x': destination_x, 'y': destination_y}
-                    
-                    location_name = context.get_location_name(destination_x, destination_y)
-                    found = False
-                    for destination in destination_arrived:
-                        if destination[0] == location_name:
-                            destination[1].append(filename.replace('.json', '').replace('characters_', ''))
-                            found = True
-                            break
-                    if not found:
-                        destination_arrived.append({
-                            "nom": location_name,
-                            "characters": [filename.replace('.json', '').replace('characters_', '')]
-                        })
+                        
+                        location_name = context.get_location_name(destination_x, destination_y)
+                        found = False
+                        for destination in destination_arrived:
+                            if destination[0] == location_name:
+                                destination[1].append(filename.replace('.json', '').replace('characters_', ''))
+                                found = True
+                                break
+                        if not found:
+                            destination_arrived.append({
+                                "nom": location_name,
+                                "characters": [filename.replace('.json', '').replace('characters_', '')]
+                            })
                     else:
                         data['etat']["déplacement"] = f"en déplacement vers ({destination_x}, {destination_y}) reste {remaining_hours} heures"
              
