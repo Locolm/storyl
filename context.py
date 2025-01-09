@@ -112,7 +112,6 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
     
     # Calculate the travel time
     travel_time_hours = get_travel_time(x, y, destination_x, destination_y, speed_m_s)
-    print(travel_time_hours)
     
     # Load the character's JSON file
     file_path = f'characters/characters_{character_name}.json'
@@ -172,7 +171,7 @@ def get_nearby_locations(x,y, radius_km=10):
             if distance_km <= radius_km:
                 nearby_locations.append(location_name)
     
-    return json.dumps(nearby_locations, ensure_ascii=False, indent=4)
+    return nearby_locations
 
 # Example usage:
 # nearby = get_nearby_locations(42, 17)
@@ -221,7 +220,7 @@ def check_location_exists(x, y):
     return matching_locations
 
 # Example usage:
-# locations = check_location_exists(12, 5)
+# locations = check_location_exists(42, 17)
 # print(locations)
 
 def moving_character_to_location(character_name, location_name, speed_m_s=2):
@@ -246,7 +245,7 @@ def is_sleeping(character_name):
     file_path = f'characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
-        raise FileNotFoundError(f"The file {file_path} does not exist.")
+        raise FileNotFoundError(f"The file '{file_path}' does not exist.")
     
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
@@ -260,13 +259,13 @@ def is_sleeping(character_name):
     return 0
 
 # Example usage:
-# sleep_hours = is_sleeping('Tenzin le fort')
+# sleep_hours = is_sleeping('Tenzin le Fort')
 # print(f"Sleeping hours remaining: {sleep_hours}")
 
 def update_character_state_with_sleep(character_name, sleep_hours):
     number = is_sleeping(character_name)
     if number > 0:
-        return f"Le personnage est déjà en train de dormir, reste {number} heures."
+        return f"{character_name} est déjà en train de dormir, reste {number} heures."
 
     try:
         sleep_hours = int(float(sleep_hours))
@@ -286,19 +285,29 @@ def update_character_state_with_sleep(character_name, sleep_hours):
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
+    # Check if the character's state contains "en forme", "fatigué", or "épuisé"
+    if 'etat' in data:
+        if data['etat']["sommeil"] == "en forme" and sleep_hours < 2:
+            sleep_hours = 2
+        elif data['etat']["sommeil"] == "fatigué" and sleep_hours < 7:
+            sleep_hours = 7
+        elif data['etat']["sommeil"] == "épuisé" and sleep_hours < 9:
+            sleep_hours = 9
+        elif data['etat']["sommeil"] == "nuit blanche" and sleep_hours < 12:
+            sleep_hours = 12
+
+    # Replace the sleep state
+    data['etat']['sommeil'] = f"en train de dormir reste {sleep_hours} heures"
     # Update the character's state
     if 'etat' in data:
-        if data['etat'].get('déplacement')=="non":
+        if data['etat']['déplacement']!="non":
             # Extract the remaining hours of travel
             match = re.search(r"en déplacement vers \((\d+), (\d+)\) reste (\d+) heures", data['etat']['déplacement'])
             if match:
                 destination_x, destination_y, remaining_hours = map(int, match.groups())
-                remaining_hours = max(0, remaining_hours + sleep_hours)
-            data['etat']['déplacement'] = f"en déplacement vers ({destination_x}, {destination_y}) reste {remaining_hours} heures"
-        
-        # Replace the sleep state
-        data['etat']['sommeil'] = f"en train de dormir reste {sleep_hours} heures"
-        
+                remaining_hours = remaining_hours + sleep_hours
+                data['etat']['déplacement'] = f"en déplacement vers ({destination_x}, {destination_y}) reste {remaining_hours} heures"
+
         # Save the updated JSON file
         with open(file_path, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
@@ -448,3 +457,62 @@ def get_pnj_routine_time(pnj_name):
 # Example usage:
 # routine_time = get_pnj_routine_time('test')
 # print(routine_time)
+
+def get_arrival_descriptions(destination_arrived):
+    descriptions = []
+    
+    for destination in destination_arrived:
+        location_name = destination['nom']
+        characters = destination['characters']
+        
+        # Load the location's JSON file
+        file_path = f'locations/locations_{location_name}.json'
+        
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"The file {file_path} does not exist.")
+        
+        with open(file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        
+        if 'description' not in data:
+            raise KeyError(f"The JSON file for location {location_name} does not contain 'description' key.")
+        
+        description_location = data['description']
+        character_names = ', '.join(characters)
+        
+        if len(characters) > 1:
+            arrival_text = f"{character_names} sont arrivés à {location_name}, {description_location}"
+        else:
+            arrival_text = f"{character_names} est arrivé à {location_name}, {description_location}"
+        
+        descriptions.append(arrival_text)
+    
+    return '\n\n'.join(descriptions)
+
+# Example usage:
+# destination_arrived = [{'nom': 'L\'Atelier des Elixirs', 'characters': ['Tenzin le fort', 'Lara la sage']}, {'nom': 'Labyrinthe des ombres', 'characters': ['Tenzin le fort', 'Lara la sage']}]
+# print(get_arrival_descriptions(destination_arrived))
+
+def get_locations_with_monsters(destination_arrived):
+    locations_with_monsters = []
+    
+    for destination in destination_arrived:
+        location_name = destination['nom']
+        
+        # Load the location's JSON file
+        file_path = f'locations/locations_{location_name}.json'
+        
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"The file {file_path} does not exist.")
+        
+        with open(file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        
+        if 'monstres' in data and data['monstres']:
+            locations_with_monsters.append(location_name)
+    
+    return locations_with_monsters
+
+# Example usage:
+# destination_arrived = [{'nom': 'Temple de la Lumière Éternelle', 'characters': ['Tenzin le fort', 'Lara la sage']},{'nom': 'L\'Atelier des Elixirs', 'characters': ['Tenzin le fort', 'Lara la sage']}, {'nom': 'Labyrinthe des ombres', 'characters': ['Tenzin le fort', 'Lara la sage']}]
+# print(get_locations_with_monsters(destination_arrived))

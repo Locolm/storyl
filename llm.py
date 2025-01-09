@@ -1,3 +1,4 @@
+import random
 import re
 import openai
 import json
@@ -51,8 +52,6 @@ def completion(prompt):
     #prompt = """/time 1"""
     #prompt = """/create-pnj /location_name/"""
     #prompt = """/sleep /Tenzin le fort/ 7""""
-    #prompt = """/create-char Un moine musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales."""
-
 
     #repérer la commande
     _response = "command not recognized"
@@ -61,12 +60,15 @@ def completion(prompt):
         prompt = """Créer un personnage avec cette description :"""+prompt.replace("/create-char", "").strip() + """"Répondez sous la forme d'un JSON contenant les champs suivants : nom, force, dextérité, constitution, sagesse, intelligence, charisme, pv, etat : [santé :en bonne santé, sommeil: reposé, déplacement: non], description, inventaire (liste), or et position (coordonnées x=0 et y=0)."""
     elif prompt.startswith("/move-to"):
         character_name = prompt.split("/")[2].strip()
+        is_sleeping = context.is_sleeping(character_name)
+        if is_sleeping!=0:
+            return f"{character_name} est en train de dormir, il reste " + str(is_sleeping) + " heures."
         if not context.is_moving(character_name):
             try:
-                parts = prompt.split("/")
+                parts = [part.strip() for part in prompt.split("/") if part.strip()]
                 if len(parts) > 3:
-                    x = int(float(parts[3].strip()))
-                    y = int(float(parts[4].strip()))
+                    x = int(float(parts[2]))
+                    y = int(float(parts[3]))
                 else:
                     x, y = context.get_character_position(character_name)
             except ValueError:
@@ -83,12 +85,15 @@ def completion(prompt):
                 prompt =    f"Contexte des lieux alentours : {locations_data}\n"\
                             f"Prompt : " + prompt.strip() + "\n"
             else :
-                context.moving_character_to_location(character_name, matching_location[0]) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
+                return context.moving_character_to_location(character_name, matching_location[0]) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
         else:
             return "Le personnage est déjà en mouvement."
     elif prompt.startswith("/action"):
-        count_time+=1
         character_name = prompt.split("/")[2].strip()
+        is_sleeping = context.is_sleeping(character_name)
+        if is_sleeping!=0:
+            return f"{character_name} est en train de dormir, il reste " + str(is_sleeping) + " heures."
+        count_time+=1
         if not context.is_moving(character_name):
             type = "actions"
             prompt = prompt.replace("/action", "").replace(f"""/{character_name}/""", "").strip()
@@ -113,11 +118,13 @@ def completion(prompt):
         prompt = prompt.replace("/speed", "").strip() + """ "Estime la vitesse de déplacement du personnage en m/s en fonction de ses caractéristiques, en prenant comme base qu'un humain moyen se déplace à 2 m/s. Nous sommes dans dnd5. Répondez sous la forme d'un json qui contient les champs nom (du personnage) et vitesse."""
         prompt =    f"Contexte du personnage : {character_data}\n"\
                     f"Prompt : " + prompt.strip() + "\n"
-
     elif prompt.startswith("/time"):
         count_time = 0
-        time_of_day.advance_time(prompt.split(" ")[1])
-        return "Le temps a avancé de " + prompt.split(" ")[1] + " heure(s)."
+        _response = context.get_arrival_descriptions(time_of_day.advance_time(prompt.split(" ")[1]))
+        if _response=="":
+            return "Le temps a avancé de " + prompt.split(" ")[1] + " heure(s)."
+        else:
+            return _response
     elif prompt.startswith("/create-pnj"):
         type = "pnjs"
         location_name = prompt.split("/")[2].strip()
@@ -135,11 +142,15 @@ def completion(prompt):
     elif prompt.startswith("/sleep"):
         type = "sleep"
         character_name = prompt.split("/")[2].strip()
+        is_sleeping = context.is_sleeping(character_name)
+        if is_sleeping!=0:
+            return f"{character_name} est déjà en train de dormir, il reste " + str(is_sleeping) + " heures."
         match = re.search(r'\d+', prompt)
         if match:
             number = match.group()
         else:
-            number = "7"
+            number = "8"
+        context.update_character_state_with_sleep(character_name, number)
         return f"""{character_name} se repose pour la nuit."""
     # Vérifier si la réponse est valide avant de sauvegarder
     try :
@@ -157,7 +168,7 @@ def completion(prompt):
                 # on vient de créer un lieux, on va maintenant créer un personnage sur ce lieux avec une probabilité
                 if location_to_go is not None:
                     location_name = location_to_go.split("locations_")[1].split(".json")[0]
-                    if context.random.randint(1, 3) == 1:
+                    if random.randint(1, 3) == 1:
                         _response = completion("/create-pnj /" + location_name + "/")
                         # Tentative de conversion en JSON
                         required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
@@ -168,7 +179,7 @@ def completion(prompt):
                 location_name = location_to_go.split("locations_")[1].split(".json")[0]
                 return context.moving_character_to_location(character_name, location_name) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
         elif (type =="actions"):
-                return response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de phrase.",tokens=300)
+                response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de phrase.",tokens=300)
         elif (type =="speed"):
                 return util.extract_speed_from_markdown(response(prompt,"Tu es un assistant qui estime la vitesse de déplacement des personnages en m/s et qui le renvoie avec leur nom sous forme de json",tokens=300))
         elif (type =="pnjs"):
