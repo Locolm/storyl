@@ -1,34 +1,33 @@
 [
     {
-        "command": "create-char",
-        "description": "Create a new character"
-    },
-    {
-        "command": "create-loc",
-        "description": "Create a new location"
-    },
-    {
-        "command": "create-object",
-        "description": "Create a new object"
-    },
-    {
         "command": "action",
         "description": "Perform an action",
         "playable": true
     },
     {
-        "command": "talk",
-        "description": "Talk to other characters",
-        "playable": true
+        "command": "create-char",
+        "description": "Create a new character"
     },
     {
-        "command": "time",
-        "description": "Advance the time"
+        "command": "create-pnj",
+        "description": "crée un pnj à un lieu donné"
+    },
+    {
+        "command": "fight",
+        "description": "combattre un monstre",
+        "playable": true
     },
     {
         "command": "move-to",
         "description": "Se déplacer vers",
         "playable": true
+    },
+    {
+        "command": "speed",
+        "description": "obtenir la vitesse de déplacement en m/s"
+    },
+    {
+        "command": "time",
+        "description": "Advance the time"
     }
-
 ]
