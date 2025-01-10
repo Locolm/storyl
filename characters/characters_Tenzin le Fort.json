@@ -8,7 +8,7 @@
     "charisme": 10,
     "pv": 45,
     "etat": {
-        "santé": "en bonne santé",
+        "santé": "mal en point",
         "sommeil": "fatigué",
         "déplacement": "non"
     },
@@ -18,8 +18,7 @@
         "Amulette de protection",
         "Potion de soin",
         "Sandales légères",
-        "alcool très fort",
-        "Potion de soin"
+        "alcool très fort"
     ],
     "or": 96000,
     "position": {

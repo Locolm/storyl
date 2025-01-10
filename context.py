@@ -837,3 +837,56 @@ def process_actions(json_input):
 # Example usage:
 # json_input = {'description': "Tenzin le Fort s'approche de l'alchimiste avec un sourire chaleureux, lui faisant des compliments sur sa beauté. L'alchimiste, flatté, accepte de lui vendre une potion de soin pour 10 pièces d'or au lieu de 15. Tenzin, n'ayant pas d'or, doit renoncer à l'achat.", 'character': {'nom': 'Tenzin le Fort', 'inventaire': ['Bâton de bois', 'Amulette de protection', 'Potion de soins', 'Sandales légères', 'Potion de soin', 'Potion de soin', 'Potion de soin'], 'or': 0, 'etat': {}}, 'pnjs': [{'nom': 'Alchimiste', 'inventaire': ['Potion de soin', 'Elixir de force', "Poudre d'invisibilité", 'Herbes médicinales', 'Flacon vide'], 'or': 25, 'humeur': 'flatté', 'puissance': 5}], 'locations': {'nom': "L'Atelier des Elixirs_1", 'objets': [{'nom': 'Potion de soin', 'prix': 15}, {'nom': 'Elixir de force', 'prix': 25}, {'nom': "Poudre d'invisibilité", 'prix': 50}, {'nom': 'Herbes médicinales', 'prix': 5}, {'nom': 'Flacon vide', 'prix': 2}]}}
 # process_actions(json_input)
+
+def update_characters_from_json(input_json):
+    if not input_json:
+        raise ValueError("Input JSON is null, invalid, or empty.")
+    
+    if 'personnages' not in input_json:
+        raise KeyError("Input JSON does not contain 'personnages' key.")
+    
+    characters = input_json['personnages']
+    
+    for character in characters:
+        if 'nom' not in character:
+            raise KeyError("Character JSON does not contain 'nom' key.")
+        
+        character_name = character['nom']
+        
+        # Load the character's JSON file
+        file_path = f'characters/characters_{character_name}.json'
+        
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"The file {file_path} does not exist.")
+        
+        with open(file_path, 'r', encoding='utf-8') as file:
+            character_data = json.load(file)
+        
+        # Update the character's inventory and state if they exist in the input JSON
+        if 'inventaire' in character:
+            character_data['inventaire'] = character['inventaire']
+        
+        if 'etat' in character:
+            character_data['etat'].update(character['etat'])
+        
+        # Save the updated JSON file
+        with open(file_path, "w", encoding="utf-8") as file:
+            json.dump(character_data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+input_json = {
+    "description": "Les ténèbres enveloppent le Labyrinthe des Ombres...",
+    "personnages": [
+        {
+            "nom": "Sir Mimic",
+            "inventaire": ["épée en mimique", "bouclier en mimique", "potion de soins", "amulette de camouflage"],
+            "etat": {"santé": "mort"}
+        },
+        {
+            "nom": "Tenzin le Fort",
+            "inventaire": ["Bâton de bois", "Amulette de protection", "Potion de soin", "Sandales légères", "alcool très fort"],
+            "etat": {"santé": "mal en point"}
+        }
+    ]
+}
+update_characters_from_json(input_json)

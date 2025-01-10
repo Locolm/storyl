@@ -1,5 +1,5 @@
 {
-    "nom": "Labyrinthe des Ombres",
+    "nom": "Labytinthe des Ombres",
     "description": "Un labyrinthe sombre et humide, aux murs couverts de mousses et de lichen. Les échos de gouttes d'eau résonnent dans les couloirs étroits, et une légère brume rend la visibilité difficile. Des ombres dansent au coin de l'œil, créant une atmosphère angoissante.",
     "position": {
         "x": 12,
@@ -27,7 +27,6 @@
             "nom": "Golem de l'ombre",
             "description": "Une créature faite d'ombres et de ténèbres, capable d'absorber la lumière autour d'elle. Son toucher glacial peut paralyser ses ennemis.",
             "puissance": 80,
-            "nombre": 2,
             "objets": [
                 {
                     "nom": "Cœur d'ombre",
@@ -35,20 +34,59 @@
                     "prix": 50
                 }
             ],
-            "etat": "Un Golem de l'ombre affaibli, presque à terre."
+            "etat": "en bonne santé"
+        },
+        {
+            "nom": "Golem de l'ombre_1",
+            "description": "Une créature faite d'ombres et de ténèbres, capable d'absorber la lumière autour d'elle. Son toucher glacial peut paralyser ses ennemis.",
+            "puissance": 80,
+            "objets": [
+                {
+                    "nom": "Cœur d'ombre",
+                    "description": "Un artefact rare, pulsant d'une énergie sombre. Peut être utilisé pour créer des potions ou des enchantements.",
+                    "prix": 50
+                }
+            ],
+            "etat": "en bonne santé"
         },
         {
             "nom": "Spectre errant",
             "description": "L'âme tourmentée d'un ancien aventurier, cherchant désespérément la paix. Son cri peut terrifier quiconque s'en approche.",
             "puissance": 50,
-            "nombre": 3,
             "objets": [
                 {
                     "nom": "Étreinte spectrale",
                     "description": "Un objet intangible qui permet à son porteur de se déplacer silencieusement et d'éviter les détections.",
                     "prix": 30
                 }
-            ]
+            ],
+            "etat": "en bonne santé"
+        },
+        {
+            "nom": "Spectre errant_1",
+            "description": "L'âme tourmentée d'un ancien aventurier, cherchant désespérément la paix. Son cri peut terrifier quiconque s'en approche.",
+            "puissance": 50,
+            "objets": [
+                {
+                    "nom": "Étreinte spectrale",
+                    "description": "Un objet intangible qui permet à son porteur de se déplacer silencieusement et d'éviter les détections.",
+                    "prix": 30
+                }
+            ],
+            "etat": "en bonne santé"
+        },
+        {
+            "nom": "Spectre errant_2",
+            "description": "L'âme tourmentée d'un ancien aventurier, cherchant désespérément la paix. Son cri peut terrifier quiconque s'en approche.",
+            "puissance": 50,
+            "objets": [
+                {
+                    "nom": "Étreinte spectrale",
+                    "description": "Un objet intangible qui permet à son porteur de se déplacer silencieusement et d'éviter les détections.",
+                    "prix": 30
+                }
+            ],
+            "etat": "en bonne santé"
         }
     ]
 }

@@ -53,6 +53,7 @@ def completion(prompt):
     #prompt = """/create-pnj /location_name/"""
     #prompt = """/sleep /Tenzin le fort/ 7""""
     #prompt = """/create-loc /x/ /y/"""
+    #prompt = """/resolve-fight /location_name/"""
 
     #repérer la commande
     _response = "command not recognized"
@@ -163,20 +164,24 @@ locations : Un objet contenant :
         
         location_name = prompt.split("/")[2].strip()
         
-        prompt =    "renvoie moi un json contenant:\n"\
-                    "- la description du déroulé du combat entre (les personnages et les pnjs) contre les monstres: il faut que tu me fasses une description en plusieurs paragraphes\n"\
-                    "en gardant une cohérence d'utilisation d'inventaire etc.\n"\
-                    "- champ gagnant: Monstres/ joueurs, dans le cas où c'est les monstres qui ont gagné à la fin de la description on dit que les personnages ont fuit ne pouvant gagné le combat\n"\
-                    "- tu me renverra également les json des pnjs, et personnages ( ne touche pas aux champs sommeil et déplacement) et la liste de monstres encore en vie pour mettre à jour les fichier json associés\n"\
-                    "pour les json des pnjs et des personnage je veux un champs pnjs/personnages qui contient une liste de json de chaque pnjs/personnages\n"\
+        prompt =    """Renvoie-moi un JSON contenant :\n
+
+description : La description du déroulé du combat entre les personnages, les PNJs et les monstres. Il est important que tu me fasses une description narrative en plusieurs paragraphes détaillant les actions, les réactions et l’évolution du combat. Ne renvoie pas un tableau. La description doit être fluide, et les événements doivent être racontés de manière cohérente et logique.\n
+
+gagnant : (valeurs possibles : Monstres ou Personnages). Dans le cas où les monstres ont gagné, dis que les personnages ont fui, ne pouvant gagner le combat.\n
+
+pnjs : Un tableau contenant les PNJs mis à jour à la fin du combat. Pour chaque PNJ, tu dois indiquer son nom, la mise à jour de son humeur (par exemple, "flatté", "mort", etc.) et la mise à jour de son inventaire (ajoute ou retire des objets si nécessaire).\n
+
+personnages : Un tableau contenant les personnages mis à jour. Pour chaque personnage, renvoie uniquement son nom, son inventaire et la mise à jour de [etat][santé] (par exemple, "en bonne santé", "mal en point", "mort", etc.). N'oublie pas de mettre à jour l'inventaire si des objets ont été perdus ou utilisés durant le combat. Ne touche pas aux champs sommeil et déplacement du champ etat, ni aux pv qui restent fixes.\n
+
+monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie après le combat."""
         
         characters_name = context.get_characters_in_location(location_name)
         characters_data = [context.load_json(f"./characters/characters_{character_name}.json") for character_name in characters_name]
         
         location_data = context.load_json(f"./locations/locations_{location_name}.json")
         
-        pnjs_name = context.get_pnjs_in_location(location_name)
-        pnjs_data = [context.load_json(f"./pnjs/pnjs_{pnj_name}.json") for pnj_name in pnjs_name]
+        pnjs_data = context.get_pnjs_in_location(location_name)
         
         prompt =    f"Contexte du lieu : {location_data}\n"\
                     f"Contexte des personnages dans le lieu : {characters_data}\n"\
@@ -290,26 +295,22 @@ locations : Un objet contenant :
                 context.process_actions(_reponse_json)
                 return util.get_description_from_json(_reponse_json)
         elif (type =="fight"):
-            _response = response(prompt,"Tu es un assistant qui génère des combats pour un jeu de rôle sous forme de JSON bien structuré.",tokens=950)
+            _response = response(prompt,"Tu es un assistant qui génère des combats pour un jeu de rôle sous forme de JSON bien structuré.",tokens=5000)
             # Tentative de conversion en JSON
-            print(_response)
+            print("_response",_response)
             _dict_response = util.extract_json_from_markdown(_response)
-            
+
             if "personnages" in _dict_response:
-                for character in _dict_response["personnages"]:
-                    character_name = character["nom"]
-                    character_file = f"./characters/characters_{character_name}.json"
-                    if os.path.exists(character_file):
-                        with open(character_file, 'w', encoding='utf-8') as f:
-                            json.dump(character, f, ensure_ascii=False, indent=4)
+                print("test1")
+                util.update_characters_from_json(_dict_response)
                             
             if "pnjs" in _dict_response:
-                for pnj in _dict_response["pnjs"]:
-                    pnj_name = pnj["nom"]
-                    pnj_file = f"./pnjs/pnjs_{pnj_name}.json"
-                    if os.path.exists(pnj_file):
-                        with open(pnj_file, 'w', encoding='utf-8') as f:
-                            json.dump(pnj, f, ensure_ascii=False, indent=4)
+                print("test2")
+                util.update_pnjs_from_json(_dict_response)
+            
+            if "monstres" in _dict_response:
+                print("test3")
+                util.update_monsters_from_json(location_name,_dict_response)
             
             if "description" in _dict_response:
                 return _dict_response['description']
