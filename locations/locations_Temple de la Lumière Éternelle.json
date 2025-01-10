@@ -1,7 +1,7 @@
 {
     "nom": "Temple de la Lumière Éternelle",
     "description": "Un majestueux temple médiéval construit en pierre blanche, orné de vitraux colorés représentant des scènes de paix et d'harmonie. À l'intérieur, le doux parfum de l'encens flotte dans l'air, et la lumière du soleil filtre à travers les vitraux, illuminant le sol de motifs éclatants. Des bancs en bois massif sont disposés devant un autel sculpté avec soin, là où les fidèles viennent prier et méditer.",
-    "type": "donjon",
+    "type": "confort",
     "position": {
         "x": 22,
         "y": 10
@@ -23,34 +23,5 @@
             "prix": 30
         }
     ],
-    "monstres": [
-        {
-            "nom": "Gardien Spectral",
-            "description": "Un spectre éthéré, ancien protecteur du temple, condamné à veiller sur son sanctuaire.",
-            "puissance": 75,
-            "etat": "actif",
-            "nombre": 2,
-            "objets": [
-                {
-                    "nom": "Éclat de Lumière",
-                    "description": "Un fragment d'énergie lumineuse, pouvant servir dans des rituels ou comme source de magie.",
-                    "prix": 100
-                }
-            ]
-        },
-        {
-            "nom": "Zombie des Ruines",
-            "description": "Un cadavre réanimé par des forces obscures, errant sans but à la recherche de chair fraîche.",
-            "puissance": 50,
-            "etat": "actif",
-            "nombre": 3,
-            "objets": [
-                {
-                    "nom": "Cœur Noir",
-                    "description": "Un cœur déformé, symbole de l'obscurité, utilisé dans des rituels de nécromancie.",
-                    "prix": 20
-                }
-            ]
-        }
-    ]
+    "monstres": []
 }

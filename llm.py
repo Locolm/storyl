@@ -85,7 +85,7 @@ def completion(prompt):
                 prompt =    f"Contexte des lieux alentours : {locations_data}\n"\
                             f"Prompt : " + prompt.strip() + "\n"
             else :
-                return context.moving_character_to_location(character_name, matching_location[0]) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
+                return context.moving_character_to_location(character_name, matching_location[0], completion(f"""/speed /{character_name}/"""))
         else:
             return "Le personnage est déjà en mouvement."
     elif prompt.startswith("/action"):
@@ -105,9 +105,41 @@ def completion(prompt):
             if matching_location is not None:
                 location_data = context.load_json(f"./locations/locations_{matching_location}.json")
             
-            prompt =    f"Contexte du personnage : {character_data}\n"\
+            prompt =    f"Contexte des personnages : {character_data}\n"\
                         f"Contexte du lieu : {location_data}\n"\
-                        f"Prompt : {character_name} essaye de " + prompt.strip() + "Décrivez sous forme d'une phrase l'issue de l'action demandée. Assurez-vous de vérifier l'inventaire du personnage avant de répondre à l'action.\n"
+                        f"Contexte des PNJs : {context.get_pnjs_in_location(matching_location)}\n"\
+                        f"Prompt : {character_name} essaye de {prompt.strip()}\n"\
+                        f"""Contexte de fonctionnement :
+Le modèle doit vérifier si l'action demandée est possible et cohérente avec le contexte actuel. Cela inclut :
+
+Validation des ressources : Vérifie que les personnages ou PNJs disposent des objets, or, ou capacités nécessaires à l'action.
+Si le personnage tente d'acheter un objet ***mais n'a pas assez d'or***, l'action doit échouer avec une explication.
+Si un PNJ est ***furieux*** ou indifférent, des actions nécessitant de flatter ou marchander échouent.
+Si un PNJ possède un champ humeur == mort, alors ce pnj est mort et son cadavre est présent dans la pièce.
+Mise à jour des inventaires : Les objets acquis ou échangés doivent être retirés des inventaires et des lieux, et ajoutés aux inventaires correspondants.
+Création de PNJs au besoin : Si un PNJ absent est nécessaire pour l'action, le modèle doit en générer un avec des valeurs cohérentes (puissance, inventaire, or, etc.).
+Echanges et négociations : Si une action de vente échoue faute d’or chez le PNJ, celui-ci effectue un échange équivalent (si possible).
+Disponibilité des objets : ***Vérifie que les objets demandés sont présents dans les inventaires*** des lieux ou des PNJs avant d'accepter une action.\n"""\
+                        f"""Sortie attendue :
+
+Renvoie un JSON structuré contenant uniquement les changements résultant de l'action, avec ces champs :
+
+description : Résumé narratif réaliste de l'action et de son issue (succès, échec ou ajustement). On ne doit pas se rendre compte que l'on est dans un jeu de rôle.
+character : Un objet contenant :
+- nom : Nom du personnage concerné.
+- inventaire : Liste complète des objets dans l’inventaire du personnage après l’action.
+- or : Or restant si utilisé ou modifié.
+- santé : Modifications du champ santé du personnage (bourré, euphorique, mal en point, en bonne santé ...)(s'il y a eu modification).
+pnjs : Tableau contenant :
+- nom : Nom du PNJ impliqué.
+- inventaire : Liste complète des objets après l’action.
+- or : Or restant (si utilisé ou modifié).
+- humeur: Modifications d’humeur (mort, en colère, heureux, bourré, ...)(si applicables).
+- puissance : Puissance du PNJ (si applicable).
+locations : Un objet contenant :
+- nom : Nom du lieu impacté.
+- objets : Liste mise à jour des objets restant dans le lieu après l’action."""
+            print("prompt",prompt)
         else:
             return "Le personnage est en mouvement, il ne peut pas effectuer d'action pour le moment."
     elif prompt.startswith("/speed"):
@@ -177,9 +209,14 @@ def completion(prompt):
                 util.process_json_file(location_to_go) #modifie les données des monstres
 
                 location_name = location_to_go.split("locations_")[1].split(".json")[0]
-                return context.moving_character_to_location(character_name, location_name) #,completion("""/speed /{character_name}/ /TODO context json à définir avec character_name/""")
+                return context.moving_character_to_location(character_name, location_name,speed_m_s=completion("""/speed /{character_name}/"""))
         elif (type =="actions"):
-                return response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de phrase.",tokens=300)
+                _response = response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de JSON.",tokens=950)
+                _reponse_json = util.extract_json_from_markdown(_response)
+                print("_reponse_json",_reponse_json)
+                # enregistrement des changements
+                context.process_actions(_reponse_json)
+                return util.get_description_from_json(_reponse_json)
         elif (type =="speed"):
                 return util.extract_speed_from_markdown(response(prompt,"Tu es un assistant qui estime la vitesse de déplacement des personnages en m/s et qui le renvoie avec leur nom sous forme de json",tokens=300))
         elif (type =="pnjs"):
