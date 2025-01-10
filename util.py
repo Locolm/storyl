@@ -65,7 +65,11 @@ def save_markdown_to_json(response_markdown, required_keys, output_dir="characte
             while os.path.exists(filepath):
                 filepath = os.path.join(output_dir, f"{base_filename}_{counter}.json")
                 counter += 1
-
+                
+            # Renommer le personnage en incluant le counter s'il y a des doublons
+            if counter > 1:
+                character["nom"] = f"{character_name}_{counter - 1}"
+    
             # Enregistrer le personnage
             with open(filepath, "w", encoding="utf-8") as file:
                 json.dump(character, file, indent=4, ensure_ascii=False)
@@ -188,6 +192,10 @@ def save_markdown_to_json_return_filename(response_markdown, required_keys, outp
             while os.path.exists(filepath):
                 filepath = os.path.join(output_dir, f"{base_filename}_{counter}.json")
                 counter += 1
+            
+            # Renommer le counter s'il y a des doublons
+            if counter > 1:
+                character["nom"] = f"{character_name}_{counter - 1}"
 
             # Enregistrer le personnage
             with open(filepath, "w", encoding="utf-8") as file:
@@ -294,3 +302,14 @@ def extract_json_from_markdown(markdown):
 # """
 # extracted_json = extract_json_from_markdown(markdown)
 # print(extracted_json)
+
+def get_description_from_json(json_data):
+    """Extrait la description d'un JSON.
+
+    Args:
+        json_data (dict): Le dictionnaire JSON contenant les données.
+
+    Returns:
+        str: La description extraite ou "l'action n'a pas pu être effectuée" si non trouvée.
+    """
+    return json_data.get("description", "l'action n'a pas pu être effectuée")

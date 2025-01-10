@@ -1,0 +1,21 @@
+{
+    "nom": "Alchimiste",
+    "description": "un pnj",
+    "puissance": 5,
+    "etat": {
+        "santé": "en bonne santé",
+        "humeur": "mort"
+    },
+    "routine": {
+        "time": 8,
+        "locations": [
+            "L'Atelier des Elixirs_1"
+        ]
+    },
+    "position": {
+        "x": 12,
+        "y": 5
+    },
+    "inventaire": [],
+    "or": 0
+}

@@ -9,7 +9,7 @@ import re
 # Charger un fichier JSON spécifique
 def load_json(file_path):
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         return None
@@ -20,7 +20,7 @@ def get_character_position(name):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
     
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
     if 'position' not in data or 'x' not in data['position'] or 'y' not in data['position']:
@@ -38,7 +38,7 @@ def get_location_position(name):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
     
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
     if 'position' not in data or 'x' not in data['position'] or 'y' not in data['position']:
@@ -59,7 +59,7 @@ def get_item_from_location(location_name, item_name, item_type):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
     
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
     if item_type == 'monster':
@@ -224,6 +224,11 @@ def check_location_exists(x, y):
 # print(locations)
 
 def moving_character_to_location(character_name, location_name, speed_m_s=2):
+    try:
+        speed_m_s = int(float(speed_m_s))
+    except ValueError:
+        speed_m_s = 2
+
     # Check if the character is already moving
     if is_moving(character_name):
         return "Impossible, le personnage est déjà en déplacement."
@@ -449,7 +454,7 @@ def get_pnj_routine_time(pnj_name):
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
-    if 'routine' in data and 'time' in data['routine']:
+    if 'routine' in data and 'time' in data['routine'] and data['etat']['humeur'] != 'mort' and data['etat']['humeur'] != 'morte':
         return data['routine']['time']
     
     raise KeyError(f"No routine time found for PNJ {pnj_name}")
@@ -516,3 +521,197 @@ def get_locations_with_monsters(destination_arrived):
 # Example usage:
 # destination_arrived = [{'nom': 'Temple de la Lumière Éternelle', 'characters': ['Tenzin le fort', 'Lara la sage']},{'nom': 'L\'Atelier des Elixirs', 'characters': ['Tenzin le fort', 'Lara la sage']}, {'nom': 'Labyrinthe des ombres', 'characters': ['Tenzin le fort', 'Lara la sage']}]
 # print(get_locations_with_monsters(destination_arrived))
+
+def get_pnjs_in_location(location_name):
+    pnjs_in_location = []
+    pnjs_dir = 'pnjs'
+    
+    # Get the position of the location
+    loc_x, loc_y = get_location_position(location_name)
+    
+    # Iterate over all PNJ files in the pnjs directory
+    for filename in os.listdir(pnjs_dir):
+        if filename.endswith('.json'):
+            pnj_name = filename[len('pnjs_'):-len('.json')]
+            file_path = os.path.join(pnjs_dir, filename)
+            
+            # Load the PNJ's JSON file
+            pnj_data = load_json(file_path)
+            
+            if pnj_data and 'position' in pnj_data:
+                pnj_x, pnj_y = pnj_data['position']['x'], pnj_data['position']['y']
+                
+                # Check if the PNJ's position matches the location's position
+                if pnj_x == loc_x and pnj_y == loc_y:
+                    pnjs_in_location.append(pnj_data)
+    
+    return json.dumps(pnjs_in_location, ensure_ascii=False)
+
+# Example usage:
+# pnjs = get_pnjs_in_location('test')
+# print(pnjs)
+
+
+def parse_json_input(json_input):
+    character = json_input.get('character', {})
+    pnjs = json_input.get('pnjs', [])
+    locations = json_input.get('locations', [])
+    
+    return character, pnjs, locations
+
+# Example usage:
+# json_input = {'description': "Tenzin le Fort utilise son charisme pour convaincre l'alchimiste de lui vendre une potion de soin à un prix réduit. L'alchimiste, charmé par la présence imposante de Tenzin, accepte de la vendre pour 10 pièces d'or.", 'character': {'inventaire': ['Bâton de bois', 'Amulette de protection', 'Potion de soins', 'Sandales légères', 'Potion de soin'], 'or': 40}, 'pnjs': [], 'locations': [{'nom': 'Potion de soin', 'prix': 15}, {'nom': 'Elixir de force', 'prix': 25}, {'nom': "Poudre d'invisibilité", 'prix': 50}, {'nom': 'Herbes médicinales', 'prix': 5}, {'nom': 'Flacon vide', 'prix': 2}]}
+# character, pnjs, locations = parse_json_input(json_input)
+# print(character)
+# print(pnjs)
+# print(locations)
+
+def update_character_from_json(input_json):
+    if not input_json:
+        raise ValueError("Input JSON is null, invalid, or empty.")
+    
+    if 'nom' not in input_json:
+        raise KeyError("Input JSON does not contain 'nom' key.")
+    
+    character_name = input_json['nom']
+    
+    # Load the character's JSON file
+    file_path = f'characters/characters_{character_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        character_data = json.load(file)
+    
+    # Update the character's inventory, gold, and health state if they exist in the input JSON
+    if 'inventaire' in input_json:
+        character_data['inventaire'] = input_json['inventaire']
+
+    if 'or' in input_json:
+        character_data['or'] = input_json['or']
+
+    if 'santé' in input_json:
+        character_data['etat']["santé"] = input_json['santé']
+    
+    # Save the updated JSON file
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(character_data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+# input_json = {'nom': 'Tenzin le fort', 'inventaire': ['Épée en fer', 'Bouclier en bois'], 'or': 100, 'etat': {'santé': 'bonne'}}
+# update_character_from_json(input_json)
+
+def update_location_from_json(input_json):
+    if not input_json:
+        raise ValueError("Input JSON is null, invalid, or empty.")
+    
+    if 'nom' not in input_json or 'objets' not in input_json:
+        raise KeyError("Input JSON does not contain 'nom' or 'objets' key.")
+    
+    location_name = input_json['nom']
+    new_objects = input_json['objets']
+    
+    # Load the location's JSON file
+    file_path = f'locations/locations_{location_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        location_data = json.load(file)
+    
+    # Update the location's objects
+    location_data['objets'] = new_objects
+    
+    # Save the updated JSON file
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(location_data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+# input_json = {'nom': 'L\'Atelier des Elixirs_1', 'objets': [{'nom': 'Potion de soin', 'prix': 15}, {'nom': 'Elixir de force', 'prix': 25}]}
+# update_location_from_json(input_json)
+
+def update_pnj_from_json(input_json, location_name):
+    if not input_json:
+        raise ValueError("Input JSON is null, invalid, or empty.")
+    
+    if 'nom' not in input_json:
+        raise KeyError("Input JSON does not contain 'nom' key.")
+    
+    pnj_name = input_json['nom']
+    file_path = f'pnjs/pnjs_{pnj_name}.json'
+    
+    # Load the PNJ's JSON file if it exists, otherwise create a new one
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding='utf-8') as file:
+            pnj_data = json.load(file)
+    else:
+        loc_x, loc_y = get_location_position(location_name)
+        pnj_data = {
+            "nom": pnj_name,
+            "description": "un pnj",
+            "etat": {
+                "santé": "en bonne santé",
+                "humeur": "neutre"
+            },
+            "routine": {
+                "time":8,
+                "locations": [location_name]
+            },
+            "position": {
+                "x": loc_x,
+                "y": loc_y
+            }
+        }
+
+        if 'puissance' in input_json:
+            pnj_data['etat']['puissance'] = input_json['puissance']
+        else :
+            pnj_data['etat']['puissance'] = 5
+    
+    # Update the PNJ's fields
+    if 'inventaire' in input_json:
+        pnj_data['inventaire'] = input_json['inventaire']
+    
+    if 'or' in input_json:
+        pnj_data['or'] = input_json['or']
+    
+    if 'humeur' in input_json:
+        pnj_data['etat']['humeur'] = input_json['humeur']
+    
+    # Save the updated JSON file
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(pnj_data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+# input_json = {'nom': 'Alchimiste', 'inventaire': ['Potion de soin', 'Elixir de force', "Poudre d'invisibilité", 'Herbes médicinales', 'Flacon vide', 'cristal de clairvoyance'], 'or': 40, 'humeur': "joyeux"}
+# update_pnj_from_json(input_json, 'L\'Atelier des Elixirs')
+
+def update_pnjs_from_json(pnjs_json, location_name):
+    for pnj_json in pnjs_json:
+        update_pnj_from_json(pnj_json, location_name)
+
+def process_actions(json_input):
+    if not json_input:
+        raise ValueError("Input JSON is null, invalid, or empty.")
+    
+    if 'character' not in json_input or 'pnjs' not in json_input or 'locations' not in json_input:
+        raise KeyError("Input JSON does not contain 'character', 'pnjs', or 'locations' key.")
+    
+    character_data = json_input['character']
+    pnjs_data = json_input['pnjs']
+    location_data = json_input['locations']
+    
+    # Update character
+    update_character_from_json(character_data)
+    
+    # Update location
+    update_location_from_json(location_data)
+    
+    # Update PNJ
+    update_pnjs_from_json(pnjs_data, location_data['nom'])
+
+# Example usage:
+# json_input = {'description': "Tenzin le Fort s'approche de l'alchimiste avec un sourire chaleureux, lui faisant des compliments sur sa beauté. L'alchimiste, flatté, accepte de lui vendre une potion de soin pour 10 pièces d'or au lieu de 15. Tenzin, n'ayant pas d'or, doit renoncer à l'achat.", 'character': {'nom': 'Tenzin le Fort', 'inventaire': ['Bâton de bois', 'Amulette de protection', 'Potion de soins', 'Sandales légères', 'Potion de soin', 'Potion de soin', 'Potion de soin'], 'or': 0, 'etat': {}}, 'pnjs': [{'nom': 'Alchimiste', 'inventaire': ['Potion de soin', 'Elixir de force', "Poudre d'invisibilité", 'Herbes médicinales', 'Flacon vide'], 'or': 25, 'humeur': 'flatté', 'puissance': 5}], 'locations': {'nom': "L'Atelier des Elixirs_1", 'objets': [{'nom': 'Potion de soin', 'prix': 15}, {'nom': 'Elixir de force', 'prix': 25}, {'nom': "Poudre d'invisibilité", 'prix': 50}, {'nom': 'Herbes médicinales', 'prix': 5}, {'nom': 'Flacon vide', 'prix': 2}]}}
+# process_actions(json_input)
