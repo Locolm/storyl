@@ -7,31 +7,48 @@ import chardet
 response_markdown = """
 ```json
 {
-  "nom": "Fizzlebang",
-  "force": 8,
-  "dextérité": 14,
-  "constitution": 10,
-  "sagesse": 12,
-  "intelligence": 18,
-  "charisme": 16,
-  "pv": 30,
-  "etat": "en bonne santé",
-  "description": "Fizzlebang est un gnome illusionniste astucieux, capable de créer des copies parfaites de lui-même. Il se fond facilement dans la foule et utilise ses illusions pour tromper et déstabiliser ses ennemis. Toujours avec un sourire malicieux, il porte une baguette magique qui lui permet de projeter des illusions d'une grande réalisme.",
-  "inventaire": [
-    "Baguette magique des illusions",
-    "Chapeau pointu",
-    "Potion de camouflage",
-    "Livre de sorts d'illusion",
-    "Pierre de téléportation"
-  ],
-  "or": 150,
-  "position": {
-    "x": 0,
-    "y": 0
-  }
+  "description": "Tenzin le Fort se tient fermement, ses muscles tendus comme un arc, alors qu'il fait face aux deux Golems de l'ombre. Inspirant profondément, il canalise son énergie intérieure et exécute une série de mouvements fluides et puissants, frappant avec son bâton de bois. Son attaque fait vibrer l'air autour de lui, frappant le premier Golem avec une force incroyable. Le Golem de l'ombre, bien que résistant, est projeté en arrière, perdant une partie de sa puissance et de sa capacité à absorber la lumière.",
+  "état monstre": {
+    "nombre restants": 2,
+    "puissance restante": 60,
+    "état": "affaibli"
+  },
+  "inventaire personnage": [
+    "Bâton de bois",
+    "Amulette de protection",
+    "Potion de soins",
+    "Sandales légères"
+  ]
 }
 ```
 """
+
+
+
+def extract_json_from_markdown(markdown):
+    """Extrait le JSON d'une chaîne Markdown.
+
+    Args:
+        markdown (str): La chaîne Markdown contenant le JSON.
+
+    Returns:
+        dict: Le JSON extrait sous forme de dictionnaire.
+    """
+    try:
+        json_pattern = r"`json\n(.*?)\n`"
+        match = re.search(json_pattern, markdown, re.DOTALL)
+        
+        if match:
+            json_str = match.group(1)
+            return json.loads(json_str)
+        else:
+            print("Aucun JSON trouvé dans le markdown.")
+            return None
+    except Exception as e:
+        print(f"Une erreur s'est produite lors de l'extraction du JSON: {e}")
+        return None
+    
+tetx = extract_json_from_markdown(response_markdown)
 
 def save_markdown_to_json(response_markdown, required_keys, output_dir="characters"):
     """Extrait le JSON d'une chaîne Markdown et le sauvegarde dans un fichier.

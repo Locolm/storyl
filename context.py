@@ -172,7 +172,39 @@ def get_nearby_locations(x,y, radius_km=10):
             if distance_km <= radius_km:
                 nearby_locations.append(location_name)
     
-    return json.dumps(nearby_locations, ensure_ascii=False, indent=4)
+    return nearby_locations
+
+def get_monsters_name_from_location(location_name):
+    file_path = f'locations/locations_{location_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    
+    if 'monstres' not in data:
+        raise KeyError("The JSON file does not contain 'monstres' key.")
+
+    return [monster['nom'] for monster in data.get("monstres", [])]
+
+def get_monster_from_location(location_name, monster_name):
+    file_path = f'locations/locations_{location_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    
+    if 'monstres' not in data:
+        raise KeyError("The JSON file does not contain 'monstres' key.")
+    
+    for monster in data['monstres']:
+        if monster['nom'] == monster_name:
+            return monster
+    
+    raise ValueError(f"Monster named {monster_name} not found in location {location_name}.")
 
 # Example usage:
 # nearby = get_nearby_locations(12, 5)
@@ -223,6 +255,75 @@ def check_location_exists(x, y):
 # Example usage:
 # locations = check_location_exists(12, 5)
 # print(locations)
+
+def update_character_inventory(character_name, new_inventory):
+    # Load the character's JSON file
+    file_path = f'characters/characters_{character_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # Update the character's inventory
+    data['inventaire'] = new_inventory
+    
+    # Save the updated JSON file
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+# new_inventory = {"Potion de soin": 3, "Épée en fer": 1}
+# update_character_inventory('Tenzin le fort', new_inventory)
+
+def get_characters_in_location(location_name):
+    characters = []
+    characters_dir = 'characters'
+    
+    loc_x, loc_y = get_location_position(location_name)
+    
+    # Iterate over all character files in the characters directory
+    for filename in os.listdir(characters_dir):
+        if filename.endswith('.json'):
+            
+            with open(f"{characters_dir}/{filename}", 'r', encoding="utf-8") as file:
+                data = json.load(file)
+            
+            # Extract the character's name and position
+            character_name = data.get('nom', '')
+            x, y = data.get('position', {}).get('x', 0), data.get('position', {}).get('y', 0)
+                   
+            # Check if the character is in the specified location
+            if x == loc_x and y == loc_y:
+                characters.append(character_name)
+    
+    return characters
+
+def update_monster_state(location_name, monster_name, new_state):
+    file_path = f'locations/locations_{location_name}.json'
+    
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    if 'monstres' not in data:
+        raise KeyError("The JSON file does not contain 'monstres' key.")
+    
+    for monster in data['monstres']:
+        if monster['nom'] == monster_name:
+            monster['etat'] = new_state
+            break
+    else:
+        raise ValueError(f"Monster named {monster_name} not found in location {location_name}.")
+    
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)
+
+# Example usage:
+# update_monster_state('Labyrinthe des Ombres', 'Golem de l\'ombre', 'en colère')
 
 def moving_character_to_location(character_name, location_name, speed_m_s=2):
     # Check if the character is already moving
