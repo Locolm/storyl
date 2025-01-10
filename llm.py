@@ -106,6 +106,8 @@ def completion(prompt):
         else:
             return "Le personnage est en mouvement, il ne peut pas effectuer d'action pour le moment."
     elif prompt.startswith("/resolve-fight"):
+        type = "fight"
+        
         location_name = prompt.split("/")[2].strip()
         
         prompt =    "renvoie moi un json contenant:\n"\
@@ -127,42 +129,6 @@ def completion(prompt):
                     f"Contexte des pnjs présents dans le lieu : {pnjs_data}\n"\
                     f"Prompt : {prompt.strip()}\n"
         
-        
-    elif prompt.startswith("/fight"):
-        type = "fight"
-        character_name = prompt.split("/")[2].strip()
-        monster_name = prompt.split("/")[4].strip()
-        
-        #TODO verifier qu'il ne dort pas
-        
-        if not context.is_moving(character_name):
-            character_data = context.load_json(f"./characters/characters_{character_name}.json")
-            character_position = character_data["position"]
-            matching_location = context.check_location_exists(character_position["x"], character_position["y"])[0]
-
-            if matching_location is not None:
-                location_data = context.load_json(f"./locations/locations_{matching_location}.json")
-                
-                try:
-                    monster = context.get_monster_from_location(matching_location, monster_name)
-                except ValueError:
-                    monster = None
-
-                if monster:
-                    prompt =    f"Contexte du personnage : {character_data}\n"\
-                                f"Contexte du monstre : {monster}\n"\
-                                f"Prompt : Décrivez l'attaque de {character_name} contre {monster['nom']}. "\
-                                f"Assurez-vous de vérifier les caractéristiques et l'inventaire du personnage avant de répondre à l'action. Fait en sorte que le combat soit réaliste en fonction des capacités du personnages de celles de son advesaire ainsi que des objets ou consommables qu'ils possèdent"\
-                                f"Répondez sous forme d'un json avec les champs suivant :\n"\
-                                f"- description : une description de l'action\n"\
-                                f"- état_monstre: l'état du monstre après l'action (l'état du monstre est une très courte descritpion de l'état actuel du monstre)\n"\
-                                f"- inventaire_personnage: l'inventaire actualisé du personnage après l'action (enlever les objets consommés et/ou rajouter les objets gagnés)\n"
-                else:
-                    return f"Aucun monstre nommé {monster_name} trouvé à cet endroit."
-            else:
-                return "Lieu non trouvé."
-        else:
-            return "Le personnage est en mouvement, il ne peut pas combattre pour le moment."
     elif prompt.startswith("/speed"):
         type = "speed"
         character_name = prompt.split("/")[2].strip()
@@ -241,13 +207,26 @@ def completion(prompt):
         elif (type =="actions"):
                 return response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de phrase.",tokens=300)
         elif (type =="fight"):
-            _response = response(prompt,"Tu es un assistant qui génère des combats pour un jeu de rôle sous forme de JSON bien structuré.",tokens=300)
+            _response = response(prompt,"Tu es un assistant qui génère des combats pour un jeu de rôle sous forme de JSON bien structuré.",tokens=950)
             # Tentative de conversion en JSON
             print(_response)
             _dict_response = util.extract_json_from_markdown(_response)
             
-            context.update_monster_state(matching_location, monster_name, _dict_response['état_monstre'])
-            context.update_character_inventory(character_name, _dict_response['inventaire_personnage'])
+            if "personnages" in _dict_response:
+                for character in _dict_response["personnages"]:
+                    character_name = character["nom"]
+                    character_file = f"./characters/characters_{character_name}.json"
+                    if os.path.exists(character_file):
+                        with open(character_file, 'w', encoding='utf-8') as f:
+                            json.dump(character, f, ensure_ascii=False, indent=4)
+                            
+            if "pnjs" in _dict_response:
+                for pnj in _dict_response["pnjs"]:
+                    pnj_name = pnj["nom"]
+                    pnj_file = f"./pnjs/pnjs_{pnj_name}.json"
+                    if os.path.exists(pnj_file):
+                        with open(pnj_file, 'w', encoding='utf-8') as f:
+                            json.dump(pnj, f, ensure_ascii=False, indent=4)
             
             if "description" in _dict_response:
                 return _dict_response['description']
