@@ -300,6 +300,27 @@ def get_characters_in_location(location_name):
     
     return characters
 
+def get_pnjs_in_location(location_name):
+    pnjs = []
+    pnjs_dir = 'pnjs'
+    
+    loc_x, loc_y = get_location_position(location_name)
+    
+    # Iterate over all PNJ files in the pnjs directory
+    for filename in os.listdir(pnjs_dir):
+        if filename.endswith('.json'):
+            
+            with open(f"{pnjs_dir}/{filename}", 'r', encoding="utf-8") as file:
+                data = json.load(file)
+            
+            # Extract the PNJ's name and position
+            pnj_name = data.get('nom', '')
+            x, y = data.get('position', {}).get('x', 0), data.get('position', {}).get('y', 0)
+                   
+            # Check if the PNJ is in the specified location
+            if x == loc_x and y == loc_y:
+                pnjs.append(pnj_name)
+
 def update_monster_state(location_name, monster_name, new_state):
     file_path = f'locations/locations_{location_name}.json'
     

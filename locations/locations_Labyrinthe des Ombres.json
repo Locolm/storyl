@@ -34,7 +34,8 @@
                     "description": "Un artefact rare, pulsant d'une énergie sombre. Peut être utilisé pour créer des potions ou des enchantements.",
                     "prix": 50
                 }
-            ]
+            ],
+            "etat": "Un Golem de l'ombre affaibli, presque à terre."
         },
         {
             "nom": "Spectre errant",

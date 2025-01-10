@@ -108,7 +108,24 @@ def completion(prompt):
     elif prompt.startswith("/resolve-fight"):
         location_name = prompt.split("/")[2].strip()
         
-        characters = context.get_characters_in_location(location_name)
+        prompt =    "renvoie moi un json contenant:\n"\
+                    "- la description du déroulé du combat entre (les personnages et les pnjs) contre les monstres: il faut que tu me fasses une description en plusieurs paragraphes\n"\
+                    "en gardant une cohérence d'utilisation d'inventaire etc.\n"\
+                    "- champ gagnant: Monstres/ joueurs, dans le cas où c'est les monstres qui ont gagné à la fin de la description on dit que les personnages ont fuit ne pouvant gagné le combat\n"\
+                    "- tu me renverra également les json des pnjs, et personnages ( ne touche pas aux champs sommeil et déplacement) et la liste de monstres encore en vie pour mettre à jour les fichier json associés\n"\
+        
+        characters_name = context.get_characters_in_location(location_name)
+        characters_data = [context.load_json(f"./characters/characters_{character_name}.json") for character_name in characters_name]
+        
+        location_data = context.load_json(f"./locations/locations_{location_name}.json")
+        
+        pnjs_name = context.get_pnjs_in_location(location_name)
+        pnjs_data = [context.load_json(f"./pnjs/pnjs_{pnj_name}.json") for pnj_name in pnjs_name]
+        
+        prompt =    f"Contexte du lieu : {location_data}\n"\
+                    f"Contexte des personnages dans le lieu : {characters_data}\n"\
+                    f"Contexte des pnjs présents dans le lieu : {pnjs_data}\n"\
+                    f"Prompt : {prompt.strip()}\n"
         
         
     elif prompt.startswith("/fight"):
