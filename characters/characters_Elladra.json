@@ -1,0 +1,30 @@
+{
+    "nom": "Elladra",
+    "force": 10,
+    "dextérité": 18,
+    "constitution": 12,
+    "sagesse": 14,
+    "intelligence": 16,
+    "charisme": 20,
+    "pv": 40,
+    "etat": {
+        "santé": "en bonne santé",
+        "sommeil": "reposé",
+        "déplacement": "non"
+    },
+    "description": "Elladra est une vampire charismatique dont la beauté en attire plus d'un. Elle utilise sa séduction pour attirer ses proies dans son lit, où elle prélève leur sang avec une douceur mortelle.",
+    "inventaire": [
+        "cape noire",
+        "miroir enchanté",
+        "flacon de sang",
+        "bijoux scintillants",
+        "sac à potions",
+        "Potion de soin",
+        "flacon de potion inconnue"
+    ],
+    "or": 140,
+    "position": {
+        "x": 12,
+        "y": 5
+    }
+}

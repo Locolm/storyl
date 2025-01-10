@@ -1,0 +1,22 @@
+{
+    "nom_location": "Labyrinthe des Ombres",
+    "turns": 0,
+    "order":[
+        {"nom":"Eldrin le Sombre", "type":"characters", "command":"/fight"},
+        {"nom":"Elaria", "type":"characters"},
+        {"nom":"Ezran le Cartographe", "type":"pnjs"},
+        {"nom":"Spectre errant", "type":"monsters"},
+        {"nom":"Spectre errant_1", "type":"monsters"},
+        {"nom":"Spectre errant_2", "type":"monsters"},
+        {"nom":"Ombre vorace", "type":"monsters"},
+        {"nom":"Ombre vorace_1", "type":"monsters"},
+        {"nom":"Ombre vorace_2", "type":"monsters"},
+        {"nom":"Ombre vorace_3", "type":"monsters"},
+        {"nom":"Ombre vorace_4", "type":"monsters"},
+        {"nom":"Ombre vorace_5", "type":"monsters"},
+        {"nom":"Ombre vorace_6", "type":"monsters"},
+        {"nom":"Ombre vorace_7", "type":"monsters"},
+        {"nom":"Ombre vorace_8", "type":"monsters"},
+        {"nom":"Ombre vorace_9", "type":"monsters"}
+    ]
+}
