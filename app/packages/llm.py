@@ -35,7 +35,7 @@ def response(prompt, purpose, tokens=300, temp=0.7, ):
         # Retourner la réponse nettoyée
         return content
     except Exception as e:
-        return f"Une erreur s'est produite : {e}"
+        raise e
 
 def completion(prompt):
     global count_time
@@ -189,8 +189,12 @@ def completion(prompt):
                 # Tentative de conversion en JSON
                 required_keys = ["nom","puissance","description","inventaire","or","position"]
                 util.save_markdown_to_json(_response,required_keys,"pnjs")
+
     except Exception as e:
-        print(f"Une erreur s'est produite : {e}")
+        print("Error: ", e)
+        raise e
+
+    raise Exception("Command not recognized")
 
 # Exécution du script
 if __name__ == "__main__":

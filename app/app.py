@@ -68,20 +68,25 @@ def submit():
         prompt = f"/{command_name} {user_input}"
 
     # Get the response from the Master
-    response = llm.completion(prompt)
+    try:
+        response = llm.completion(prompt)
 
+        print(response)
 
-    print(response)
+        if response is None:
+            return []
 
-    if response is None:
-        return []
-
-    return [
-        {
+        return [
+            {
+                "user": "MASTER",
+                "message": response,
+            }
+        ]
+    except Exception as e:
+        return [{
             "user": "SYSTEM",
-            "message": response,
-        }
-    ]
+            "message": "Une erreur est survenue. Veuillez réessayer.",
+        }]
 
 
 
