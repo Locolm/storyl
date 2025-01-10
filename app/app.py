@@ -52,7 +52,7 @@ def submit():
     # If the command is not found, return an error message
     if not command:
         return [{
-            "from_master": True,
+            "user": "SYSTEM",
             "message": "Commande inconnue. Veuillez réessayer.",
         }]
 
@@ -70,6 +70,7 @@ def submit():
     # Get the response from the Master
     response = llm.completion(prompt)
 
+
     print(response)
 
     if response is None:
@@ -77,7 +78,7 @@ def submit():
 
     return [
         {
-            "from_master": True,
+            "user": "SYSTEM",
             "message": response,
         }
     ]

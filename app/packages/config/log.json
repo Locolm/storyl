@@ -6,13 +6,5 @@
   {
       "user": "MASTER",
       "message": "Bienvenue dans cette aventure, aventurier ! Le monde s'ouvre devant vous, rempli de mystères et de périls. Que votre voyage commence maintenant !"
-  },
-  {
-      "user": "Goodguy",
-      "message": "Je cherche un moyen de sortir de ce donjon. Cet endroit est maudit."
-  },
-  {
-      "user": "MASTER",
-      "message": "Les donjons sont des pièges antiques, remplis de créatures puissantes et de pièges traîtres. Soyez prudent, chaque pas pourrait être votre dernier."
   }
 ]
