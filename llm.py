@@ -52,6 +52,7 @@ def completion(prompt):
     #prompt = """/time 1"""
     #prompt = """/create-pnj /location_name/"""
     #prompt = """/sleep /Tenzin le fort/ 7""""
+    #prompt = """/create-loc /x/ /y/"""
 
     #repérer la commande
     _response = "command not recognized"
@@ -88,6 +89,22 @@ def completion(prompt):
                 return context.moving_character_to_location(character_name, matching_location[0], completion(f"""/speed /{character_name}/"""))
         else:
             return "Le personnage est déjà en mouvement."
+    elif prompt.startswith("/create-loc"):
+                type = "locations-only"
+                parts = [part.strip() for part in prompt.split("/") if part.strip()]
+                x,y=0,0
+                if len(parts) > 3:
+                    x = int(float(parts[2]))
+                    y = int(float(parts[3]))
+                locations_context = context.get_nearby_locations(x, y)
+                
+                locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]             
+                
+                prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x, y en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le lieu est de type hostile comme un donjon, un lieu hanté ou autre). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
+                
+                prompt =    f"Contexte des lieux alentours : {locations_data}\n"\
+                            f"Prompt : " + prompt.strip() + "\n"
+
     elif prompt.startswith("/action"):
         character_name = prompt.split("/")[2].strip()
         is_sleeping = context.is_sleeping(character_name)
@@ -139,7 +156,6 @@ pnjs : Tableau contenant :
 locations : Un objet contenant :
 - nom : Nom du lieu impacté.
 - objets : Liste mise à jour des objets restant dans le lieu après l’action."""
-            print("prompt",prompt)
         else:
             return "Le personnage est en mouvement, il ne peut pas effectuer d'action pour le moment."
     elif prompt.startswith("/speed"):
@@ -191,6 +207,7 @@ locations : Un objet contenant :
                 # Tentative de conversion en JSON
                 required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
                 util.save_markdown_to_json(_response,required_keys,"characters")
+                return "personnage sauvegardé"
         elif (type =="locations"):
                 _response = response(prompt,"Tu es un assistant qui génère des lieux pour un jeu de rôle sous forme de JSON bien structuré.",tokens=600)
                 # Tentative de conversion en JSON
@@ -210,10 +227,27 @@ locations : Un objet contenant :
 
                 location_name = location_to_go.split("locations_")[1].split(".json")[0]
                 return context.moving_character_to_location(character_name, location_name,speed_m_s=completion("""/speed /{character_name}/"""))
+        elif (type =="locations-only"):
+                _response = response(prompt,"Tu es un assistant qui génère des lieux pour un jeu de rôle sous forme de JSON bien structuré.",tokens=600)
+                # Tentative de conversion en JSON
+                required_keys = ["nom", "position", "description"]
+                location_to_go = util.save_markdown_to_json_return_filename(_response, required_keys, "locations")
+
+                # on vient de créer un lieux, on va maintenant créer un personnage sur ce lieux avec une probabilité
+                if location_to_go is not None:
+                    location_name = location_to_go.split("locations_")[1].split(".json")[0]
+                    if random.randint(1, 3) == 1:
+                        _response = completion("/create-pnj /" + location_name + "/")
+                        # Tentative de conversion en JSON
+                        required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
+                        util.save_markdown_to_json(_response,required_keys,"pnjs")
+                
+                util.process_json_file(location_to_go) #modifie les données des monstres
+
+                location_name = location_to_go.split("locations_")[1].split(".json")[0]
         elif (type =="actions"):
                 _response = response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de JSON.",tokens=950)
                 _reponse_json = util.extract_json_from_markdown(_response)
-                print("_reponse_json",_reponse_json)
                 # enregistrement des changements
                 context.process_actions(_reponse_json)
                 return util.get_description_from_json(_reponse_json)
