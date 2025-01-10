@@ -158,6 +158,31 @@ locations : Un objet contenant :
 - objets : Liste mise à jour des objets restant dans le lieu après l’action."""
         else:
             return "Le personnage est en mouvement, il ne peut pas effectuer d'action pour le moment."
+    elif prompt.startswith("/resolve-fight"):
+        type = "fight"
+        
+        location_name = prompt.split("/")[2].strip()
+        
+        prompt =    "renvoie moi un json contenant:\n"\
+                    "- la description du déroulé du combat entre (les personnages et les pnjs) contre les monstres: il faut que tu me fasses une description en plusieurs paragraphes\n"\
+                    "en gardant une cohérence d'utilisation d'inventaire etc.\n"\
+                    "- champ gagnant: Monstres/ joueurs, dans le cas où c'est les monstres qui ont gagné à la fin de la description on dit que les personnages ont fuit ne pouvant gagné le combat\n"\
+                    "- tu me renverra également les json des pnjs, et personnages ( ne touche pas aux champs sommeil et déplacement) et la liste de monstres encore en vie pour mettre à jour les fichier json associés\n"\
+                    "pour les json des pnjs et des personnage je veux un champs pnjs/personnages qui contient une liste de json de chaque pnjs/personnages\n"\
+        
+        characters_name = context.get_characters_in_location(location_name)
+        characters_data = [context.load_json(f"./characters/characters_{character_name}.json") for character_name in characters_name]
+        
+        location_data = context.load_json(f"./locations/locations_{location_name}.json")
+        
+        pnjs_name = context.get_pnjs_in_location(location_name)
+        pnjs_data = [context.load_json(f"./pnjs/pnjs_{pnj_name}.json") for pnj_name in pnjs_name]
+        
+        prompt =    f"Contexte du lieu : {location_data}\n"\
+                    f"Contexte des personnages dans le lieu : {characters_data}\n"\
+                    f"Contexte des pnjs présents dans le lieu : {pnjs_data}\n"\
+                    f"Prompt : {prompt.strip()}\n"
+        
     elif prompt.startswith("/speed"):
         type = "speed"
         character_name = prompt.split("/")[2].strip()
@@ -176,6 +201,15 @@ locations : Un objet contenant :
     elif prompt.startswith("/create-pnj"):
         type = "pnjs"
         location_name = prompt.split("/")[2].strip()
+        current_location_data = context.load_json(f"./locations/locations_{location_name}.json")
+        x = current_location_data["position"]["x"]
+        y = current_location_data["position"]["y"]
+        
+        locations_context = context.get_nearby_locations(x, y)
+                
+        locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]   
+        
+        
         prompt = """Crée un personnage non-joueur. Répondez sous la forme d'un JSON contenant les champs suivants :
 - nom : le nom du PNJ.
 - puissance : un entier représentant la force ou l'influence du PNJ.
@@ -187,6 +221,10 @@ locations : Un objet contenant :
     - time : l'heure en entier de la journée à laquelle le PNJ change de lieu (au format 24h).
     - locations : une liste des lieux que le PNJ visite.
 - position : les coordonnées actuelles du PNJ, qui correspondent à celles du lieu."""
+
+        prompt =    f"Contexte du lieu actuel : {current_location_data}\n"\
+                    f"Contexte des lieux alentours : {locations_data}\n"\
+                    f"Prompt : " + prompt.strip() + "\n"
     elif prompt.startswith("/sleep"):
         type = "sleep"
         character_name = prompt.split("/")[2].strip()
@@ -251,6 +289,32 @@ locations : Un objet contenant :
                 # enregistrement des changements
                 context.process_actions(_reponse_json)
                 return util.get_description_from_json(_reponse_json)
+        elif (type =="fight"):
+            _response = response(prompt,"Tu es un assistant qui génère des combats pour un jeu de rôle sous forme de JSON bien structuré.",tokens=950)
+            # Tentative de conversion en JSON
+            print(_response)
+            _dict_response = util.extract_json_from_markdown(_response)
+            
+            if "personnages" in _dict_response:
+                for character in _dict_response["personnages"]:
+                    character_name = character["nom"]
+                    character_file = f"./characters/characters_{character_name}.json"
+                    if os.path.exists(character_file):
+                        with open(character_file, 'w', encoding='utf-8') as f:
+                            json.dump(character, f, ensure_ascii=False, indent=4)
+                            
+            if "pnjs" in _dict_response:
+                for pnj in _dict_response["pnjs"]:
+                    pnj_name = pnj["nom"]
+                    pnj_file = f"./pnjs/pnjs_{pnj_name}.json"
+                    if os.path.exists(pnj_file):
+                        with open(pnj_file, 'w', encoding='utf-8') as f:
+                            json.dump(pnj, f, ensure_ascii=False, indent=4)
+            
+            if "description" in _dict_response:
+                return _dict_response['description']
+            else:
+                return "Le combat s'est déroulé sans encombre."
         elif (type =="speed"):
                 return util.extract_speed_from_markdown(response(prompt,"Tu es un assistant qui estime la vitesse de déplacement des personnages en m/s et qui le renvoie avec leur nom sous forme de json",tokens=300))
         elif (type =="pnjs"):
