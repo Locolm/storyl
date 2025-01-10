@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Storyl</title>
     <link href="{{ url_for('static', filename='css/tailwind.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             background-image: url("{{ url_for('static', filename='images/papyrus.png') }}");
@@ -27,12 +28,11 @@
     <div class="w-64 bg-gray-800 text-white p-6 flex flex-col gap-8 pt-20">
         <div>
             <h1 class="text-xl font-bold mb-4">Joueurs</h1>
-            <div class="h-64 py-8 overflow-y-auto">
+            <div class="h-64 py-8 overflow-y-auto joueurs-list">
                 <ul class="space-y-4">
                     {% for player in players %}
                     <li>
-                        <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ player.id
-                            }}</a>
+                        <a href="#" data-index="{{ loop.index0 }}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ player.id }}</a>
                     </li>
                     {% endfor %}
                 </ul>
@@ -41,11 +41,11 @@
 
         <div>
             <h1 class="text-xl font-bold mb-4">Lieux</h1>
-            <div class="h-64 py-8 overflow-y-auto">
+            <div class="h-64 py-8 overflow-y-auto locations-list">
                 <ul class="space-y-4">
                     {% for location in locations %}
                     <li>
-                        <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ location.id
+                        <a href="#" data-index="{{ loop.index0 }}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">{{ location.id
                             }}</a>
                     </li>
                     {% endfor %}
@@ -73,12 +73,17 @@
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
-        <nav class="bg-gray-800 p-4 flex items-center shadow-lg">
-    <!-- App Name -->
-    <div class="text-white text-2xl font-bold mx-auto">
-        STORYL
-    </div>
-</nav>
+        <nav class="bg-gray-800 p-4 flex items-center justify-between shadow-lg">
+            <!-- App Name -->
+            <div class="text-white text-2xl font-bold mx-auto">
+                STORYL
+            </div>
+            <!-- Settings Icon -->
+            <div class="text-white text-2xl cursor-pointer hover:text-gray-400">
+                <i class="fa fa-cog" aria-hidden="true"></i>
+            </div>
+        </nav>
+
         <!-- Chat Panel -->
         <div id="chat" class="flex-1 flex flex-col p-6 relative">
 
@@ -215,6 +220,14 @@
 </script>
 
 <script>
+    // Function to close the overlay
+    function closeOverlay(info, overlay) {
+        overlay.remove(); // Remove the overlay
+        info.remove();    // Remove the info container
+    }
+</script>
+
+<script>
     const chatForm = document.getElementById('chat-form');
     const chatWindow = document.getElementById('chat-window');
 
@@ -344,6 +357,201 @@
             event.stopPropagation();
         });
     </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Get all player items
+    const playerItems = document.querySelectorAll('.joueurs-list a');
+
+    playerItems.forEach(item => {
+        item.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+
+            // remove existing overlay and info
+            const existingOverlay = document.getElementById('overlay');
+            const existingInfo = document.getElementById('info');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+            if (existingInfo) {
+                existingInfo.remove();
+            }
+
+            // Get player ID
+            const playerId = item.textContent.trim();
+            const current_player = players[item.dataset.index];
+            console.log(current_player);
+
+            // Darken the chat window
+            const chatWindow = document.getElementById('chat');
+
+            const overlay = document.createElement('div');
+            overlay.id = "overlay";
+            overlay.className = 'h-full w-full absolute bg-gray-900 bg-opacity-75 fixed top-0 left-0 z-10';
+
+            chatWindow.append(overlay);
+
+            // Create the overlay
+            const info = document.createElement('div');
+            info.id = 'info';
+
+            info.className = 'absolute inset-0 z-30 flex justify-center items-center';
+            info.innerHTML = `
+<div class="bg-gradient-to-br from-gray-800 to-black text-white p-10 rounded-lg shadow-2xl relative h-5/6 w-full mx-16 " id="player-card">
+    <!-- Close Button -->
+    <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-3xl" id="close-overlay">
+        ✕
+    </button>
+
+    <div class="py-8 h-full overflow-y-auto">
+    <!-- Player Info Header -->
+    <h2 class="text-4xl font-extrabold mb-6 text-center text-indigo-400">${current_player.nom}</h2>
+    <p class="text-gray-300 mb-8">${current_player.description}</p>
+
+    <!-- 2x2 Grid Layout for Sections -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Attributes Section -->
+        <div class="p-6 rounded-lg bg-gray-800">
+            <h3 class="text-xl font-semibold text-yellow-500 mb-3">Attributs</h3>
+            <ul class="space-y-2">
+                <li><span class="font-medium text-gray-400">Charisme:</span> ${current_player.charisme}</li>
+                <li><span class="font-medium text-gray-400">Constitution:</span> ${current_player.constitution}</li>
+                <li><span class="font-medium text-gray-400">Dextérité:</span> ${current_player.dextérité}</li>
+                <li><span class="font-medium text-gray-400">Force:</span> ${current_player.force}</li>
+                <li><span class="font-medium text-gray-400">Intelligence:</span> ${current_player.intelligence}</li>
+                <li><span class="font-medium text-gray-400">Sagesse:</span> ${current_player.sagesse}</li>
+            </ul>
+        </div>
+
+        <!-- State Section -->
+        <div class="p-6 rounded-lg bg-gray-800">
+            <h3 class="text-xl font-semibold text-teal-400 mb-3">État</h3>
+            <ul class="space-y-2">
+                ${Object.entries(current_player.etat).map(([key, value]) => `
+                    <li><span class="font-medium text-gray-400">${key.charAt(0).toUpperCase() + key.slice(1)}:</span> ${value}</li>
+                `).join('')}
+            </ul>
+        </div>
+
+        <!-- Inventory Section -->
+        <div class="p-6 rounded-lg bg-gray-800">
+            <h3 class="text-xl font-semibold text-pink-500 mb-3">Inventaire</h3>
+            <ul class="space-y-2 list-disc pl-6">
+                ${current_player.inventaire.map(item => `
+                    <li class="text-gray-300">${item}</li>
+                `).join('')}
+            </ul>
+        </div>
+
+        <!-- Details Section -->
+        <div class="p-6 rounded-lg bg-gray-800">
+            <h3 class="text-xl font-semibold text-orange-400 mb-3">Details</h3>
+            <p><span class="font-medium text-gray-400">Or:</span> ${current_player.or}</p>
+            <p><span class="font-medium text-gray-400">Point de vie (PV):</span> ${current_player.pv}</p>
+            <p><span class="font-medium text-gray-400">Position:</span> (${current_player.position.x}, ${current_player.position.y})</p>
+        </div>
+    </div>
+</div>
+
+</div>
+`;
+
+            // Append the overlay to the chat window
+            chatWindow.appendChild(info);
+
+            // Close functionality for the close button
+            document.getElementById('close-overlay').addEventListener('click', () => {
+                closeOverlay(info, overlay);
+            });
+        });
+    });
+
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Get all location items
+    const locationItems = document.querySelectorAll('.locations-list a');
+
+    locationItems.forEach(item => {
+        item.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+
+            // Remove existing overlay and info
+            const existingOverlay = document.getElementById('overlay');
+            const existingInfo = document.getElementById('info');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+            if (existingInfo) {
+                existingInfo.remove();
+            }
+
+            // Get location ID (or name here for simplicity)
+            const locationId = item.textContent.trim();
+            const current_location = locations[item.dataset.index];  // Assuming 'locations' data is available
+            console.log(current_location);
+
+            // Darken the chat window
+            const chatWindow = document.getElementById('chat');
+
+            const overlay = document.createElement('div');
+            overlay.id = "overlay";
+            overlay.className = 'h-full w-full absolute bg-gray-900 bg-opacity-75 fixed top-0 left-0 z-10';
+
+            // Create the overlay
+            const info = document.createElement('div');
+            info.id = 'info';
+
+            info.className = 'absolute inset-0 z-30 flex justify-center items-center';
+            info.innerHTML = `
+                <div class="inset-0 bg-gradient-to-br from-gray-800 to-black text-white p-10 rounded-lg shadow-2xl relative h-5/6 w-full mx-16 " id="location-card">
+                    <!-- Close Button -->
+                    <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-3xl" id="close-overlay">
+                        ✕
+                    </button>
+
+                    <div class="py-8 h-full overflow-y-auto">
+                    <!-- Location Info Header -->
+                    <h2 class="text-4xl font-extrabold mb-6 text-center text-indigo-400">${current_location.nom}</h2>
+                    <p class="text-gray-300 mb-8">${current_location.description}</p>
+
+                    <!-- 2x2 Grid Layout for Sections -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Coordinates Section -->
+                        <div class="p-6 rounded-lg bg-gray-800">
+                            <h3 class="text-xl font-semibold text-yellow-500 mb-3">Coordonnées</h3>
+                            <p class="text-gray-400">X: ${current_location.position.x}</p>
+                            <p class="text-gray-400">Y: ${current_location.position.y}</p>
+                        </div>
+
+
+                    </div>
+                </div>
+            `;
+
+            chatWindow.append(overlay);
+            // Append the overlay to the chat window
+            chatWindow.appendChild(info);
+
+            // Close functionality for the close button
+            document.getElementById('close-overlay').addEventListener('click', () => {
+                closeOverlay(info, overlay);
+            });
+
+            overlay.addEventListener('click', () => {
+                console.log(
+                    "Overlay clicked. Closing overlay..."
+                )
+                closeOverlay(info, overlay);
+            });
+        });
+    });
+});
+</script>
 
 
 
