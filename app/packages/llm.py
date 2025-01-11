@@ -265,8 +265,8 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
                 _response = response(prompt,"Tu es un assistant qui génère des personnages pour un jeu de rôle sous forme de JSON bien structuré.",tokens=300)
                 # Tentative de conversion en JSON
                 required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
-                util.save_markdown_to_json(_response,required_keys,"characters")
-                return "personnage sauvegardé"
+                saved_file_path = util.save_markdown_to_json(_response,required_keys,"characters")
+                return f"personnage enregistrée en tant que {saved_file_path.split("characters_")[1].split(".json")[0]}"
         elif (type =="locations"):
                 _response = response(prompt,"Tu es un assistant qui génère des lieux pour un jeu de rôle sous forme de JSON bien structuré.",tokens=600)
                 # Tentative de conversion en JSON
@@ -304,6 +304,8 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
                 util.process_json_file(location_to_go) #modifie les données des monstres
 
                 location_name = location_to_go.split("locations_")[1].split(".json")[0]
+
+                return f"Lieu enregistrée en tant que {location_name}"
         elif (type =="actions"):
                 _response = response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de JSON.",tokens=950)
                 _reponse_json = util.extract_json_from_markdown(_response)
