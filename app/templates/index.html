@@ -778,8 +778,14 @@ let width = svg.node().getBoundingClientRect().width;
 let height = svg.node().getBoundingClientRect().height;
 
 // Calculate min and max coordinates for scaling
-const xValues = locations.map(d => d.position.x);
-const yValues = locations.map(d => d.position.y);
+const allPositions = [
+    ...locations.map(d => d.position),
+    ...players.map(d => d.position)
+];
+
+// Calculate min and max coordinates for scaling
+const xValues = allPositions.map(p => p.x);
+const yValues = allPositions.map(p => p.y);
 
 const xMin = Math.min(...xValues);
 const xMax = Math.max(...xValues);
@@ -855,8 +861,8 @@ svg.style("background-color", "#1e1e1e");  // Dark background
 svg.style("border", "2px solid #444444");  // Subtle border for the map
 svg.style("border-radius", "12px");  // Rounded corners for a sleek look
 
-// Create map markers
-mapGroup.selectAll("circle")
+// Create map markers for locations
+mapGroup.selectAll(".location-dot")
     .data(locations)
     .enter()
     .append("circle")
@@ -864,10 +870,9 @@ mapGroup.selectAll("circle")
     .attr("cy", d => yScale(d.position.y))
     .attr("r", 6) // Initial radius size
     .attr("fill", "red")
-    .attr("class", "location-dot")
     .attr("stroke", "white")  // Adding a white stroke to make it pop
     .attr("stroke-width", 1)
-    .attr("class", "location-dot")
+    .attr("class", "location-dot") // Assign a unique class
     .style("transition", "transform 0.2s ease, fill 0.2s ease") // Smooth transition
 
     // Glow effect and hover animation
@@ -890,6 +895,43 @@ mapGroup.selectAll("circle")
             .attr("fill", "red")
             .style("filter", "none");  // Remove glow on mouse out
     });
+
+// Create map markers for players
+mapGroup.selectAll(".player-dot")
+    .data(players)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xScale(d.position.x))
+    .attr("cy", d => yScale(d.position.y))
+    .attr("r", 6) // Initial radius size
+    .attr("fill", "blue")
+    .attr("stroke", "white")  // Adding a white stroke to make it pop
+    .attr("stroke-width", 1)
+    .attr("class", "player-dot") // Assign a unique class
+    .style("transition", "transform 0.2s ease, fill 0.2s ease") // Smooth transition
+
+    // Glow effect and hover animation
+    .on("mouseover", function (event, d) {
+        const tooltip = d3.select("#map-card").append("div")
+            .attr("class", "tooltip bg-gray-800 text-white p-2 rounded")
+            .style("position", "absolute")
+            .style("left", `${0}px`)
+            .style("bottom", `${0}px`)
+            .html(`<strong>${d.nom}</strong><br>${d.description}`);
+
+        // Highlight with a glowing effect
+        d3.select(this)
+            .attr("fill", "cyan")
+            .style("filter", "drop-shadow(0 0 10px rgba(0, 255, 255, 0.8))"); // Cyan glow
+    })
+    .on("mouseout", function () {
+        d3.select(".tooltip").remove();
+        d3.select(this)
+            .attr("fill", "blue")
+            .style("filter", "none");  // Remove glow on mouse out
+    });
+
+
 
 // Apply the zoom behavior to the SVG element
 svg.call(zoom);
