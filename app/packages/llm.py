@@ -95,13 +95,14 @@ def completion(prompt):
     elif prompt.startswith("/create-loc"):
                 type = "locations-only"
                 parts = [part.strip() for part in prompt.split("/") if part.strip()]
+                print(parts)
                 x,y=0,0
                 if len(parts) > 3:
-                    x = int(float(parts[2]))
-                    y = int(float(parts[3]))
+                    x = int(float(parts[1]))
+                    y = int(float(parts[2]))
                 locations_context = context.get_nearby_locations(x, y)
                 
-                locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]             
+                locations_data = [context.load_json(f"app/packages/locations/locations_{matching_location}.json") for matching_location in locations_context]
                 
                 prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x, y en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le lieu est de type hostile comme un donjon, un lieu hanté ou autre). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
                 
@@ -221,13 +222,13 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
     elif prompt.startswith("/create-pnj"):
         type = "pnjs"
         location_name = prompt.split("/")[2].strip()
-        current_location_data = context.load_json(f"./locations/locations_{location_name}.json")
+        current_location_data = context.load_json(f"app/packages/locations/locations_{location_name}.json")
         x = current_location_data["position"]["x"]
         y = current_location_data["position"]["y"]
         
         locations_context = context.get_nearby_locations(x, y)
                 
-        locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]   
+        locations_data = [context.load_json(f"app/packages/locations/locations_{matching_location}.json") for matching_location in locations_context]
         
         
         prompt = """Crée un personnage non-joueur. Répondez sous la forme d'un JSON contenant les champs suivants :
