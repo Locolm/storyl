@@ -138,7 +138,7 @@
                         <!-- Command Dropdown -->
                         <select id="command-dropdown" name="command"
                                 class="bg-gray-100 p-2 border-r text-gray-700 focus:outline-none">
-                            <option value="" disabled selected>Select a command</option>
+                            <option value="" disabled selected>Choisir une commande</option>
                             {% for command in commands %}
                             <option value="{{ command.command }}">{{ command.command }}</option>
                             {% endfor %}
@@ -150,15 +150,31 @@
                             <!-- Player options will be dynamically populated -->
                         </select>
 
+                        <!-- Coordinate Fields -->
+                        <div id="coordinate-fields" class="inline-flex items-center hidden">
+                            <input type="number" id="coord-x" name="coord-x"
+                                   class="p-2 border rounded-md w-20 focus:outline-none"
+                                   placeholder="X"/>
+                            <input type="number" id="coord-y" name="coord-y"
+                                   class="p-2 border rounded-md w-20 focus:outline-none"
+                                   placeholder="Y"/>
+                        </div>
+
+                        <input type="number" id="time-input" name="time"
+                                   class="p-2 border rounded-md w-20 focus:outline-none hidden"
+                                   placeholder="Time" min="1"/>
+
                         <!-- Input Field -->
-                        <input type="text" id="user-input" name="prompt" class="flex-1 p-2 focus:outline-none"
-                               placeholder="Type your message..." required/>
+                        <input type="text" id="user-input" name="prompt"
+                               class="flex-1 p-2 text-start focus:outline-none"
+                               placeholder="Entrer votre instruction..." required/>
                     </div>
+
 
                     <!-- Send Button -->
                     <button id="submit" type="submit"
                             class="px-4 py-2 bg-gray-800 -blue-500 text-white rounded-md hover:bg-gray-700 focus:outline-none">
-                        Submit
+                        Valider
                     </button>
                 </form>
 
@@ -184,6 +200,11 @@
     // Select the dropdown elements
     const commandDropdown = document.getElementById('command-dropdown');
     const playerDropdown = document.getElementById('player-dropdown');
+    const coordinateFields = document.getElementById('coordinate-fields');
+    const userInput = document.getElementById('user-input');
+    const coordXInput = document.getElementById('coord-x');
+    const coordYInput = document.getElementById('coord-y');
+    const timeInput = document.getElementById('time-input');
 
     // Ensure the DOM is fully loaded before binding events
     document.addEventListener('DOMContentLoaded', () => {
@@ -212,6 +233,37 @@
                 // Hide the player dropdown
                 playerDropdown.classList.add('hidden');
             }
+
+            // Handle coordinate fields visibility
+            if (selectedCommand.coordinates) {
+                coordinateFields.classList.remove('hidden');
+            } else {
+                coordinateFields.classList.add('hidden');
+                userInput.disabled = false; // Enable the input field
+            }
+
+            console.log(selectedCommand.time)
+
+            if (selectedCommand.time_input) {
+                timeInput.classList.remove('hidden');
+            } else {
+                timeInput.classList.add('hidden');
+            }
+
+            console.log('Selected Command:', selectedCommand);
+            console.log(selectedCommand.no_input)
+            // Handle allowed user input
+            if (selectedCommand.no_input) {
+                userInput.value = ''; // Clear the input field
+                userInput.disabled = true; // Disable the input field
+                userInput.placeholder = "Cette commande ne nécessite pas d'entrée.";
+                userInput.classList.add("hidden");
+            } else {
+                userInput.disabled = false; // Enable the input field
+                userInput.placeholder = "Entrer votre instruction...";
+                userInput.classList.remove("hidden");
+            }
+
         });
     });
 </script>
