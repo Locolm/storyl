@@ -80,7 +80,7 @@ def save_markdown_to_json(response_markdown, required_keys, output_dir="characte
             # Gestion des doublons
             counter = 1
             while os.path.exists(filepath):
-                filepath = os.path.join(output_dir, f"{base_filename}_{counter}.json")
+                filepath = os.path.join(f"app/packages/{output_dir}", f"{base_filename}_{counter}.json")
                 counter += 1
                 
             # Renommer le personnage en incluant le counter s'il y a des doublons

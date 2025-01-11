@@ -110,7 +110,7 @@ def update_pnj_routines():
 
 
 def update_sleep_status(n):
-    characters_dir = 'characters'
+    characters_dir = 'app/packages/characters'
     for filename in os.listdir(characters_dir):
         if filename.endswith('.json'):
             file_path = os.path.join(characters_dir, filename)
@@ -155,7 +155,7 @@ def update_const_value(key, value):
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 def next_all_state():
-    characters_dir = 'characters'
+    characters_dir = 'app/packages/characters'
     for filename in os.listdir(characters_dir):
         if filename.endswith('.json'):
             file_path = os.path.join(characters_dir, filename)

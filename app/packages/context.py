@@ -277,7 +277,7 @@ def update_character_inventory(character_name, new_inventory):
 
 def get_characters_in_location(location_name):
     characters = []
-    characters_dir = 'characters'
+    characters_dir = 'app/packages/characters'
     
     loc_x, loc_y = get_location_position(location_name)
     

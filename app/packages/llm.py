@@ -192,9 +192,9 @@ personnages : Un tableau contenant les personnages mis à jour. Pour chaque pers
 monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie après le combat."""
         
         characters_name = context.get_characters_in_location(location_name)
-        characters_data = [context.load_json(f"./characters/characters_{character_name}.json") for character_name in characters_name]
+        characters_data = [context.load_json(f"app/packages//characters/characters_{character_name}.json") for character_name in characters_name]
         
-        location_data = context.load_json(f"./locations/locations_{location_name}.json")
+        location_data = context.load_json(f"app/packages//locations/locations_{location_name}.json")
         
         pnjs_data = context.get_pnjs_in_location(location_name)
         
