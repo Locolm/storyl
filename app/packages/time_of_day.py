@@ -53,7 +53,7 @@ def advance_time(n):
     #update characters
     update_sleep_status(n)
     
-    characters_dir = 'characters'
+    characters_dir = 'app/packages/characters'
 
     #destination_arrived = [{nom:nom_destination,characters:[]},.....]
     destination_arrived = []
@@ -93,7 +93,7 @@ def advance_time(n):
 
 
 def update_pnj_routines():
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     
     for filename in os.listdir(pnjs_dir):
         if filename.endswith('.json'):
@@ -132,7 +132,7 @@ def update_sleep_status(n):
 
 
 def get_const_value(key):
-    const_file = '../../CONST.json'
+    const_file = 'app/packages/config/CONST.json'
     if not os.path.exists(const_file):
         return None
     
