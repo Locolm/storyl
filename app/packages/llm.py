@@ -2,13 +2,15 @@ import random
 import re
 import openai
 
-from packages import context, util
-import json
+from packages import context, util, time_of_day
 import os
-import time_of_day
+
+# read the API key from the env file
+from dotenv import load_dotenv
+load_dotenv()
 
 # Remplacez "YOUR_API_KEY" par votre clé API OpenAI : # Remplacez par votre clé API OpenAI accessible ici https://platform.openai.com/settings/organization/api-keys
-openai.api_key = "YOUR_API_KEY"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 count_time = 0
 
 # Fonction pour générer un personnage

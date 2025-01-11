@@ -1,8 +1,9 @@
-from datetime import datetime
 import json
 import os
 import re
-import context
+
+from packages import context
+
 
 # Variables globales pour l'heure de la journée
 
@@ -92,7 +93,7 @@ def advance_time(n):
 
 
 def update_pnj_routines():
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     
     for filename in os.listdir(pnjs_dir):
         if filename.endswith('.json'):
