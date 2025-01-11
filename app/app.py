@@ -5,7 +5,7 @@ from flask_cors import CORS
 import json
 import traceback
 from datetime import datetime
-
+import os
 
 app = Flask(__name__)
 
@@ -181,6 +181,14 @@ def submit():
             path="app/packages/config/backend_logs.json"
         )
 
+        append_log(
+            {
+                "timestamp": datetime.now().isoformat(),
+                "user": player if player else "ADMIN",
+                "message": f"{prompt}",
+            },
+            path="app/packages/config/log.json"
+        )
         # Append into the game log
         append_log(
             {
@@ -192,6 +200,10 @@ def submit():
         )
 
         return [
+            {
+                "user": player if player else "ADMIN",
+                "message": f"{prompt}",
+            },
             {
                 "user": "MASTER",
                 "message": response,
@@ -211,6 +223,10 @@ def submit():
         )
 
         return [
+            {
+                "user": "user",
+                "message": f"{prompt}",
+            },
             {
                 "user": "SYSTEM",
                 "message": "Une erreur est survenue. Veuillez réessayer.",
@@ -236,6 +252,55 @@ def fetch():
         "logs": logs,
         "pnjs": pnjs,
         "state": state
+    }
+
+@app.route("/reset", methods=["POST"])
+def reset():
+    # Define directories and file paths
+    directories = ["locations", "characters", "pnjs"]
+    const_file_path = "app/packages/config/CONST.json"
+    log_file_path = "app/packages/config/log.json"
+
+    # Reset directories
+    for directory in directories:
+        if os.path.exists(f"app/packages/{directory}"):
+            for file_name in os.listdir(f"app/packages/{directory}"):
+                file_path = os.path.join(f"app/packages/{directory}", file_name)
+                if os.path.isfile(file_path):
+                    os.remove(file_path)  # Remove file
+            print(f"Cleared contents of directory: app/packages/{directory}")
+        else:
+            os.makedirs(directory)  # Create if it doesn't exist
+            print(f"Created missing directory: {directory}")
+
+    # Reset CONST.json
+    default_const = {
+        "CURRENT_HOUR": 7,
+        "TIME_OF_DAY": "matin",
+        "HOURS_PLAYED": 0
+    }
+
+    default_log = [
+        {
+            "user": "SYSTEM",
+            "message": "Bienvenue dans le jeu, aventurier ! Préparez-vous à vivre une aventure épique pleine de mystères et de dangers."
+        },
+        {
+            "user": "MASTER",
+            "message": "Bienvenue dans cette aventure, aventurier ! Le monde s'ouvre devant vous, rempli de mystères et de périls. Que votre voyage commence maintenant !"
+        }
+    ]
+
+    with open(const_file_path, "w") as const_file:
+        json.dump(default_const, const_file, indent=4)
+    print(f"Reset {const_file_path} with default values.")
+
+    with open(log_file_path, "w") as const_file:
+        json.dump(default_log, const_file, indent=4)
+    print(f"Reset {log_file_path} with default values.")
+
+    return {
+        "response": True
     }
 
 if __name__ == '__main__':
