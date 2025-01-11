@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+
 from packages import context, llm, util
 from flask_cors import CORS
 import json
@@ -36,12 +37,21 @@ def append_log(message_object, path="config/backend_logs.json"):
     with open (path, 'w', encoding='utf-8') as file:
         json.dump(logs, file, indent=4, ensure_ascii=False)
 
+def load_game_state(path="config/CONST.json"):
+    """
+    Load game state stored in CONST.json file
+    """
+    with open(path, "r", encoding="utf-8") as file:
+        return json.load(file)
+
 @app.route('/')
 def index():
     commands = load_commands(path="app/packages/config/commands.json")
     locations = context.load_locations(path="app/packages/locations")
     players = context.load_characters(path="app/packages/characters")
+    pnjs = context.load_pnjs(path="app/packages/pnjs")
     logs = load_log(path="app/packages/config/log.json")
+    state = load_game_state(path="app/packages/config/CONST.json")
 
 
     return render_template(
@@ -50,6 +60,8 @@ def index():
         commands=commands,
         players=players,
         logs=logs,
+        pnjs=pnjs,
+        state=state
     )
 
 @app.route('/submit', methods=['POST'])
@@ -213,13 +225,17 @@ def fetch():
     commands = load_commands(path="app/packages/config/commands.json")
     locations = context.load_locations(path="app/packages/locations")
     players = context.load_characters(path="app/packages/characters")
+    pnjs = context.load_pnjs(path="app/packages/pnjs")
     logs = load_log(path="app/packages/config/log.json")
+    state = load_game_state(path="app/packages/config/CONST.json")
 
     return {
         "commands": commands,
         "locations": locations,
         "players": players,
-        "logs": logs
+        "logs": logs,
+        "pnjs": pnjs,
+        "state": state
     }
 
 if __name__ == '__main__':
