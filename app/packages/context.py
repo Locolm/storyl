@@ -462,6 +462,26 @@ def load_locations(path='locations'):
 
     return locations
 
+def load_pnjs(path='pnjs'):
+    """
+    Load all location files from the specified directory.
+    """
+    pnjs = []
+
+    # Iterate over all location files in the locations directory
+    for filename in os.listdir(path):
+        if filename.endswith('.json'):
+            file_path = os.path.join(path, filename)
+            with open(file_path, 'r', encoding='utf-8') as file:
+                try:
+                    data = json.load(file)
+                    data['id'] = filename.replace('pnjs_', '').replace('.json', '')
+                    pnjs.append(data)
+                except :
+                    pass
+
+    return pnjs
+
 def load_characters(path="characters"):
     """
     Load all character files from the specified relative directory.

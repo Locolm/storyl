@@ -13,6 +13,25 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
+
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid brown; /* Blue */
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="{{url_for('static', filename='js/utils.js') }}"></script>
@@ -106,6 +125,11 @@
                     <svg id="map-svg" width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
             </div>
 
+            <div class="flex justify-center space-x-4 text-lg font-semibold">
+                <span id="current-hour" class="text-blue-600">--</span>
+                <span id="time-of-day" class="text-gray-500 italic">--</span>
+            </div>
+
 
             <div class="flex-1 overflow-auto p-4">
                 <div id="chat-window" class="space-y-4 overflow-y-auto max-h-[75vh]">
@@ -137,6 +161,11 @@
                     </div>
 
                     {% endfor %}
+
+                      <div id="loading-spinner" class="flex justify-center hidden">
+                          <div class="loader"></div>
+                      </div>
+
                 </div>
 
 
@@ -201,6 +230,12 @@
 </div>
 
 <script>
+
+    function updateDisplay() {
+        document.getElementById('current-hour').textContent = `${state.CURRENT_HOUR}:00`;
+        document.getElementById('time-of-day').textContent = state.TIME_OF_DAY;
+    }
+
     window.addEventListener('load', function () {
         const form = document.getElementById('chat-form');
         form.reset();  // Resets all form elements to their default values
@@ -217,8 +252,10 @@
     let commands = {{commands | tojson}};
     let players = {{ players | tojson}};
     let locations = {{ locations | tojson}};
+    let pnjs = {{ pnjs | tojson }};
     let locationsWithMonster = locations.filter(location => location.monstres);
     let logs = {{ logs | tojson}};
+    let state = {{ state | tojson }};
 
     // Select the dropdown elements
     const commandDropdown = document.getElementById('command-dropdown');
@@ -263,6 +300,8 @@
         SYSTEM: 'hidden',
         FIGHT_DESCRIPTION: 'hidden',
     }
+
+    updateDisplay()
 </script>
 
 <script>
@@ -357,6 +396,7 @@
 </script>
 
 
+
 <script>
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault(); // Prevent default form submission
@@ -373,9 +413,12 @@
                 body: formData,
             });
 
+            document.getElementById("loading-spinner").classList.remove("hidden");
 
             const result = await response.json();
             console.log('Server Response:', result);
+
+            document.getElementById("loading-spinner").classList.add("hidden");
 
             // Process each message in the response
             result.forEach(response => {
@@ -425,7 +468,9 @@
             locations = gameData.locations;
             locationsWithMonster = locations.filter(location => location.monstres);
             log = gameData.logs;
+            state = gameData.state;
 
+            updateDisplay();
             // Update element on the UI
             const playerList = document.querySelector('.joueurs-list ul');
             playerList.innerHTML = '';
@@ -446,6 +491,8 @@
                 `;
                 locationList.appendChild(locationItem);
             });
+
+            updateMap();
 
         } catch (error) {
             console.error('Error:', error);
@@ -769,6 +816,120 @@ info.innerHTML = `
 });
 </script>
 
+
+<script>
+    const updateMap = () => {
+        // Create map markers for locations
+mapGroup.selectAll(".location-dot")
+    .data(locations)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xScale(d.position.x))
+    .attr("cy", d => yScale(d.position.y))
+    .attr("r", 6) // Initial radius size
+    .attr("fill", "red")
+    .attr("stroke", "white")  // Adding a white stroke to make it pop
+    .attr("stroke-width", 1)
+    .attr("class", "location-dot") // Assign a unique class
+    .style("transition", "transform 0.2s ease, fill 0.2s ease") // Smooth transition
+
+    // Glow effect and hover animation
+    .on("mouseover", function (event, d) {
+        const tooltip = d3.select("#map-card").append("div")
+            .attr("class", "tooltip bg-gray-800 text-white p-2 rounded")
+            .style("position", "absolute")
+            .style("left", `${0}px`)
+            .style("bottom", `${0}px`)
+            .html(`<strong>${d.nom}</strong><br>${d.description}`);
+
+        // Highlight with a glowing effect
+        d3.select(this)
+            .attr("fill", "yellow")
+            .style("filter", "drop-shadow(0 0 10px rgba(255, 255, 0, 0.8))"); // Yellow glow
+    })
+    .on("mouseout", function () {
+        d3.select(".tooltip").remove();
+        d3.select(this)
+            .attr("fill", "red")
+            .style("filter", "none");  // Remove glow on mouse out
+    });
+
+// Create map markers for players
+mapGroup.selectAll(".player-dot")
+    .data(players)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xScale(d.position.x))
+    .attr("cy", d => yScale(d.position.y))
+    .attr("r", 6) // Initial radius size
+    .attr("fill", "blue")
+    .attr("stroke", "white")  // Adding a white stroke to make it pop
+    .attr("stroke-width", 1)
+    .attr("class", "player-dot") // Assign a unique class
+    .style("transition", "transform 0.2s ease, fill 0.2s ease") // Smooth transition
+
+    // Glow effect and hover animation
+    .on("mouseover", function (event, d) {
+        const tooltip = d3.select("#map-card").append("div")
+            .attr("class", "tooltip bg-gray-800 text-white p-2 rounded")
+            .style("position", "absolute")
+            .style("left", `${0}px`)
+            .style("bottom", `${0}px`)
+            .html(`<strong>${d.nom}</strong><br>${d.description}`);
+
+        // Highlight with a glowing effect
+        d3.select(this)
+            .attr("fill", "cyan")
+            .style("filter", "drop-shadow(0 0 10px rgba(0, 255, 255, 0.8))"); // Cyan glow
+    })
+    .on("mouseout", function () {
+        d3.select(".tooltip").remove();
+        d3.select(this)
+            .attr("fill", "blue")
+            .style("filter", "none");  // Remove glow on mouse out
+    });
+
+// Create map markers for players
+mapGroup.selectAll(".pnj-dot")
+    .data(pnjs)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xScale(d.position.x))
+    .attr("cy", d => yScale(d.position.y))
+    .attr("r", 6) // Initial radius size
+    .attr("fill", "silver")
+    .attr("stroke", "white")  // Adding a white stroke to make it pop
+    .attr("stroke-width", 1)
+    .attr("class", "player-dot") // Assign a unique class
+    .style("transition", "transform 0.2s ease, fill 0.2s ease") // Smooth transition
+
+    // Glow effect and hover animation
+    .on("mouseover", function (event, d) {
+        const tooltip = d3.select("#map-card").append("div")
+            .attr("class", "tooltip bg-gray-800 text-white p-2 rounded")
+            .style("position", "absolute")
+            .style("left", `${0}px`)
+            .style("bottom", `${0}px`)
+            .html(`<strong>${d.nom}</strong><br>${d.description}`);
+
+        // Highlight with a glowing effect
+        d3.select(this)
+            .attr("fill", "cyan")
+            .style("filter", "drop-shadow(0 0 10px rgba(0, 255, 255, 0.8))"); // Cyan glow
+    })
+    .on("mouseout", function () {
+        d3.select(".tooltip").remove();
+        d3.select(this)
+            .attr("fill", "silver")
+            .style("filter", "none");  // Remove glow on mouse out
+    });
+    }
+</script>
+
+
+
+
+
 <script>
 // Get the SVG element
 const svg = d3.select("#map-svg");
@@ -861,75 +1022,7 @@ svg.style("background-color", "#1e1e1e");  // Dark background
 svg.style("border", "2px solid #444444");  // Subtle border for the map
 svg.style("border-radius", "12px");  // Rounded corners for a sleek look
 
-// Create map markers for locations
-mapGroup.selectAll(".location-dot")
-    .data(locations)
-    .enter()
-    .append("circle")
-    .attr("cx", d => xScale(d.position.x))
-    .attr("cy", d => yScale(d.position.y))
-    .attr("r", 6) // Initial radius size
-    .attr("fill", "red")
-    .attr("stroke", "white")  // Adding a white stroke to make it pop
-    .attr("stroke-width", 1)
-    .attr("class", "location-dot") // Assign a unique class
-    .style("transition", "transform 0.2s ease, fill 0.2s ease") // Smooth transition
-
-    // Glow effect and hover animation
-    .on("mouseover", function (event, d) {
-        const tooltip = d3.select("#map-card").append("div")
-            .attr("class", "tooltip bg-gray-800 text-white p-2 rounded")
-            .style("position", "absolute")
-            .style("left", `${0}px`)
-            .style("bottom", `${0}px`)
-            .html(`<strong>${d.nom}</strong><br>${d.description}`);
-
-        // Highlight with a glowing effect
-        d3.select(this)
-            .attr("fill", "yellow")
-            .style("filter", "drop-shadow(0 0 10px rgba(255, 255, 0, 0.8))"); // Yellow glow
-    })
-    .on("mouseout", function () {
-        d3.select(".tooltip").remove();
-        d3.select(this)
-            .attr("fill", "red")
-            .style("filter", "none");  // Remove glow on mouse out
-    });
-
-// Create map markers for players
-mapGroup.selectAll(".player-dot")
-    .data(players)
-    .enter()
-    .append("circle")
-    .attr("cx", d => xScale(d.position.x))
-    .attr("cy", d => yScale(d.position.y))
-    .attr("r", 6) // Initial radius size
-    .attr("fill", "blue")
-    .attr("stroke", "white")  // Adding a white stroke to make it pop
-    .attr("stroke-width", 1)
-    .attr("class", "player-dot") // Assign a unique class
-    .style("transition", "transform 0.2s ease, fill 0.2s ease") // Smooth transition
-
-    // Glow effect and hover animation
-    .on("mouseover", function (event, d) {
-        const tooltip = d3.select("#map-card").append("div")
-            .attr("class", "tooltip bg-gray-800 text-white p-2 rounded")
-            .style("position", "absolute")
-            .style("left", `${0}px`)
-            .style("bottom", `${0}px`)
-            .html(`<strong>${d.nom}</strong><br>${d.description}`);
-
-        // Highlight with a glowing effect
-        d3.select(this)
-            .attr("fill", "cyan")
-            .style("filter", "drop-shadow(0 0 10px rgba(0, 255, 255, 0.8))"); // Cyan glow
-    })
-    .on("mouseout", function () {
-        d3.select(".tooltip").remove();
-        d3.select(this)
-            .attr("fill", "blue")
-            .style("filter", "none");  // Remove glow on mouse out
-    });
+updateMap();
 
 
 
@@ -944,6 +1037,8 @@ const resizeObserver = new ResizeObserver(() => {
 // Start observing the SVG element
 resizeObserver.observe(svg.node());
 </script>
+
+
 
 
 
