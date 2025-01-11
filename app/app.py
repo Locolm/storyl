@@ -118,7 +118,7 @@ def submit():
         if response is None:
             return []
 
-        # Append the log
+        # Append into the system log
         append_log(
             {
                 "timestamp": datetime.now().isoformat(),
@@ -129,6 +129,16 @@ def submit():
                 "output_error": response,
             },
             path="app/packages/config/backend_logs.json"
+        )
+
+        # Append into the game log
+        append_log(
+            {
+                "timestamp": datetime.now().isoformat(),
+                "user": "MASTER",
+                "message": response,
+            },
+            path="app/packages/config/log.json"
         )
 
         return [
@@ -156,6 +166,23 @@ def submit():
                 "message": "Une erreur est survenue. Veuillez réessayer.",
             }
         ]
+
+@app.route("/fetch", methods=["GET"])
+def fetch():
+    """
+    Return all related data to the frontend.
+    """
+    commands = load_commands(path="app/packages/config/commands.json")
+    locations = context.load_locations(path="app/packages/locations")
+    players = context.load_characters(path="app/packages/characters")
+    logs = load_log(path="app/packages/config/log.json")
+
+    return {
+        "commands": commands,
+        "locations": locations,
+        "players": players,
+        "logs": logs
+    }
 
 if __name__ == '__main__':
     app.run(debug=True)
