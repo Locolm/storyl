@@ -579,24 +579,27 @@ def update_pnj_routine(pnj_name):
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
-    if 'position' in data:
-        loc_x, loc_y = data['position']['x'], data['position']['y']
-        location_name = get_location_name(loc_x, loc_y)
-        
-        # Find the index of the current location in the PNJ's routine
-        if 'routine' in data and 'locations' in data['routine']:
-            locations = data['routine']['locations']
-            if location_name in locations:
-                current_index = locations.index(location_name)
-                next_index = (current_index + 1) % len(locations)
-                next_location_name = locations[next_index]
-                
-                # Get the position of the next location
-                next_loc_x, next_loc_y = get_location_position(next_location_name)
-                
-                # Update the PNJ's position to the next location's position
-                data['position']['x'] = next_loc_x
-                data['position']['y'] = next_loc_y
+    try:
+        if 'position' in data:
+            loc_x, loc_y = data['position']['x'], data['position']['y']
+            location_name = get_location_name(loc_x, loc_y)
+
+            # Find the index of the current location in the PNJ's routine
+            if 'routine' in data and 'locations' in data['routine']:
+                locations = data['routine']['locations']
+                if location_name in locations:
+                    current_index = locations.index(location_name)
+                    next_index = (current_index + 1) % len(locations)
+                    next_location_name = locations[next_index]
+
+                    # Get the position of the next location
+                    next_loc_x, next_loc_y = get_location_position(next_location_name)
+
+                    # Update the PNJ's position to the next location's position
+                    data['position']['x'] = next_loc_x
+                    data['position']['y'] = next_loc_y
+    except Exception as e:
+        raise e
     
     # Save the updated JSON file
     with open(file_path, "w", encoding="utf-8") as file:
