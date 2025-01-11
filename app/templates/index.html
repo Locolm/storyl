@@ -160,6 +160,11 @@
                             <!-- Player options will be dynamically populated -->
                         </select>
 
+                        <select id="location-dropdown" name="location"
+                                class="bg-gray-100 p-2 border-r text-gray-700 focus:outline-none hidden">
+                            <!-- Player options will be dynamically populated -->
+                        </select>
+
                         <!-- Coordinate Fields -->
                         <div id="coordinate-fields" class="inline-flex items-center hidden">
                             <input type="number" id="coord-x" name="coord-x"
@@ -212,11 +217,13 @@
     let commands = {{commands | tojson}};
     let players = {{ players | tojson}};
     let locations = {{ locations | tojson}};
+    let locationsWithMonster = locations.filter(location => location.monstres);
     let logs = {{ logs | tojson}};
 
     // Select the dropdown elements
     const commandDropdown = document.getElementById('command-dropdown');
     const playerDropdown = document.getElementById('player-dropdown');
+    const locationsDropdown = document.getElementById('location-dropdown');
     const coordinateFields = document.getElementById('coordinate-fields');
     const userInput = document.getElementById('user-input');
     const coordXInput = document.getElementById('coord-x');
@@ -292,6 +299,23 @@
                 playerDropdown.classList.add('hidden');
             }
 
+            if (selectedCommand.select_location_with_monsters) {
+                // Populate the player dropdown with players
+                locationsDropdown.innerHTML = ''; // Clear existing options
+                locationsWithMonster.forEach(location => {
+                    const option = document.createElement('option');
+                    option.value = location.id;
+                    option.textContent = location.id;
+                    locationsDropdown.appendChild(option);
+                });
+
+                // Show the player dropdown
+                locationsDropdown.classList.remove('hidden');
+            } else {
+                // Hide the player dropdown
+                locationsDropdown.classList.add('hidden');
+            }
+
             // Handle coordinate fields visibility
             if (selectedCommand.coordinates) {
                 coordinateFields.classList.remove('hidden'); // Show coordinate fields
@@ -313,7 +337,6 @@
                 timeInput.classList.add('hidden');
             }
 
-            console.log('Selected Command:', selectedCommand);
             console.log(selectedCommand.no_input)
             // Handle allowed user input
             if (selectedCommand.no_input) {
@@ -328,6 +351,7 @@
                 userInput.classList.remove("hidden");
                 userInput.setAttribute('required', 'true');
             }
+
         });
     });
 </script>
@@ -399,7 +423,10 @@
             const gameData = await gameInfo.json();
             players = gameData.players;
             locations = gameData.locations;
+            locationsWithMonster = locations.filter(location => location.monstres);
             log = gameData.logs;
+
+            location
 
             // Update element on the UI
             const playerList = document.querySelector('.joueurs-list ul');

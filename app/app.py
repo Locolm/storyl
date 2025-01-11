@@ -49,7 +49,7 @@ def index():
         locations=locations,
         commands=commands,
         players=players,
-        logs=logs
+        logs=logs,
     )
 
 @app.route('/submit', methods=['POST'])
@@ -65,6 +65,11 @@ def submit():
     command_name = request.form.get('command')
     player = request.form.get('player')
     user_input = request.form.get('prompt')
+    coord_x = request.form.get('coord-x')
+    coord_y = request.form.get('coord-y')
+    time = request.form.get('time')
+    location = request.form.get('location')
+
 
     # Find the matching command
     command = next((cmd for cmd in commands if cmd["command"] == command_name), None)
@@ -89,9 +94,11 @@ def submit():
         }]
 
     # Construct the prompt based on command and parameters
-    if command.get("playable", False):
-        if not player:  # Check if the command requires a player but none was provided
+    # Construct the prompt
+    if command:
+        prompt = f"/{command_name}"
 
+        if command.get("playable", False) and not player:
             append_log(
                 {
                     "timestamp": datetime.now().isoformat(),
@@ -102,14 +109,51 @@ def submit():
                 },
                 path="app/packages/config/backend_logs.json"
             )
-
             return [{
-                "from_master": True,
+                "user": "MASTER",
                 "message": "Cette commande nécessite un joueur. Veuillez en sélectionner un.",
             }]
-        prompt = f"/{command_name} /{player}/ {user_input}"
-    else:
-        prompt = f"/{command_name} {user_input}"
+        else:
+            # Append player if required
+            if command.get("playable", False) and player:
+                prompt += f" /{player}/"
+
+            # Append coordinates if required
+            if command.get("coordinates", False):
+                prompt += f" /{coord_x}/ /{coord_y}/"
+
+            if command.get("select_location_with_monsters") or command.get("select_location"):
+                prompt += f" /{location}/"
+
+            # Append time if required
+            if command.get("time_input", False):
+                prompt += f" {time}"
+
+            # Append user input unless no_input is True
+            if not command.get("no_input", False):
+                prompt += f" {user_input}"
+
+    else  :
+        append_log(
+            {
+                "timestamp": datetime.now().isoformat(),
+                "user": "SYSTEM_ERROR",
+                "command": command_name,
+                "user_input": user_input,
+                "output_error": "Commande introuvable ou non valide.",
+            },
+            path="app/packages/config/backend_logs.json"
+        )
+        return [{
+            "user": "MASTER",
+            "message": "Commande introuvable ou non valide.",
+        }]
+
+    return [
+        {
+            "message": prompt
+        }
+    ]
 
     # Get the response from the Master
     try:
