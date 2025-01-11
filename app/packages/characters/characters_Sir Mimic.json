@@ -8,8 +8,8 @@
     "charisme": 15,
     "pv": 50,
     "etat": {
-        "santé": "en bonne santé",
-        "sommeil": "reposé",
+        "santé": "mort",
+        "sommeil": "nuit blanche",
         "déplacement": "non"
     },
     "description": "Un chevalier mystérieux vêtu entièrement d'une armure en mimique, capable de se camoufler et de surprendre ses ennemis. Sa présence inspire à la fois la peur et l'admiration.",
@@ -21,7 +21,7 @@
     ],
     "or": 100,
     "position": {
-        "x": 0,
-        "y": 0
+        "x": 12,
+        "y": -8
     }
 }

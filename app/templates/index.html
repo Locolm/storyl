@@ -14,15 +14,11 @@
             background-attachment: fixed;
         }
     </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body class="flex flex-col h-screen bg-gray-100">
 
-
-
-
-
 <div class="h-full w-full flex">
-
 
     <!-- Sidebar -->
     <div class="w-64 bg-gray-800 text-white p-6 flex flex-col gap-8 pt-20">
@@ -97,9 +93,7 @@
             <div id="map-card"
                  class="map-card absolute top-0 right-0 m-4 w-32 h-32 bg-gray-700 p-4 rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out">
                 <!-- Card Content, such as map or other info -->
-                <svg id="map-svg" class="w-full h-full">
-
-                </svg>
+                    <svg id="map-svg" width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
             </div>
 
 
@@ -573,7 +567,146 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>
+// Get the SVG element
+const svg = d3.select("#map-svg");
+
+// Dynamically calculate the SVG height and width
+let width = svg.node().getBoundingClientRect().width;
+let height = svg.node().getBoundingClientRect().height;
+
+// Calculate min and max coordinates for scaling
+const xValues = locations.map(d => d.position.x);
+const yValues = locations.map(d => d.position.y);
+
+const xMin = Math.min(...xValues);
+const xMax = Math.max(...xValues);
+const yMin = Math.min(...yValues);
+const yMax = Math.max(...yValues);
+
+// Add padding to the domain for zoomed-in effect
+const padding = 10; // Adjust this value for more or less padding
+const xPadding = (xMax - xMin) * padding / 100; // Padding as a percentage of range
+const yPadding = (yMax - yMin) * padding / 100;
+
+// Create initial scales with dynamic padded domain
+let xScale = d3.scaleLinear()
+    .domain([xMin - xPadding, xMax + xPadding])
+    .range([20, width - 20]); // Add padding to the edges of the SVG
+
+let yScale = d3.scaleLinear()
+    .domain([yMin - yPadding, yMax + yPadding])
+    .range([20, height - 20]); // Use dynamic height for padding
+
+// Function to recalculate scales and update positions
+function updateScales() {
+    width = svg.node().getBoundingClientRect().width;
+    height = svg.node().getBoundingClientRect().height;
+
+    // Recalculate the scales
+    xScale = d3.scaleLinear()
+        .domain([xMin - xPadding, xMax + xPadding])
+        .range([20, width - 20]);
+
+    yScale = d3.scaleLinear()
+        .domain([yMin - yPadding, yMax + yPadding])
+        .range([20, height - 20]);
+
+    // Update the positions of the circles based on the new scales
+    svg.selectAll("circle.location-dot")
+        .attr("cx", d => xScale(d.position.x))
+        .attr("cy", d => yScale(d.position.y));
+
+    svg.selectAll("circle.green-location-dot")
+        .attr("cx", d => xScale(d.position.x))
+        .attr("cy", d => yScale(d.position.y));
+
+    // Optionally, update the zoom behavior
+    svg.selectAll("g").attr("transform", d3.zoomIdentity); // Reset zoom transform to default
+}
+
+// Apply zoom behavior
+const zoom = d3.zoom()
+    .scaleExtent([0.5, 10]) // Set the zoom scale range (min and max zoom)
+    .on("zoom", function (event) {
+        const transform = event.transform;
+
+        // Apply zoom transformation to the entire group
+        svg.selectAll("g").attr("transform", transform);
+
+        // Adjust the radius dynamically based on zoom level
+        const zoomScale = transform.k;
+
+        // Adjust circle radius dynamically with a more responsive scaling factor
+        svg.selectAll(".location-dot")
+            .attr("r", d => 6 * zoomScale);
+
+        svg.selectAll(".green-location-dot")
+            .attr("r", 6 * zoomScale);
+    });
+
+// Set up the map's base group element
+const mapGroup = svg.append("g");
+
+// Styling for background to make it look more immersive (dark theme)
+svg.style("background-color", "#1e1e1e");  // Dark background
+svg.style("border", "2px solid #444444");  // Subtle border for the map
+svg.style("border-radius", "12px");  // Rounded corners for a sleek look
+
+// Create map markers
+mapGroup.selectAll("circle")
+    .data(locations)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xScale(d.position.x))
+    .attr("cy", d => yScale(d.position.y))
+    .attr("r", 6) // Initial radius size
+    .attr("fill", "red")
+    .attr("class", "location-dot")
+    .attr("stroke", "white")  // Adding a white stroke to make it pop
+    .attr("stroke-width", 1)
+    .attr("class", "location-dot")
+    .style("transition", "transform 0.2s ease, fill 0.2s ease") // Smooth transition
+
+    // Glow effect and hover animation
+    .on("mouseover", function (event, d) {
+        const tooltip = d3.select("#map-card").append("div")
+            .attr("class", "tooltip bg-gray-800 text-white p-2 rounded")
+            .style("position", "absolute")
+            .style("left", `${0}px`)
+            .style("bottom", `${0}px`)
+            .html(`<strong>${d.nom}</strong><br>${d.description}`);
+
+        // Highlight with a glowing effect
+        d3.select(this)
+            .attr("fill", "yellow")
+            .style("filter", "drop-shadow(0 0 10px rgba(255, 255, 0, 0.8))"); // Yellow glow
+    })
+    .on("mouseout", function () {
+        d3.select(".tooltip").remove();
+        d3.select(this)
+            .attr("fill", "red")
+            .style("filter", "none");  // Remove glow on mouse out
+    });
+
+// Apply the zoom behavior to the SVG element
+svg.call(zoom);
+
+// Observe changes to the SVG size using ResizeObserver
+const resizeObserver = new ResizeObserver(() => {
+    updateScales(); // Update the scales and positions when the SVG size changes
+});
+
+// Start observing the SVG element
+resizeObserver.observe(svg.node());
+</script>
+
+
 
 
 </body>
 </html>
+
+
+
+
