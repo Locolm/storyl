@@ -90,7 +90,7 @@ def save_markdown_to_json(response_markdown, required_keys, output_dir="characte
             # Enregistrer le personnage
             with open(filepath, "w", encoding="utf-8") as file:
                 json.dump(character, file, indent=4, ensure_ascii=False)
-            print(f"Personnage sauvegardé dans le fichier : {filepath}")
+            print(f"{output_dir} sauvegardé dans le fichier : {filepath}")
             return filepath
         except Exception as e:
             print(f"Une erreur s'est produite : {e}")
@@ -218,7 +218,7 @@ def save_markdown_to_json_return_filename(response_markdown, required_keys, outp
             # Enregistrer le personnage
             with open(filepath, "w", encoding="utf-8") as file:
                 json.dump(character, file, indent=4, ensure_ascii=False)
-            print(f"Personnage sauvegardé dans le fichier : {filepath}")
+            print(f"{output_dir} sauvegardé dans le fichier : {filepath}")
             return os.path.basename(filepath)
         except Exception as e:
             print(f"Une erreur s'est produite : {e}")
@@ -237,7 +237,7 @@ def process_json_file(json_file_path):
     """
     try:
         # Lire le fichier JSON
-        with open(f"app/packages/{json_file_path}", 'r', encoding='utf-8') as file:
+        with open(f"app/packages/locations/{json_file_path}", 'r', encoding='utf-8') as file:
             data = json.load(file)
 
         # Traiter les monstres
@@ -255,7 +255,7 @@ def process_json_file(json_file_path):
         data["monstres"] = new_monstres
 
         # Sauvegarder les modifications dans le fichier JSON
-        with open(f"app/packages/{json_file_path}", 'w', encoding='utf-8') as file:
+        with open(f"app/packages/locations/{json_file_path}", 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
         print(f"Fichier JSON traité et sauvegardé : {json_file_path}")
 
