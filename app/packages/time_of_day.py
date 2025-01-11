@@ -142,7 +142,7 @@ def get_const_value(key):
     return data.get(key, None)
 
 def update_const_value(key, value):
-    const_file = '../../CONST.json'
+    const_file = 'app/packages/config/CONST.json'
     if not os.path.exists(const_file):
         data = {}
     else:

@@ -507,7 +507,7 @@ if __name__ == "__main__":
     print(load_locations())
     print(load_characters())
 def get_location_name(x, y):
-    locations_dir = 'locations'
+    locations_dir = 'app/packages/locations'
     
     # Iterate over all location files in the locations directory
     for filename in os.listdir(locations_dir):
