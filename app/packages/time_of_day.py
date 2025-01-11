@@ -93,7 +93,7 @@ def advance_time(n):
 
 
 def update_pnj_routines():
-    pnjs_dir = 'app/packages/pnjs'
+    pnjs_dir = 'pnjs'
     
     for filename in os.listdir(pnjs_dir):
         if filename.endswith('.json'):
@@ -132,7 +132,7 @@ def update_sleep_status(n):
 
 
 def get_const_value(key):
-    const_file = 'CONST.json'
+    const_file = '../../CONST.json'
     if not os.path.exists(const_file):
         return None
     
@@ -142,7 +142,7 @@ def get_const_value(key):
     return data.get(key, None)
 
 def update_const_value(key, value):
-    const_file = 'CONST.json'
+    const_file = '../../CONST.json'
     if not os.path.exists(const_file):
         data = {}
     else:

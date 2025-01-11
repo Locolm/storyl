@@ -75,7 +75,7 @@ def save_markdown_to_json(response_markdown, required_keys, output_dir="characte
 
             # Construire le nom de fichier de base
             base_filename = f"{output_dir}_{character_name}"
-            filepath = os.path.join(output_dir, base_filename + ".json") 
+            filepath = os.path.join(f"app/packages/{output_dir}", base_filename + ".json")
 
             # Gestion des doublons
             counter = 1
@@ -94,6 +94,7 @@ def save_markdown_to_json(response_markdown, required_keys, output_dir="characte
             return filepath
         except Exception as e:
             print(f"Une erreur s'est produite : {e}")
+            raise e
             
 def detect_encoding(json_file_path):
     try:
@@ -202,12 +203,12 @@ def save_markdown_to_json_return_filename(response_markdown, required_keys, outp
 
             # Construire le nom de fichier de base
             base_filename = f"{output_dir}_{character_name}"
-            filepath = os.path.join(output_dir, base_filename + ".json") 
+            filepath = os.path.join(f"app/packages/{output_dir}", base_filename + ".json")
 
             # Gestion des doublons
             counter = 1
             while os.path.exists(filepath):
-                filepath = os.path.join(output_dir, f"{base_filename}_{counter}.json")
+                filepath = os.path.join(f"app/packages/{output_dir}", f"{base_filename}_{counter}.json")
                 counter += 1
             
             # Renommer le counter s'il y a des doublons
@@ -236,7 +237,7 @@ def process_json_file(json_file_path):
     """
     try:
         # Lire le fichier JSON
-        with open(json_file_path, 'r', encoding='utf-8') as file:
+        with open(f"app/packages/{json_file_path}", 'r', encoding='utf-8') as file:
             data = json.load(file)
 
         # Traiter les monstres
@@ -254,7 +255,7 @@ def process_json_file(json_file_path):
         data["monstres"] = new_monstres
 
         # Sauvegarder les modifications dans le fichier JSON
-        with open(json_file_path, 'w', encoding='utf-8') as file:
+        with open(f"app/packages/{json_file_path}", 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
         print(f"Fichier JSON traité et sauvegardé : {json_file_path}")
 
@@ -347,7 +348,7 @@ def update_characters_from_json(input_json):
         character_name = character['nom']
         
         # Load the character's JSON file
-        file_path = f'characters/characters_{character_name}.json'
+        file_path = f'app/packages/characters/characters_{character_name}.json'
         
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -367,8 +368,8 @@ def update_characters_from_json(input_json):
             json.dump(character_data, file, indent=4, ensure_ascii=False)
 
 # Example usage:
-input_json = {'description': "Dans le sombre Labyrinthe des Ombres, une atmosphère oppressante plane alors que Sir Mimic et Tenzin le Fort se tiennent face à deux Golems de l'ombre, leurs silhouettes mouvantes glissant sur les murs humides. Les échos des gouttes d'eau résonnent comme un présage funeste, tandis qu'une légère brume enveloppe le terrain. Sir Mimic, en armure brillante d'un mimique, avance prudemment, épée à la main, conscient de la menace qui pèse sur lui. Tenzin, le moine musclé, adopte une posture défensive, prêt à exploiter sa force et sa sagesse pour contrer les attaques des créatures sombres.\n\nLes Golems, bien que blessés, se déplacent lentement mais sûrement, cherchant à encadrer leurs proies. L'un d'eux s'élance vers Tenzin, qui réagit rapidement avec un coup de bâton, mais la créature de ténèbres évite habilement l'attaque avec une agilité inattendue. Sir Mimic, voyant son ami en difficulté, se précipite pour frapper le Golem avec son épée en mimique. L'impact résonne dans le labyrinthe, mais la créature se redresse, presque imperméable à la douleur.\n\nSoudain, trois Spectres errants apparaissent dans un nuage de brume, ajoutant à la confusion. Leur visage tourmenté est une vision d'horreur qui fait frémir même les plus braves. Tenzin, déjà mal en point, est assailli par un des spectres, qui lui inflige une étreinte spectrale, le laissant à bout de souffle. Sir Mimic tente de protéger son camarade, mais sa propre santé est mise à l'épreuve alors qu'un Golem l'attaque avec brutalité.\n\nLe combat devient chaotique. Les personnages, bien que courageux, commencent à réaliser que la situation leur échappe. Les attaques des monstres se font de plus en plus puissantes, et les blessures s'accumulent. Tenzin, sentant ses forces décliner, lance une potion de soin, mais même cela ne suffit pas à renverser le cours du combat. L'un des Golems, presque à terre, parvient à porter un coup fatal à Sir Mimic, qui s'effondre, laissant Tenzin seul face aux ombres.\n\nFinalement, réalisant qu'ils n'ont aucune chance de victoire, Tenzin prend la décision difficile de fuir. Ébranlé, il se détourne des monstres, traversant le labyrinthe dans une course désespérée, laissant derrière lui les échos de la bataille et les cris des Spectres. Ce combat, bien que héroïque, se termine par une retraite précipitée, marquée par la défaite et l'humiliation.", 'gagnant': 'Monstres', 'pnjs': [{'nom': 'Ezran le Cartographe', 'etat': {'humeur': 'inquiet'}, 'inventaire': [{'nom': 'Plume enchantée', 'description': "Une plume magique qui ne s'épuise jamais d'encre, parfaite pour dessiner des cartes."}, {'nom': 'Carnet de cartographie', 'description': 'Un carnet contenant des croquis détaillés de certaines parties du labyrinthe, bien que certaines zones soient incomplètes.'}, {'nom': "Loupe d'observation", 'description': 'Un outil précieux pour détecter les détails cachés sur les murs du labyrinthe.'}]}], 'personnages': [{'nom': 'Sir Mimic', 'inventaire': ['épée en mimique', 'bouclier en mimique', 'potion de soins', 'amulette de camouflage'], 'etat': {'santé': 'mort'}}, {'nom': 'Tenzin le Fort', 'inventaire': ['Bâton de bois', 'Amulette de protection', 'Potion de soin', 'Sandales légères', 'alcool très fort'], 'etat': {'santé': 'mal en point'}}], 'monstres': [{'nom': "Golem de l'ombre", 'description': "Une créature faite d'ombres et de ténèbres...", 'puissance': 80, 'nombre': 2, 'objets': [{'nom': "Cœur d'ombre", 'description': 'Un artefact rare...', 'prix': 50}], 'etat': "Un Golem de l'ombre affaibli, presque à terre."}, {'nom': 'Spectre errant', 'description': "L'âme tourmentée d'un ancien aventurier...", 'puissance': 50, 'nombre': 3, 'objets': [{'nom': 'Étreinte spectrale', 'description': 'Un objet intangible...', 'prix': 30}]}]}
-update_characters_from_json(input_json)
+# input_json = {'description': "Dans le sombre Labyrinthe des Ombres, une atmosphère oppressante plane alors que Sir Mimic et Tenzin le Fort se tiennent face à deux Golems de l'ombre, leurs silhouettes mouvantes glissant sur les murs humides. Les échos des gouttes d'eau résonnent comme un présage funeste, tandis qu'une légère brume enveloppe le terrain. Sir Mimic, en armure brillante d'un mimique, avance prudemment, épée à la main, conscient de la menace qui pèse sur lui. Tenzin, le moine musclé, adopte une posture défensive, prêt à exploiter sa force et sa sagesse pour contrer les attaques des créatures sombres.\n\nLes Golems, bien que blessés, se déplacent lentement mais sûrement, cherchant à encadrer leurs proies. L'un d'eux s'élance vers Tenzin, qui réagit rapidement avec un coup de bâton, mais la créature de ténèbres évite habilement l'attaque avec une agilité inattendue. Sir Mimic, voyant son ami en difficulté, se précipite pour frapper le Golem avec son épée en mimique. L'impact résonne dans le labyrinthe, mais la créature se redresse, presque imperméable à la douleur.\n\nSoudain, trois Spectres errants apparaissent dans un nuage de brume, ajoutant à la confusion. Leur visage tourmenté est une vision d'horreur qui fait frémir même les plus braves. Tenzin, déjà mal en point, est assailli par un des spectres, qui lui inflige une étreinte spectrale, le laissant à bout de souffle. Sir Mimic tente de protéger son camarade, mais sa propre santé est mise à l'épreuve alors qu'un Golem l'attaque avec brutalité.\n\nLe combat devient chaotique. Les personnages, bien que courageux, commencent à réaliser que la situation leur échappe. Les attaques des monstres se font de plus en plus puissantes, et les blessures s'accumulent. Tenzin, sentant ses forces décliner, lance une potion de soin, mais même cela ne suffit pas à renverser le cours du combat. L'un des Golems, presque à terre, parvient à porter un coup fatal à Sir Mimic, qui s'effondre, laissant Tenzin seul face aux ombres.\n\nFinalement, réalisant qu'ils n'ont aucune chance de victoire, Tenzin prend la décision difficile de fuir. Ébranlé, il se détourne des monstres, traversant le labyrinthe dans une course désespérée, laissant derrière lui les échos de la bataille et les cris des Spectres. Ce combat, bien que héroïque, se termine par une retraite précipitée, marquée par la défaite et l'humiliation.", 'gagnant': 'Monstres', 'pnjs': [{'nom': 'Ezran le Cartographe', 'etat': {'humeur': 'inquiet'}, 'inventaire': [{'nom': 'Plume enchantée', 'description': "Une plume magique qui ne s'épuise jamais d'encre, parfaite pour dessiner des cartes."}, {'nom': 'Carnet de cartographie', 'description': 'Un carnet contenant des croquis détaillés de certaines parties du labyrinthe, bien que certaines zones soient incomplètes.'}, {'nom': "Loupe d'observation", 'description': 'Un outil précieux pour détecter les détails cachés sur les murs du labyrinthe.'}]}], 'personnages': [{'nom': 'Sir Mimic', 'inventaire': ['épée en mimique', 'bouclier en mimique', 'potion de soins', 'amulette de camouflage'], 'etat': {'santé': 'mort'}}, {'nom': 'Tenzin le Fort', 'inventaire': ['Bâton de bois', 'Amulette de protection', 'Potion de soin', 'Sandales légères', 'alcool très fort'], 'etat': {'santé': 'mal en point'}}], 'monstres': [{'nom': "Golem de l'ombre", 'description': "Une créature faite d'ombres et de ténèbres...", 'puissance': 80, 'nombre': 2, 'objets': [{'nom': "Cœur d'ombre", 'description': 'Un artefact rare...', 'prix': 50}], 'etat': "Un Golem de l'ombre affaibli, presque à terre."}, {'nom': 'Spectre errant', 'description': "L'âme tourmentée d'un ancien aventurier...", 'puissance': 50, 'nombre': 3, 'objets': [{'nom': 'Étreinte spectrale', 'description': 'Un objet intangible...', 'prix': 30}]}]}
+# update_characters_from_json(input_json)
 
 def update_pnjs_from_json(input_json):
     if not input_json:
@@ -386,7 +387,7 @@ def update_pnjs_from_json(input_json):
         pnj_name = pnj['nom']
         
         # Load the PNJ's JSON file
-        file_path = f'pnjs/pnjs_{pnj_name}.json'
+        file_path = f'app/packages/pnjs/pnjs_{pnj_name}.json'
         
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -439,7 +440,7 @@ def update_monsters_from_json(location_name, input_json):
     monsters = input_json['monstres']
     
     # Load the location's JSON file
-    file_path = f'locations/locations_{location_name}.json'
+    file_path = f'app/packages/locations/locations_{location_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
