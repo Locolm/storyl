@@ -11,17 +11,11 @@
   {
     "command": "create-loc",
     "description": "Create a new location",
-    "coordinates": true,
-    "no_input": true
+    "coordinates": true
   },
   {
     "command": "create-pnj",
     "description": "crée un pnj à un lieu donné"
-  },
-  {
-    "command": "fight",
-    "description": "combattre un monstre",
-    "playable": true
   },
   {
     "command": "move-to",
@@ -29,6 +23,12 @@
     "playable": true,
     "coordinates": true,
     "no_input": true
+  },
+  {
+    "command": "resolve-fight",
+    "description": "combattre un monstre",
+    "no_input": true,
+    "select_location_with_monsters": true
   },
   {
     "command": "sleep",
@@ -39,7 +39,9 @@
   },
   {
     "command": "speed",
-    "description": "obtenir la vitesse de déplacement en m/s"
+    "description": "obtenir la vitesse de déplacement en m/s",
+    "time_input": true,
+    "no_input": true
   },
   {
     "command": "time",
