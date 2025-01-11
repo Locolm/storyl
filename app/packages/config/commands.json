@@ -21,8 +21,7 @@
     "command": "move-to",
     "description": "Se déplacer vers",
     "playable": true,
-    "coordinates": true,
-    "no_input": true
+    "coordinates": true
   },
   {
     "command": "resolve-fight",
