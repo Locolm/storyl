@@ -149,12 +149,6 @@ def submit():
             "message": "Commande introuvable ou non valide.",
         }]
 
-    return [
-        {
-            "message": prompt
-        }
-    ]
-
     # Get the response from the Master
     try:
         response = llm.completion(prompt)
