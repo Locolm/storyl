@@ -550,64 +550,62 @@
 
                 info.className = 'absolute inset-0 z-30 flex justify-center items-center';
                 info.innerHTML = `
-<div class="bg-gradient-to-br from-gray-800 to-black text-white p-10 rounded-lg shadow-2xl relative h-5/6 w-full mx-16 " id="player-card">
-    <!-- Close Button -->
-    <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-3xl" id="close-overlay">
-        ✕
-    </button>
+                <div class="bg-gradient-to-br from-gray-800 to-black text-white p-10 rounded-lg shadow-2xl relative h-5/6 w-full mx-16 " id="player-card">
+                    <!-- Close Button -->
+                    <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-3xl" id="close-overlay">
+                        ✕
+                    </button>
 
-    <div class="py-8 h-full overflow-y-auto">
-    <!-- Player Info Header -->
-    <h2 class="text-4xl font-extrabold mb-6 text-center text-indigo-400">${current_player.nom}</h2>
-    <p class="text-gray-300 mb-8">${current_player.description}</p>
+                    <div class="py-8 h-full overflow-y-auto">
+                    <!-- Player Info Header -->
+                    <h2 class="text-4xl font-extrabold mb-6 text-center text-indigo-400">${current_player.nom}</h2>
+                    <p class="text-gray-300 mb-8">${current_player.description}</p>
 
-    <!-- 2x2 Grid Layout for Sections -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Attributes Section -->
-        <div class="p-6 rounded-lg bg-gray-800">
-            <h3 class="text-xl font-semibold text-yellow-500 mb-3">Attributs</h3>
-            <ul class="space-y-2">
-                <li><span class="font-medium text-gray-400">Charisme:</span> ${current_player.charisme}</li>
-                <li><span class="font-medium text-gray-400">Constitution:</span> ${current_player.constitution}</li>
-                <li><span class="font-medium text-gray-400">Dextérité:</span> ${current_player.dextérité}</li>
-                <li><span class="font-medium text-gray-400">Force:</span> ${current_player.force}</li>
-                <li><span class="font-medium text-gray-400">Intelligence:</span> ${current_player.intelligence}</li>
-                <li><span class="font-medium text-gray-400">Sagesse:</span> ${current_player.sagesse}</li>
-            </ul>
-        </div>
+                    <!-- 2x2 Grid Layout for Sections -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Attributes Section -->
+                        <div class="p-6 rounded-lg bg-gray-800">
+                            <h3 class="text-xl font-semibold text-yellow-500 mb-3">Attributs</h3>
+                            <ul class="space-y-2">
+                                <li><span class="font-medium text-gray-400">Charisme:</span> ${current_player.charisme}</li>
+                                <li><span class="font-medium text-gray-400">Constitution:</span> ${current_player.constitution}</li>
+                                <li><span class="font-medium text-gray-400">Dextérité:</span> ${current_player.dextérité}</li>
+                                <li><span class="font-medium text-gray-400">Force:</span> ${current_player.force}</li>
+                                <li><span class="font-medium text-gray-400">Intelligence:</span> ${current_player.intelligence}</li>
+                                <li><span class="font-medium text-gray-400">Sagesse:</span> ${current_player.sagesse}</li>
+                            </ul>
+                        </div>
 
-        <!-- State Section -->
-        <div class="p-6 rounded-lg bg-gray-800">
-            <h3 class="text-xl font-semibold text-teal-400 mb-3">État</h3>
-            <ul class="space-y-2">
-                ${Object.entries(current_player.etat).map(([key, value]) => `
-                    <li><span class="font-medium text-gray-400">${key.charAt(0).toUpperCase() + key.slice(1)}:</span> ${value}</li>
-                `).join('')}
-            </ul>
-        </div>
+                        <!-- State Section -->
+                        <div class="p-6 rounded-lg bg-gray-800">
+                            <h3 class="text-xl font-semibold text-teal-400 mb-3">État</h3>
+                            <ul class="space-y-2">
+                                ${Object.entries(current_player.etat).map(([key, value]) => `
+                                    <li><span class="font-medium text-gray-400">${key.charAt(0).toUpperCase() + key.slice(1)}:</span> ${value}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
 
-        <!-- Inventory Section -->
-        <div class="p-6 rounded-lg bg-gray-800">
-            <h3 class="text-xl font-semibold text-pink-500 mb-3">Inventaire</h3>
-            <ul class="space-y-2 list-disc pl-6">
-                ${current_player.inventaire.map(item => `
-                    <li class="text-gray-300">${item}</li>
-                `).join('')}
-            </ul>
-        </div>
+                        <!-- Inventory Section -->
+                        <div class="p-6 rounded-lg bg-gray-800">
+                            <h3 class="text-xl font-semibold text-pink-500 mb-3">Inventaire</h3>
+                            <ul class="space-y-2 list-disc pl-6">
+                                ${current_player.inventaire.map(item => `
+                                    <li class="text-gray-300">${item}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
 
-        <!-- Details Section -->
-        <div class="p-6 rounded-lg bg-gray-800">
-            <h3 class="text-xl font-semibold text-orange-400 mb-3">Details</h3>
-            <p><span class="font-medium text-gray-400">Or:</span> ${current_player.or}</p>
-            <p><span class="font-medium text-gray-400">Point de vie (PV):</span> ${current_player.pv}</p>
-            <p><span class="font-medium text-gray-400">Position:</span> (${current_player.position.x}, ${current_player.position.y})</p>
-        </div>
-    </div>
-</div>
-
-</div>
-`;
+                        <!-- Details Section -->
+                        <div class="p-6 rounded-lg bg-gray-800">
+                            <h3 class="text-xl font-semibold text-orange-400 mb-3">Details</h3>
+                            <p><span class="font-medium text-gray-400">Or:</span> ${current_player.or}</p>
+                            <p><span class="font-medium text-gray-400">Point de vie (PV):</span> ${current_player.pv}</p>
+                            <p><span class="font-medium text-gray-400">Position:</span> (${current_player.position.x}, ${current_player.position.y})</p>
+                        </div>
+                    </div>
+                </div>
+                `;
 
             // Append the overlay to the chat window
             chatWindow.appendChild(info);
@@ -659,31 +657,99 @@ document.addEventListener('DOMContentLoaded', () => {
             info.id = 'info';
 
             info.className = 'absolute inset-0 z-30 flex justify-center items-center';
-            info.innerHTML = `
-                <div class="inset-0 bg-gradient-to-br from-gray-800 to-black text-white p-10 rounded-lg shadow-2xl relative h-5/6 w-full mx-16 " id="location-card">
-                    <!-- Close Button -->
-                    <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-3xl" id="close-overlay">
-                        ✕
-                    </button>
+info.innerHTML = `
+  <div class="inset-0 bg-gradient-to-br from-gray-800 to-black text-white p-10 rounded-lg shadow-2xl relative h-5/6 w-full mx-16" id="location-card">
+    <!-- Close Button -->
+    <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-3xl" id="close-overlay">
+      ✕
+    </button>
 
-                    <div class="py-8 h-full overflow-y-auto">
-                    <!-- Location Info Header -->
-                    <h2 class="text-4xl font-extrabold mb-6 text-center text-indigo-400">${current_location.nom}</h2>
-                    <p class="text-gray-300 mb-8">${current_location.description}</p>
+    <div class="py-8 h-full overflow-y-auto">
+      <!-- Location Info Header -->
+      <h2 class="text-4xl font-extrabold mb-6 text-center text-indigo-400">${current_location.nom}</h2>
+      <p class="text-gray-300 mb-8">${current_location.description}</p>
 
-                    <!-- 2x2 Grid Layout for Sections -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <!-- Coordinates Section -->
-                        <div class="p-6 rounded-lg bg-gray-800">
-                            <h3 class="text-xl font-semibold text-yellow-500 mb-3">Coordonnées</h3>
-                            <p class="text-gray-400">X: ${current_location.position.x}</p>
-                            <p class="text-gray-400">Y: ${current_location.position.y}</p>
-                        </div>
+      <!-- 2x2 Grid Layout for Sections -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Coordinates Section -->
+        <div class="p-6 rounded-lg bg-gray-800">
+          <h3 class="text-xl font-semibold text-yellow-500 mb-3">Coordonnées</h3>
+          <p class="text-gray-400">X: ${current_location.position.x}</p>
+          <p class="text-gray-400">Y: ${current_location.position.y}</p>
+        </div>
 
+        <!-- Type Section (Optional) -->
+        ${
+          current_location.type
+            ? `
+        <div class="p-6 rounded-lg bg-gray-800">
+          <h3 class="text-xl font-semibold text-green-500 mb-3">Type</h3>
+          <p class="text-gray-400">${current_location.type}</p>
+        </div>
+        `
+            : ""
+        }
 
-                    </div>
-                </div>
-            `;
+        <!-- Objects Section (Optional) -->
+        ${
+          current_location.objets && current_location.objets.length > 0
+            ? `
+        <div class="p-6 rounded-lg bg-gray-800">
+          <h3 class="text-xl font-semibold text-blue-500 mb-3">Objets Disponibles</h3>
+          <ul class="list-disc pl-5 text-gray-400">
+            ${current_location.objets
+              .map(
+                (objet) =>
+                  `<li><strong>${objet.nom}</strong>: ${objet.description} (Prix: ${objet.prix})</li>`
+              )
+              .join("")}
+          </ul>
+        </div>
+        `
+            : ""
+        }
+
+        <!-- Monsters Section (Optional) -->
+        ${
+          current_location.monstres && current_location.monstres.length > 0
+            ? `
+        <div class="p-6 rounded-lg bg-gray-800">
+          <h3 class="text-xl font-semibold text-red-500 mb-3">Monstres</h3>
+          <ul class="list-disc pl-5 text-gray-400">
+            ${current_location.monstres
+              .map(
+                (monstre) => `
+              <li>
+                <strong>${monstre.nom}</strong>: ${monstre.description}
+                (Puissance: ${monstre.puissance}, État: ${monstre.etat}, Nombre: ${monstre.nombre})
+                ${
+                  monstre.objets && monstre.objets.length > 0
+                    ? `
+                <ul class="list-disc pl-5">
+                  ${monstre.objets
+                    .map(
+                      (obj) =>
+                        `<li>${obj.nom}: ${obj.description} (Prix: ${obj.prix})</li>`
+                    )
+                    .join("")}
+                </ul>
+                `
+                    : ""
+                }
+              </li>
+            `
+              )
+              .join("")}
+          </ul>
+        </div>
+        `
+            : ""
+        }
+      </div>
+    </div>
+  </div>
+`;
+;
 
             chatWindow.append(overlay);
             // Append the overlay to the chat window
