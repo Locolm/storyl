@@ -7,7 +7,7 @@ Ce guide vous explique comment configurer et exécuter l'application en mode dé
 ## 1. Installation des dépendances Python
 
 1. Assurez-vous que Python est installé sur votre machine.
-2. Installez les dépendances nécessaires en exécutant les dépendances spécifiées dans le fichier `requirements.txt` présent dans le répertoire du projet :
+2. Installez les dépendances nécessaires en exécutant les dépendances spécifiées dans le fichier `requirements.txt` présent dans le répertoire du projet (à la racine) :
 
 ```bash
 pip install -r requirements.txt
@@ -25,8 +25,8 @@ npm run dev
 
 ## 3. Exécution de l'application
 
-Pour exécuter l'application, executez le script principal : 
+Pour exécuter l'application, executez le script principal depuis la racine: 
 
 ```bash
-python app.py
+flask --app app/app run
 ```
