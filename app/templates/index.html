@@ -104,13 +104,13 @@
                 STORYL
             </div>
             <!-- Settings Icon -->
-            <div class="text-white text-2xl cursor-pointer hover:text-gray-400">
+            <div id="reset" class="text-white text-2xl cursor-pointer hover:text-gray-400">
                 <i class="fa fa-cog" aria-hidden="true"></i>
             </div>
         </nav>
 
         <!-- Chat Panel -->
-        <div id="chat" class="flex-1 flex flex-col p-6 relative">
+        <div id="chat" class="flex-1 flex flex-col relative">
 
             <!-- Location Tooltip -->
             <div id="location-tooltip-card"
@@ -125,8 +125,8 @@
                     <svg id="map-svg" width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
             </div>
 
-            <div class="flex justify-center space-x-4 text-lg font-semibold">
-                <span id="current-hour" class="text-blue-600">--</span>
+            <div class="flex justify-center space-x-4 text-lg font-semibold pt-4">
+                <span id="current-hour" class="text-gray-600">--</span>
                 <span id="time-of-day" class="text-gray-500 italic">--</span>
             </div>
 
@@ -161,10 +161,6 @@
                     </div>
 
                     {% endfor %}
-
-                      <div id="loading-spinner" class="flex justify-center hidden">
-                          <div class="loader"></div>
-                      </div>
 
                 </div>
 
@@ -221,6 +217,9 @@
                             class="px-4 py-2 bg-gray-800 -blue-500 text-white rounded-md hover:bg-gray-700 focus:outline-none">
                         Valider
                     </button>
+                    <div id="loading-spinner" class="flex justify-center hidden">
+                          <div class="loader"></div>
+                      </div>
                 </form>
 
             </div>
@@ -236,9 +235,43 @@
         document.getElementById('time-of-day').textContent = state.TIME_OF_DAY;
     }
 
+    async function fetchGameData(){
+        const gameInfo = await fetch('/fetch');
+            const gameData = await gameInfo.json();
+            players = gameData.players;
+            locations = gameData.locations;
+            locationsWithMonster = locations.filter(location => location.monstres);
+            log = gameData.logs;
+            state = gameData.state;
+
+            updateDisplay();
+            // Update element on the UI
+            const playerList = document.querySelector('.joueurs-list ul');
+            playerList.innerHTML = '';
+            players.forEach((player, index) => {
+                const playerItem = document.createElement('li');
+                playerItem.innerHTML = `
+                    <a href="#" data-index="${index}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">${player.id}</a>
+                `;
+                playerList.appendChild(playerItem);
+            });
+
+            const locationList = document.querySelector('.locations-list ul');
+            locationList.innerHTML = '';
+            locations.forEach((location, index) => {
+                const locationItem = document.createElement('li');
+                locationItem.innerHTML = `
+                    <a href="#" data-index="${index}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">${location.id}</a>
+                `;
+                locationList.appendChild(locationItem);
+            });
+
+            updateMap();
+    }
+
     window.addEventListener('load', function () {
         const form = document.getElementById('chat-form');
-        form.reset();  // Resets all form elements to their default values
+        // form.reset();  // Resets all form elements to their default values
     });
 </script>
 
@@ -462,37 +495,7 @@
             userInput.value = '';
 
             // fetch game information
-            const gameInfo = await fetch('/fetch');
-            const gameData = await gameInfo.json();
-            players = gameData.players;
-            locations = gameData.locations;
-            locationsWithMonster = locations.filter(location => location.monstres);
-            log = gameData.logs;
-            state = gameData.state;
-
-            updateDisplay();
-            // Update element on the UI
-            const playerList = document.querySelector('.joueurs-list ul');
-            playerList.innerHTML = '';
-            players.forEach((player, index) => {
-                const playerItem = document.createElement('li');
-                playerItem.innerHTML = `
-                    <a href="#" data-index="${index}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">${player.id}</a>
-                `;
-                playerList.appendChild(playerItem);
-            });
-
-            const locationList = document.querySelector('.locations-list ul');
-            locationList.innerHTML = '';
-            locations.forEach((location, index) => {
-                const locationItem = document.createElement('li');
-                locationItem.innerHTML = `
-                    <a href="#" data-index="${index}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">${location.id}</a>
-                `;
-                locationList.appendChild(locationItem);
-            });
-
-            updateMap();
+            await fetchGameData();
 
         } catch (error) {
             console.error('Error:', error);
@@ -745,7 +748,7 @@ info.innerHTML = `
             ${current_location.objets
               .map(
                 (objet) =>
-                  `<li><strong>${objet.nom}</strong>: ${objet.description} (Prix: ${objet.prix})</li>`
+                  `<li><strong>${objet.nom}</strong>: ${objet.description ? objet.description : '' } (Prix: ${objet.prix})</li>`
               )
               .join("")}
           </ul>
@@ -927,7 +930,19 @@ mapGroup.selectAll(".pnj-dot")
 </script>
 
 
+<script>
+    document.getElementById("reset").addEventListener("click", async (event) => {
+        event.stopPropagation();
 
+         // Send POST request to the backend
+        const response = await fetch("/reset", {
+            method: 'POST',
+            body: {},
+        });
+
+        await fetchGameData()
+    })
+</script>
 
 
 <script>
