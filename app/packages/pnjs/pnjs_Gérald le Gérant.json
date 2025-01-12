@@ -1,0 +1,34 @@
+{
+    "nom": "Gérald le Gérant",
+    "puissance": 8,
+    "etat": {
+        "santé": "en bonne santé",
+        "sommeil": "éveillé"
+    },
+    "description": "Gérald est un homme de taille moyenne, avec des cheveux grisonnants et une barbe bien taillée. Il porte une blouse en cuir usée par le temps et un tablier en toile. Son sourire accueillant et sa voix chaleureuse font de lui un hôte apprécié. Il connaît de nombreuses histoires sur les voyageurs et les légendes locales, qu'il partage avec enthousiasme lors des soirées à la taverne. Gérald est toujours prêt à offrir un bon conseil ou à écouter les préoccupations de ses clients.",
+    "inventaire": [
+        {
+            "nom": "Livre de Recettes",
+            "description": "Un livre relié en cuir contenant les recettes secrètes de la taverne.",
+            "prix": null
+        },
+        {
+            "nom": "Flacon de Liqueur Maison",
+            "description": "Une liqueur douce faite maison, parfaite pour réchauffer les cœurs en hiver.",
+            "prix": null
+        }
+    ],
+    "or": 25,
+    "routine": {
+        "time": 18,
+        "locations": [
+            "La Taverne du Voyageur",
+            "Le Marché Local",
+            "Le Parc du Village"
+        ]
+    },
+    "position": {
+        "x": 15,
+        "y": 22
+    }
+}

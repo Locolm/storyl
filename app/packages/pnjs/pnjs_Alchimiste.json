@@ -1,21 +1,27 @@
 {
     "nom": "Alchimiste",
     "description": "un pnj",
-    "puissance": 5,
     "etat": {
         "santé": "en bonne santé",
-        "humeur": "mort"
+        "humeur": "en colère",
+        "puissance": null
     },
     "routine": {
         "time": 8,
         "locations": [
-            "L'Atelier des Elixirs_1"
+            "L'Atelier des Elixirs"
         ]
     },
     "position": {
-        "x": 12,
-        "y": 5
+        "x": 42,
+        "y": 17
     },
-    "inventaire": [],
-    "or": 0
+    "inventaire": [
+        "Potion de soin",
+        "Elixir de force",
+        "Poudre d'invisibilité",
+        "Herbes médicinales",
+        "Flacon vide"
+    ],
+    "or": 15
 }

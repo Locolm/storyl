@@ -1,10 +1,200 @@
 [
-  {
-      "user": "SYSTEM",
-      "message": "Bienvenue dans le jeu, aventurier ! Préparez-vous à vivre une aventure épique pleine de mystères et de dangers."
-  },
-  {
-      "user": "MASTER",
-      "message": "Bienvenue dans cette aventure, aventurier ! Le monde s'ouvre devant vous, rempli de mystères et de périls. Que votre voyage commence maintenant !"
-  }
+    {
+        "user": "SYSTEM",
+        "message": "Bienvenue dans le jeu, aventurier ! Préparez-vous à vivre une aventure épique pleine de mystères et de dangers."
+    },
+    {
+        "user": "MASTER",
+        "message": "Bienvenue dans cette aventure, aventurier ! Le monde s'ouvre devant vous, rempli de mystères et de périls. Que votre voyage commence maintenant !"
+    },
+    {
+        "timestamp": "2025-01-12T01:30:52.712303",
+        "user": "ADMIN",
+        "message": "/create-char Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance."
+    },
+    {
+        "timestamp": "2025-01-12T01:30:52.713818",
+        "user": "MASTER",
+        "message": "personnage enregistrée en tant que Tian Zhen"
+    },
+    {
+        "timestamp": "2025-01-12T01:31:05.562571",
+        "user": "ADMIN",
+        "message": "/create-char Arfuld, un nain alcoolique et colérique qui ne jure que par son marteau."
+    },
+    {
+        "timestamp": "2025-01-12T01:31:05.565119",
+        "user": "MASTER",
+        "message": "personnage enregistrée en tant que Arfuld"
+    },
+    {
+        "timestamp": "2025-01-12T01:35:58.124153",
+        "user": "ADMIN",
+        "message": "/create-loc /0/ /0/ Taverne chaleureuse"
+    },
+    {
+        "timestamp": "2025-01-12T01:35:58.127147",
+        "user": "MASTER",
+        "message": "Lieu enregistrée en tant que La Taverne du Voyageur"
+    },
+    {
+        "timestamp": "2025-01-12T13:51:29.770649",
+        "user": "Arfuld",
+        "message": "/move-to /Arfuld/ /40/ /40/ Le labyrinthe donjon sombre"
+    },
+    {
+        "timestamp": "2025-01-12T13:51:29.773648",
+        "user": "MASTER",
+        "message": "Le personnage Arfuld est maintenant en déplacement vers Labyrinthe de l'Ombre."
+    },
+    {
+        "timestamp": "2025-01-12T13:56:16.389076",
+        "user": "Arfuld",
+        "message": "/time 1"
+    },
+    {
+        "timestamp": "2025-01-12T13:56:16.391862",
+        "user": "MASTER",
+        "message": "Arfuld est arrivé à Labyrinthe de l'Ombre, Un dédale tortueux de couloirs sombres et humides, où la lumière peine à percer. Les murs sont recouverts de mousse et de lichen, et une atmosphère pesante s'y installe. Des échos lointains résonnent, laissant présager la présence de créatures tapies dans l'ombre."
+    },
+    {
+        "timestamp": "2025-01-12T14:00:33.234209",
+        "user": "Arfuld",
+        "message": "/create-loc /42/ /17/ L'atelier des Elixirs"
+    },
+    {
+        "timestamp": "2025-01-12T14:00:33.236806",
+        "user": "MASTER",
+        "message": "Lieu enregistrée en tant que L'atelier des Elixirs"
+    },
+    {
+        "timestamp": "2025-01-12T14:04:46.547790",
+        "user": "Arfuld",
+        "message": "/move-to /Arfuld/ /42/ /17/ L'atelier des Elixirs"
+    },
+    {
+        "timestamp": "2025-01-12T14:04:46.549811",
+        "user": "MASTER",
+        "message": "Le personnage Arfuld est maintenant en déplacement vers L'atelier des Elixirs."
+    },
+    {
+        "timestamp": "2025-01-12T14:05:01.968697",
+        "user": "Tian Zhen",
+        "message": "/move-to /Tian Zhen/ /42/ /17/ L'atelier des Elixirs"
+    },
+    {
+        "timestamp": "2025-01-12T14:05:01.973707",
+        "user": "MASTER",
+        "message": "Le personnage Tian Zhen est maintenant en déplacement vers L'atelier des Elixirs."
+    },
+    {
+        "timestamp": "2025-01-12T14:05:59.476577",
+        "user": "ADMIN",
+        "message": "/time 4"
+    },
+    {
+        "timestamp": "2025-01-12T14:05:59.479592",
+        "user": "MASTER",
+        "message": "Tian Zhen est arrivé à L'atelier des Elixirs, L'Atelier des Elixirs est une boutique d'alchimie flamboyante située au cœur du quartier commerçant de la ville. La façade en bois sculpté est ornée de symboles alchimiques, et une douce lumière émanant des fenêtres invite les passants à entrer. À l'intérieur, l'air est chargé d'odeurs enivrantes de plantes séchées et de potions bouillonnantes. Des étagères en bois massif sont remplies de fioles colorées, de cristaux étincelants et de livres anciens aux pages jaunies. Un grand chaudron en cuivre trône au centre de la pièce, où l'alchimiste, une femme aux cheveux argentés, concocte des breuvages mystérieux. Les clients peuvent y trouver des potions de guérison, des élixirs de force, ainsi que des ingrédients rares pour leurs propres expériences alchimiques. Des affiches sur les murs annoncent des cours d'alchimie pour ceux qui souhaitent apprendre l'art mystérieux de la transformation."
+    },
+    {
+        "timestamp": "2025-01-12T14:06:53.451570",
+        "user": "ADMIN",
+        "message": "/time 2"
+    },
+    {
+        "timestamp": "2025-01-12T14:06:53.454582",
+        "user": "MASTER",
+        "message": "Arfuld est arrivé à L'atelier des Elixirs, L'Atelier des Elixirs est une boutique d'alchimie flamboyante située au cœur du quartier commerçant de la ville. La façade en bois sculpté est ornée de symboles alchimiques, et une douce lumière émanant des fenêtres invite les passants à entrer. À l'intérieur, l'air est chargé d'odeurs enivrantes de plantes séchées et de potions bouillonnantes. Des étagères en bois massif sont remplies de fioles colorées, de cristaux étincelants et de livres anciens aux pages jaunies. Un grand chaudron en cuivre trône au centre de la pièce, où l'alchimiste, une femme aux cheveux argentés, concocte des breuvages mystérieux. Les clients peuvent y trouver des potions de guérison, des élixirs de force, ainsi que des ingrédients rares pour leurs propres expériences alchimiques. Des affiches sur les murs annoncent des cours d'alchimie pour ceux qui souhaitent apprendre l'art mystérieux de la transformation."
+    },
+    {
+        "timestamp": "2025-01-12T14:09:15.948208",
+        "user": "Tian Zhen",
+        "message": "/action /Tian Zhen/ Utilise son charme et sa sagesse pour acheter une potion de soin a un prix réduit."
+    },
+    {
+        "timestamp": "2025-01-12T14:09:15.950258",
+        "user": "MASTER",
+        "message": "Tian Zhen, avec sa sagesse et son charisme, s'approche de l'alchimiste et lui demande s'il serait possible d'obtenir une potion de soin à un prix réduit. L'alchimiste, appréciant sa démarche respectueuse et son sérieux, accepte de lui vendre la potion pour 10 pièces d'or au lieu de 15. Tian Zhen, reconnaissant, lui remet l'argent et repart avec la potion."
+    },
+    {
+        "timestamp": "2025-01-12T14:11:43.391254",
+        "user": "Arfuld",
+        "message": "/action /Arfuld/ Bois une bière et déverse la moitié de son contenu devant l’alchimiste en lui disant que sa boutique est nulle."
+    },
+    {
+        "timestamp": "2025-01-12T14:11:43.393255",
+        "user": "MASTER",
+        "message": "Arfuld, après avoir vidé la moitié de sa bière sur le sol de l'Atelier des Elixirs, déverse son mécontentement sur l'alchimiste, lui affirmant que sa boutique est nulle. L'alchimiste, surpris par cette attitude, fronce les sourcils mais reste calme malgré la situation. Arfuld se sent un peu euphorique après sa gorgée de bière, mais son acte n'a pas eu l'effet escompté sur l'alchimiste."
+    },
+    {
+        "timestamp": "2025-01-12T14:12:59.157792",
+        "user": "Arfuld",
+        "message": "/action /Arfuld/ Achète une potion de soin en négociant le prix."
+    },
+    {
+        "timestamp": "2025-01-12T14:12:59.159808",
+        "user": "MASTER",
+        "message": "Arfuld s'approche de l'alchimiste avec un sourire colérique, brandissant son or pour acheter une potion de soin. Cependant, l'alchimiste, déjà en colère, refuse de négocier et lui dit que le prix est fixe. Arfuld, frustré, décide de ne pas acheter la potion."
+    },
+    {
+        "timestamp": "2025-01-12T14:15:46.389406",
+        "user": "Tian Zhen",
+        "message": "/action /Tian Zhen/ Bois une bière."
+    },
+    {
+        "timestamp": "2025-01-12T14:15:46.391452",
+        "user": "MASTER",
+        "message": "Tian Zhen se dirige vers le bar de L'Atelier des Elixirs, espérant y trouver une bière rafraîchissante. Cependant, il réalise que cet endroit est spécialisé dans les potions et les élixirs, et qu'il n'y a aucune bière disponible à la vente. Déçu mais compréhensif, il décide de quitter l'atelier sans rien acheter."
+    },
+    {
+        "timestamp": "2025-01-12T14:19:12.206943",
+        "user": "Arfuld",
+        "message": "/move-to /Arfuld/ /40/ /40/ Le Labyrinthe"
+    },
+    {
+        "timestamp": "2025-01-12T14:19:12.208960",
+        "user": "MASTER",
+        "message": "Le personnage Arfuld est maintenant en déplacement vers Labyrinthe de l'Ombre."
+    },
+    {
+        "timestamp": "2025-01-12T14:19:28.474175",
+        "user": "Tian Zhen",
+        "message": "/move-to /Tian Zhen/ /40/ /40/ Le lieux sombre"
+    },
+    {
+        "timestamp": "2025-01-12T14:19:28.476731",
+        "user": "MASTER",
+        "message": "Le personnage Tian Zhen est maintenant en déplacement vers Labyrinthe de l'Ombre."
+    },
+    {
+        "timestamp": "2025-01-12T14:19:38.891213",
+        "user": "Tian Zhen",
+        "message": "/time 5"
+    },
+    {
+        "timestamp": "2025-01-12T14:19:38.895170",
+        "user": "MASTER",
+        "message": "Tian Zhen est arrivé à Labyrinthe de l'Ombre, Un dédale tortueux de couloirs sombres et humides, où la lumière peine à percer. Les murs sont recouverts de mousse et de lichen, et une atmosphère pesante s'y installe. Des échos lointains résonnent, laissant présager la présence de créatures tapies dans l'ombre."
+    },
+    {
+        "timestamp": "2025-01-12T14:21:01.554413",
+        "user": "Arfuld",
+        "message": "/time 5"
+    },
+    {
+        "timestamp": "2025-01-12T14:21:01.556819",
+        "user": "MASTER",
+        "message": "Arfuld est arrivé à Labyrinthe de l'Ombre, Un dédale tortueux de couloirs sombres et humides, où la lumière peine à percer. Les murs sont recouverts de mousse et de lichen, et une atmosphère pesante s'y installe. Des échos lointains résonnent, laissant présager la présence de créatures tapies dans l'ombre."
+    },
+    {
+        "timestamp": "2025-01-12T14:21:39.077874",
+        "user": "Arfuld",
+        "message": "/resolve-fight /Labyrinthe de l'Ombre/"
+    },
+    {
+        "timestamp": "2025-01-12T14:21:39.079883",
+        "user": "MASTER",
+        "message": "Alors qu'Arfuld et Tian Zhen avancent prudemment dans le Labyrinthe de l'Ombre, l'atmosphère devient pesante. Les échos de leurs pas résonnent à travers les couloirs sombres, et une ombre se profile au loin. Soudain, un Golem des Ombres surgit de l'obscurité, ses mouvements silencieux trahissant une menace imminente. Arfuld, l'instinct guerrier en éveil, brandit son marteau de guerre et charge le monstre. Tian Zhen, quant à lui, se met en position, prêt à déployer ses techniques martiales.\n\nLe Golem des Ombres attaque le nain avec une rapidité surprenante, ses bras de ténèbres se refermant sur lui. Arfuld encaisse le coup avec bravoure, mais il ressent la puissance de l'attaque. Il riposte immédiatement, frappant le Golem avec son marteau, mais la créature semble résister aux coups. Tian Zhen, voyant son ami en difficulté, s'élance et frappe avec sa lance, visant les points faibles dans la constitution du Golem. Cependant, l'ombre se déplace avec une agilité déconcertante, esquivant certains des coups de Tian Zhen.\n\nSoudain, un deuxième Golem des Ombres apparaît, renforçant l'assaut. Arfuld et Tian Zhen réalisent qu'ils sont désormais confrontés à deux adversaires redoutables. L'un des Golems frappe Tian Zhen, le faisant tituber légèrement, tandis que l'autre se concentre sur Arfuld. Le combat devient chaotique, les coups échangés résonnant dans le labyrinthe. Les personnages tentent de se regrouper, mais la pression des ombres les désoriente. Arfuld, malgré sa force, commence à ressentir la fatigue, tandis que Tian Zhen voit ses mouvements ralentir, l'épuisement se faisant sentir.\n\nDans un ultime effort, Tian Zhen concentre son énergie et tente une attaque désespérée, mais le Golem des Ombres réagit rapidement et l'attrape par le bras, le maintenant immobilisé. Arfuld, voyant son ami dans une position délicate, décide de se retirer, réalisant qu'ils ne peuvent pas gagner ce combat face à des adversaires si puissants. Les deux personnages, haletants et en mauvaise posture, font demi-tour et s'enfuient, laissant les Golems victorieux dans le labyrinthe sombre."
+    }
 ]

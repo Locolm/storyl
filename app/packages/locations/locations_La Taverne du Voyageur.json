@@ -1,0 +1,32 @@
+{
+    "nom": "La Taverne du Voyageur",
+    "description": "Cette taverne chaleureuse est le refuge idéal pour les aventuriers fatigués. Les murs en bois sont ornés de trophées de chasse et de cartes anciennes. Une cheminée crépite au centre de la salle principale, diffusant une lumière douce et une chaleur réconfortante. Les tables sont en chêne massif, et l'odeur de viande rôtie et de pain frais emplit l'air.",
+    "type": "confort",
+    "position": {
+        "x": 0,
+        "y": 0
+    },
+    "objets": [
+        {
+            "nom": "Bière du Voyageur",
+            "description": "Une bière artisanale, mousseuse et rafraîchissante, parfaite après une longue journée.",
+            "prix": 5
+        },
+        {
+            "nom": "Ragoût de Viande",
+            "description": "Un plat copieux fait de viande tendre, de légumes et d'épices. Idéal pour reprendre des forces.",
+            "prix": 15
+        },
+        {
+            "nom": "Carte de la région",
+            "description": "Une ancienne carte de la région, indiquant les routes, les villes et les lieux d'intérêt.",
+            "prix": 10
+        },
+        {
+            "nom": "Coffre de Mémoire",
+            "description": "Un petit coffre en bois, rempli de souvenirs et de récits d'anciens aventuriers.",
+            "prix": 25
+        }
+    ],
+    "monstres": []
+}
