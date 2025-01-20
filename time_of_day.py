@@ -6,29 +6,35 @@ import context
 
 # Variables globales pour l'heure de la journée
 
-def update_time_of_day():
+def update_time_of_day(n):
     """
-    Met à jour la variable TIME_OF_DAY en fonction de l'heure actuelle.
+    Met à jour la variable TIME_OF_DAY en fonction de l'heure actuelle et renvoie le décalage de time_of_day.
     """
     CURRENT_HOUR = get_const_value("CURRENT_HOUR")
     TIME_OF_DAY = get_const_value("TIME_OF_DAY")
+    
+    time_of_day_order = ["matin", "après-midi", "soir", "nuit"]
     NEW_TIME_OF_DAY = "matin"
     if 5 <= CURRENT_HOUR < 12:
         NEW_TIME_OF_DAY = "matin"
-        update_const_value("TIME_OF_DAY",NEW_TIME_OF_DAY)
     elif 12 <= CURRENT_HOUR < 18:
         NEW_TIME_OF_DAY = "après-midi"
-        update_const_value("TIME_OF_DAY",NEW_TIME_OF_DAY)
     elif 18 <= CURRENT_HOUR < 22:
         NEW_TIME_OF_DAY = "soir"
-        update_const_value("TIME_OF_DAY",NEW_TIME_OF_DAY)
     else:
         NEW_TIME_OF_DAY = "nuit"
-        update_const_value("TIME_OF_DAY",NEW_TIME_OF_DAY)
 
-    if TIME_OF_DAY != NEW_TIME_OF_DAY:
-        return True
-    return False
+    update_const_value("TIME_OF_DAY", NEW_TIME_OF_DAY)
+
+    if TIME_OF_DAY == NEW_TIME_OF_DAY:
+        return (n // 24) * 4
+
+    old_index = time_of_day_order.index(TIME_OF_DAY) + 1
+    new_index = time_of_day_order.index(NEW_TIME_OF_DAY) + 1
+    if new_index < old_index:
+        new_index += len(time_of_day_order) - old_index
+
+    return (n // 24) * 4 + new_index
 
 def advance_time(n):
     try:
@@ -43,8 +49,9 @@ def advance_time(n):
     CURRENT_HOUR = (get_const_value("CURRENT_HOUR") + n) % 24
     update_const_value("CURRENT_HOUR", CURRENT_HOUR)
     update_const_value("HOURS_PLAYED", get_const_value("HOURS_PLAYED") + n)
-    if (update_time_of_day()):
-        next_all_state()
+    k = update_time_of_day(n)
+    if (k>0):
+        next_all_state(k,n)
 
     #update pnj routines
     update_pnj_routines()
@@ -153,26 +160,38 @@ def update_const_value(key, value):
     with open(const_file, 'w', encoding='utf-8') as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
-def next_all_state():
+def next_all_state(k,n):
     characters_dir = 'characters'
     for filename in os.listdir(characters_dir):
         if filename.endswith('.json'):
             file_path = os.path.join(characters_dir, filename)
+            charactername = filename.replace('characters_', '').replace('.json', '')
             with open(file_path, 'r', encoding='utf-8') as file:
                 data = json.load(file)
             
             if 'etat' in data and 'sommeil' in data['etat']:
-                if data['etat']['sommeil'].startswith("en train de dormir"):
+                sleep_states = ["reposé", "en forme", "fatigué", "épuisé", "nuit blanche"]
+                current_state = data['etat']['sommeil']
+                
+                if current_state.startswith("en train de dormir"):
                     continue
-                elif data['etat']['sommeil'] == "reposé":
-                    data['etat']['sommeil'] = "en forme"
-                elif data['etat']['sommeil'] == "en forme":
-                    data['etat']['sommeil'] = "fatigué"
-                elif data['etat']['sommeil'] == "fatigué":
-                    data['etat']['sommeil'] = "épuisé"
-                elif data['etat']['sommeil'] == "épuisé":
+                elif current_state in sleep_states:
+                    current_index = sleep_states.index(current_state)
+                    new_index = (current_index + k) % len(sleep_states)
+                    if current_state == "nuit blanche":
+                        print(charactername + " " + str(n) + str(k) + str(new_index) + str(current_index))
+                    if new_index < current_index:
+                        print("doit se reposer")
+                        if (n>=12 or n<0) :
+                            data['etat']['sommeil'] = "reposé"
+                        else :
+                            data['etat']['sommeil'] = f"en train de dormir reste {12} heures"
+                    else:
+                        data['etat']['sommeil'] = sleep_states[new_index]
+                else:
                     data['etat']['sommeil'] = "nuit blanche"
+            else:
+                data['etat']['sommeil'] = "nuit blanche"
             
             with open(file_path, "w", encoding="utf-8") as file:
                 json.dump(data, file, indent=4, ensure_ascii=False)
-

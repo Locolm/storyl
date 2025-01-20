@@ -874,19 +874,19 @@ def update_characters_from_json(input_json):
             json.dump(character_data, file, indent=4, ensure_ascii=False)
 
 # Example usage:
-input_json = {
-    "description": "Les ténèbres enveloppent le Labyrinthe des Ombres...",
-    "personnages": [
-        {
-            "nom": "Sir Mimic",
-            "inventaire": ["épée en mimique", "bouclier en mimique", "potion de soins", "amulette de camouflage"],
-            "etat": {"santé": "mort"}
-        },
-        {
-            "nom": "Tenzin le Fort",
-            "inventaire": ["Bâton de bois", "Amulette de protection", "Potion de soin", "Sandales légères", "alcool très fort"],
-            "etat": {"santé": "mal en point"}
-        }
-    ]
-}
-update_characters_from_json(input_json)
+# input_json = {
+#     "description": "Les ténèbres enveloppent le Labyrinthe des Ombres...",
+#     "personnages": [
+#         {
+#             "nom": "Sir Mimic",
+#             "inventaire": ["épée en mimique", "bouclier en mimique", "potion de soins", "amulette de camouflage"],
+#             "etat": {"santé": "mort"}
+#         },
+#         {
+#             "nom": "Tenzin le Fort",
+#             "inventaire": ["Bâton de bois", "Amulette de protection", "Potion de soin", "Sandales légères", "alcool très fort"],
+#             "etat": {"santé": "mal en point"}
+#         }
+#     ]
+# }
+# update_characters_from_json(input_json)
