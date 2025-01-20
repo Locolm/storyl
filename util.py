@@ -90,7 +90,7 @@ def save_markdown_to_json(response_markdown, required_keys, output_dir="characte
             # Enregistrer le personnage
             with open(filepath, "w", encoding="utf-8") as file:
                 json.dump(character, file, indent=4, ensure_ascii=False)
-            print(f"Personnage sauvegardé dans le fichier : {filepath}")
+            print(f"Sauvegardé dans le fichier : {filepath}")
             return filepath
         except Exception as e:
             print(f"Une erreur s'est produite : {e}")
@@ -217,7 +217,7 @@ def save_markdown_to_json_return_filename(response_markdown, required_keys, outp
             # Enregistrer le personnage
             with open(filepath, "w", encoding="utf-8") as file:
                 json.dump(character, file, indent=4, ensure_ascii=False)
-            print(f"Personnage sauvegardé dans le fichier : {filepath}")
+            print(f"Sauvegardé dans le fichier : {filepath}")
             return os.path.basename(filepath)
         except Exception as e:
             print(f"Une erreur s'est produite : {e}")

@@ -8,8 +8,8 @@
     "charisme": 20,
     "pv": 40,
     "etat": {
-        "santé": "en bonne santé",
-        "sommeil": "en train de dormir reste 4 heures",
+        "santé": "mal en point",
+        "sommeil": "reposé",
         "déplacement": "non"
     },
     "description": "Elladra est une vampire charismatique dont la beauté en attire plus d'un. Elle utilise sa séduction pour attirer ses proies dans son lit, où elle prélève leur sang avec une douceur mortelle.",
@@ -24,7 +24,7 @@
     ],
     "or": 140,
     "position": {
-        "x": 12,
-        "y": 5
+        "x": 40,
+        "y": 70
     }
 }

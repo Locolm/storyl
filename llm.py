@@ -94,14 +94,14 @@ def completion(prompt):
                 type = "locations-only"
                 parts = [part.strip() for part in prompt.split("/") if part.strip()]
                 x,y=0,0
-                if len(parts) > 3:
-                    x = int(float(parts[2]))
-                    y = int(float(parts[3]))
+                if len(parts) > 2:
+                    x = int(float(parts[1]))
+                    y = int(float(parts[2]))
                 locations_context = context.get_nearby_locations(x, y)
                 
                 locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]             
                 
-                prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x, y en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le lieu est de type hostile comme un donjon, un lieu hanté ou autre). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
+                prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x="""+str(x)+""", y="""+str(y)+""" en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le lieu est de type hostile comme un donjon, un lieu hanté ou autre). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
                 
                 prompt =    f"Contexte des lieux alentours : {locations_data}\n"\
                             f"Prompt : " + prompt.strip() + "\n"
@@ -215,7 +215,7 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
         locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]   
         
         
-        prompt = """Crée un personnage non-joueur. Répondez sous la forme d'un JSON contenant les champs suivants :
+        prompt = f"""Crée un personnage non-joueur. Répondez sous la forme d'un JSON contenant les champs suivants :
 - nom : le nom du PNJ.
 - puissance : un entier représentant la force ou l'influence du PNJ.
 - etat : un objet décrivant des éléments comme la santé ou d'autres états (ex. : santé : "en bonne santé", sommeil : "en train de dormir").
@@ -225,7 +225,7 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
 - routine : un objet contenant deux champs :
     - time : l'heure en entier de la journée à laquelle le PNJ change de lieu (au format 24h).
     - locations : une liste des lieux que le PNJ visite.
-- position : les coordonnées actuelles du PNJ, qui correspondent à celles du lieu."""
+- position : les coordonnées actuelles du PNJ, qui correspondent à celles du lieu.x={x},y={y}."""
 
         prompt =    f"Contexte du lieu actuel : {current_location_data}\n"\
                     f"Contexte des lieux alentours : {locations_data}\n"\
@@ -285,9 +285,10 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
                         required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
                         util.save_markdown_to_json(_response,required_keys,"pnjs")
                 
-                util.process_json_file(location_to_go) #modifie les données des monstres
+                #util.process_json_file(location_to_go) #modifie les données des monstres
 
                 location_name = location_to_go.split("locations_")[1].split(".json")[0]
+                return "Lieu créé"
         elif (type =="actions"):
                 _response = response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de JSON.",tokens=950)
                 _reponse_json = util.extract_json_from_markdown(_response)
@@ -301,15 +302,12 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
             _dict_response = util.extract_json_from_markdown(_response)
 
             if "personnages" in _dict_response:
-                print("test1")
                 util.update_characters_from_json(_dict_response)
                             
             if "pnjs" in _dict_response:
-                print("test2")
                 util.update_pnjs_from_json(_dict_response)
             
             if "monstres" in _dict_response:
-                print("test3")
                 util.update_monsters_from_json(location_name,_dict_response)
             
             if "description" in _dict_response:
