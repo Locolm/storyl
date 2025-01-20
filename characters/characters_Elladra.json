@@ -9,7 +9,7 @@
     "pv": 40,
     "etat": {
         "santé": "en bonne santé",
-        "sommeil": "reposé",
+        "sommeil": "fatigué",
         "déplacement": "non"
     },
     "description": "Elladra est une vampire charismatique dont la beauté en attire plus d'un. Elle utilise sa séduction pour attirer ses proies dans son lit, où elle prélève leur sang avec une douceur mortelle.",
@@ -19,12 +19,13 @@
         "flacon de sang",
         "bijoux scintillants",
         "sac à potions",
-        "Potion de soin",
-        "flacon de potion inconnue"
+        "flacon de potion inconnue",
+        "flèche en acier",
+        "hache de bataille"
     ],
     "or": 140,
     "position": {
-        "x": 12,
-        "y": 5
+        "x": 40,
+        "y": 70
     }
 }

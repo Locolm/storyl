@@ -1,0 +1,37 @@
+{
+    "nom": "La cave d'Albert le forgeron",
+    "description": "Une cave sombre et humide, remplie d'armes forgées avec soin par Albert. Cependant, les ombres dansent sur les murs, et le bruit des rats qui s'agitent se fait entendre. Les armes brillent d'un éclat sinistre, mais il faudra se méfier des petites créatures qui rôdent.",
+    "type": "magasin",
+    "position": {
+        "x": 40,
+        "y": 70
+    },
+    "objets": [
+        {
+            "nom": "Épée rouillée",
+            "description": "Une épée en fer, rouillée par le temps, mais toujours capable de trancher.",
+            "prix": 15
+        },
+        {
+            "nom": "Hache de bataille",
+            "description": "Une hache massive, idéale pour infliger des dégâts en combat rapproché.",
+            "prix": 50
+        },
+        {
+            "nom": "Bouclier en bois",
+            "description": "Un bouclier usé, mais encore capable de dévier certains coups.",
+            "prix": 20
+        },
+        {
+            "nom": "Flèche en acier",
+            "description": "Une flèche bien équilibrée, parfaite pour les archers.",
+            "prix": 5
+        },
+        {
+            "nom": "Gantelet de forgeron",
+            "description": "Un gantelet renforcé, offrant une bonne protection aux mains.",
+            "prix": 30
+        }
+    ],
+    "monstres": []
+}
