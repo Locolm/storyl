@@ -178,10 +178,7 @@ def next_all_state(k,n):
                 elif current_state in sleep_states:
                     current_index = sleep_states.index(current_state)
                     new_index = (current_index + k) % len(sleep_states)
-                    if current_state == "nuit blanche":
-                        print(charactername + " " + str(n) + str(k) + str(new_index) + str(current_index))
                     if new_index < current_index:
-                        print("doit se reposer")
                         if (n>=12 or n<0) :
                             data['etat']['sommeil'] = "reposé"
                         else :
