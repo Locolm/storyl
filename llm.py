@@ -119,11 +119,14 @@ def completion(prompt):
             character_data = context.load_json(f"./characters/characters_{character_name}.json")
             character_position = character_data["position"]
             matching_location = context.check_location_exists(character_position["x"], character_position["y"])[0]
+            characters_name = context.get_characters_in_location(matching_location)
+            characters_data = [context.load_json(f"./characters/characters_{character_name}.json") for character_name in characters_name]
             
             if matching_location is not None:
                 location_data = context.load_json(f"./locations/locations_{matching_location}.json")
             
-            prompt =    f"Contexte des personnages : {character_data}\n"\
+            prompt =    f"""Moment de la journée : {time_of_day.get_const_value("TIME_OF_DAY")}\n"""\
+                        f"Contexte des personnages : {characters_data}\n"\
                         f"Contexte du lieu : {location_data}\n"\
                         f"Contexte des PNJs : {context.get_pnjs_in_location(matching_location)}\n"\
                         f"Prompt : {character_name} essaye de {prompt.strip()}\n"\
@@ -133,7 +136,7 @@ Le modèle doit vérifier si l'action demandée est possible et cohérente avec 
 Validation des ressources : Vérifie que les personnages ou PNJs disposent des objets, or, ou capacités nécessaires à l'action.
 Si le personnage tente d'acheter un objet ***mais n'a pas assez d'or***, l'action doit échouer avec une explication.
 Si un PNJ est ***furieux*** ou indifférent, des actions nécessitant de flatter ou marchander échouent.
-Si un PNJ possède un champ humeur == mort, alors ce pnj est mort et son cadavre est présent dans la pièce.
+Si un PNJ est mort, alors son cadavre est présent dans la pièce et tenter de lui parler est inutile sans sort de nécromancie.
 Mise à jour des inventaires : Les objets acquis ou échangés doivent être retirés des inventaires et des lieux, et ajoutés aux inventaires correspondants.
 Création de PNJs au besoin : Si un PNJ absent est nécessaire pour l'action, le modèle doit en générer un avec des valeurs cohérentes (puissance, inventaire, or, etc.).
 Echanges et négociations : Si une action de vente échoue faute d’or chez le PNJ, celui-ci effectue un échange équivalent (si possible).
@@ -143,16 +146,17 @@ Disponibilité des objets : ***Vérifie que les objets demandés sont présents 
 Renvoie un JSON structuré contenant uniquement les changements résultant de l'action, avec ces champs :
 
 description : Résumé narratif réaliste de l'action et de son issue (succès, échec ou ajustement). On ne doit pas se rendre compte que l'on est dans un jeu de rôle.
-character : Un objet contenant :
+characters : Un tableau json contenant :
 - nom : Nom du personnage concerné.
-- inventaire : Liste complète des objets dans l’inventaire du personnage après l’action.
+- inventaire : Liste  mise à jour des objets dans l’inventaire du personnage après l’action, en retirant les objets consommés et en ajoutants les objets acquis.
 - or : Or restant si utilisé ou modifié.
 - santé : Modifications du champ santé du personnage (bourré, euphorique, mal en point, en bonne santé ...)(s'il y a eu modification).
 pnjs : Tableau contenant :
 - nom : Nom du PNJ impliqué.
-- inventaire : Liste complète des objets après l’action.
+- inventaire : Liste mise à jour des objets après l’action, en retirant les objets consommés et en ajoutants les objets acquis.
 - or : Or restant (si utilisé ou modifié).
-- humeur: Modifications d’humeur (mort, en colère, heureux, bourré, ...)(si applicables).
+- santé: Modifications de l'état de santé du PNJ (mort, blessé, apeuré, ...)(si applicables).
+- humeur: Modifications d’humeur (en colère, heureux, ivre, ...)(si applicables).
 - puissance : Puissance du PNJ (si applicable).
 locations : Un objet contenant :
 - nom : Nom du lieu impacté.
@@ -161,20 +165,45 @@ locations : Un objet contenant :
             return "Le personnage est en mouvement, il ne peut pas effectuer d'action pour le moment."
     elif prompt.startswith("/resolve-fight"):
         type = "fight"
-        
         location_name = prompt.split("/")[2].strip()
         
-        prompt =    """Renvoie-moi un JSON contenant :\n
+        prompt =    """Renvoie-moi un JSON contenant :
 
-description : La description du déroulé du combat entre les personnages, les PNJs et les monstres. Il est important que tu me fasses une description narrative en plusieurs paragraphes détaillant les actions, les réactions et l’évolution du combat. Ne renvoie pas un tableau. La description doit être fluide, et les événements doivent être racontés de manière cohérente et logique.\n
+description : Une description narrative détaillée et fluide du déroulement du combat entre les personnages, les PNJs et les monstres. Raconte les événements de manière cohérente et logique en plusieurs paragraphes, en tenant compte de la puissance estimée des personnages, des PNJs et des monstres, ainsi que de leur équipement, état initial, et description.
 
-gagnant : (valeurs possibles : Monstres ou Personnages). Dans le cas où les monstres ont gagné, dis que les personnages ont fui, ne pouvant gagner le combat.\n
+gagnant : (valeurs possibles : Monstres ou Personnages). Si les personnages gagnent, indique s'ils ont éradiqué tous les monstres ou si certains monstres ont fui. Si les monstres gagnent, précise que les personnages ont dû fuir.
 
-pnjs : Un tableau contenant les PNJs mis à jour à la fin du combat. Pour chaque PNJ, tu dois indiquer son nom, la mise à jour de son humeur (par exemple, "flatté", "mort", etc.) et la mise à jour de son inventaire (ajoute ou retire des objets si nécessaire).\n
+pnjs : Un tableau listant les PNJs présents à la fin du combat. Pour chaque PNJ, indique :
+  - nom
+  - humeur (ex. : "flatté", "apeuré", "inquiet", "concentré" etc.)
+  - santé (ex. : "en bonne santé", "blessé", "mourant", "mort")
+  - mise à jour de l’inventaire (ajout ou retrait d’objets consommés pendant le combat, Une pomme est consommable, une épée ne l’est pas, l'épée reste dans l'inventaire).
 
-personnages : Un tableau contenant les personnages mis à jour. Pour chaque personnage, renvoie uniquement son nom, son inventaire et la mise à jour de [etat][santé] (par exemple, "en bonne santé", "mal en point", "mort", etc.). N'oublie pas de mettre à jour l'inventaire si des objets ont été perdus ou utilisés durant le combat. Ne touche pas aux champs sommeil et déplacement du champ etat, ni aux pv qui restent fixes.\n
+personnages : Un tableau contenant les personnages mis à jour après le combat. Pour chaque personnage, indique :
+  - nom
+  - inventaire (mis à jour selon les objets utilisés ou gagnés)
+  - état de santé mis à jour (par ordre de gravité [etat][santé] : "en bonne santé", "légèrement blessé", "blessé", "mal en point", "Gravement blessé", "Agonisant", "inconscient", "mort", il existe aussi d'autres état en fonction de la situation comme "empoisonné", "brûlé", "gêlé" etc.). Ne modifie pas [etat][sommeil], [etat][déplacement].
 
-monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie après le combat."""
+monstres : Une liste des monstres encore vivant après le combat. Indique leur état (vivant, blessé, mourant,...).
+
+Contexte spécifique :
+1. La puissance des personnages doit être estimée à partir de leurs caractéristiques et de leur description :
+   - **Faible** : Puissance 1-15 → Exemples : personnages maladroits, sans entraînement ou avec des caractéristiques physiques très basses.
+   - **Moyenne** : Puissance 16-40 → Exemples : personnages ordinaires avec des compétences variées et des objets simples.
+   - **Forte** : Puissance 41-80 → Par défaut, un personnage bien équilibré avec des caractéristiques cohérentes et un bon équipement devrait avoir une puissance dans cette fourchette.
+   - **Très forte** : Puissance 81-120 → Exemples : personnages particulièrement remarquables avec des talents ou un équipement exceptionnel.
+   - **Épique** : Puissance 121-200 → Exemples : héros légendaires ou personnages incroyablement puissants avec des descriptions uniques.
+   - La puissance estimée doit être cohérente avec les caractéristiques et descriptions. Par exemple, un personnage avec une dextérité de 18 et un charisme de 20 devrait être considéré comme ayant une puissance **forte** ou **très forte**, sauf s'il est affaibli.
+   - Si un personnage est affaibli (ex. : "mal en point"), sa puissance doit être réduite d'un nombre de niveau équivalant à l'affaiblissement, par exemple s'il est mal en point son état est critique donc on le descend de 3 niveau (ex. : de **forte** à **faible**).
+2. Les personnages peuvent vaincre facilement des monstres faibles (1-15), même en grand nombre, sauf dans des circonstances défavorables (ex. : état affaibli, environnement hostile).
+3. Les personnages mal en points se battent avec difficultée, ceux ayant un état plus critique ne peuvent pas se battre.
+4. La difficulté des combats est déterminée par la puissance des monstres et leur nombre :
+    - Un monstre de puissance 300 ne peut pas être vaincu par un seul personnage, même s'il est très puissant, il faut au moins 3 personnages pour le vaincre.
+    - Un personnage sort forcément blessé d'un combat contre un monstre de puissance 80 ou plus.
+5. Décris les actions de manière logique :
+   - Si les personnages sont bien préparés (ex. : potions, objets spéciaux, stratégie), ils doivent triompher des monstres faibles avec peu de dégâts.
+   - Si les personnages sont affaiblis (ex. : "mal en point"), adapte la description pour montrer qu'ils rencontrent plus de difficulté, mais sans les rendre incohérents avec leur puissance globale.
+"""
         
         characters_name = context.get_characters_in_location(location_name)
         characters_data = [context.load_json(f"./characters/characters_{character_name}.json") for character_name in characters_name]
@@ -183,9 +212,13 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
         
         pnjs_data = context.get_pnjs_in_location(location_name)
         
-        prompt =    f"Contexte du lieu : {location_data}\n"\
+        prompt =    f"""Moment de la journée : {time_of_day.get_const_value("TIME_OF_DAY")}\n"""\
+                    f"Contexte du lieu : {location_data}\n"\
                     f"Contexte des personnages dans le lieu : {characters_data}\n"\
                     f"Contexte des pnjs présents dans le lieu : {pnjs_data}\n"\
+                    """Contexte de l'affrontement : voici un ordre d'idée de la puissance des monstres : faible : 1-15, moyen : 16-40, fort : 41-70, très fort : 71-120, extrêmement fort : 121-200, légendaire : 201-300\n
+                    La puissance d'un monstre indique la difficulté de l'affrontement, un personnage (en fonction de son équipement et de sa description qui indique un ordre d'idée de sa puissance) peut facilement à lui seul vaincre une dizaine de monstres faible, 5 monstres moyen, 2 monstre fort, 1 monstre très fort. Deux personnages viennent à bout de 1 monstre extrêmement fort, et un monstre légendaire est un défi pour un groupe de 5 personnages très puissants.\n
+                    certains personnages peuvent mourir lors de cet affrontement (rare seulement si les mosntres sont extrêmement fort), ils peuvent gagner cet affrontement malgré la différence de nombre s'ils sont suffisament bien préparé (inventaire) ou suffisamment fort (les monstres sont faible, accompagné d'un pnj puissant, les personnages ont une description qui indique leur puissance) dans ce cas là les personnages peuvent gagner l'affrontement et erradiquer tous les monstres (leur état de santé finale dépendra de la difficulté du combat).\n"""\
                     f"Prompt : {prompt.strip()}\n"
         
     elif prompt.startswith("/speed"):
@@ -291,6 +324,7 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
                 return "Lieu créé"
         elif (type =="actions"):
                 _response = response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de JSON.",tokens=950)
+                print("_response",_response)
                 _reponse_json = util.extract_json_from_markdown(_response)
                 # enregistrement des changements
                 context.process_actions(_reponse_json)
@@ -310,6 +344,8 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
             if "monstres" in _dict_response:
                 util.update_monsters_from_json(location_name,_dict_response)
             
+            count_time+=15 #un combat fait passer le temps
+
             if "description" in _dict_response:
                 return _dict_response['description']
             else:

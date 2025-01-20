@@ -1,7 +1,7 @@
 {
     "nom": "La cave d'Albert le forgeron",
     "description": "Une cave sombre et humide, remplie d'armes forgées avec soin par Albert. Cependant, les ombres dansent sur les murs, et le bruit des rats qui s'agitent se fait entendre. Les armes brillent d'un éclat sinistre, mais il faudra se méfier des petites créatures qui rôdent.",
-    "type": "donjon",
+    "type": "magasin",
     "position": {
         "x": 40,
         "y": 70
@@ -33,28 +33,5 @@
             "prix": 30
         }
     ],
-    "monstres": [
-        {
-            "nom": "Rat géant",
-            "description": "Un rat de taille exceptionnelle, aux yeux brillants et aux dents acérées.",
-            "puissance": 3,
-            "etat": "agressif",
-            "nombre": 1,
-            "objets": [
-                {
-                    "nom": "Poil de rat",
-                    "description": "Un poil épais, pouvant être utilisé pour des potions.",
-                    "prix": 1
-                }
-            ]
-        },
-        {
-            "nom": "Rat de cave",
-            "description": "Un rat plus petit mais agile, capable de se faufiler entre les jambes.",
-            "puissance": 1,
-            "etat": "fugitif",
-            "nombre": 10,
-            "objets": []
-        }
-    ]
+    "monstres": []
 }
