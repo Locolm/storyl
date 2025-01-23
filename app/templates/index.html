@@ -241,29 +241,39 @@
         document.getElementById('time-of-day').textContent = state.TIME_OF_DAY;
 
         // Update element on the UI
-            const playerList = document.querySelector('.joueurs-list ul');
-            playerList.innerHTML = '';
+        const playerList = document.querySelector('.joueurs-list ul');
+        playerList.innerHTML = '';
+        if (players.length > 0) {
             players.forEach((player, index) => {
                 const playerItem = document.createElement('li');
                 playerItem.innerHTML = `
-                    <a href="#" data-index="${index}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">${player.id}</a>
-                `;
+            <a href="#" data-index="${index}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">${player.id}</a>
+        `;
                 playerList.appendChild(playerItem);
             });
+        } else {
+            playerList.innerHTML = '<p class="text-gray-500 text-center">Aucun joueur</p>';
+        }
 
-            const locationList = document.querySelector('.locations-list ul');
-            locationList.innerHTML = '';
+        const locationList = document.querySelector('.locations-list ul');
+        locationList.innerHTML = '';
+        if (locations.length > 0) {
             locations.forEach((location, index) => {
                 const locationItem = document.createElement('li');
                 locationItem.innerHTML = `
-                    <a href="#" data-index="${index}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">${location.id}</a>
-                `;
+            <a href="#" data-index="${index}" class="block py-2 px-4 bg-gray-700 rounded-md hover:bg-gray-600">${location.id}</a>
+        `;
                 locationList.appendChild(locationItem);
             });
-            //
-            playersItemEventListener();
-            locationItemEventListener();
-            updateMap();
+        } else {
+            locationList.innerHTML = '<p class="text-gray-500 text-center">Aucun Lieu</p>';
+        }
+
+
+        playersItemEventListener();
+        locationItemEventListener();
+        updateChatLogs();
+        updateMap();
     }
 
     /**
@@ -276,7 +286,7 @@
             locations = gameData.locations;
             locationsWithMonster = locations.filter(location => location.monstres);
             pnjs = gameData.pnjs;
-            log = gameData.logs;
+            logs = gameData.logs;
             state = gameData.state;
 
             updateDisplay();
@@ -395,6 +405,41 @@
             });
 }
 
+    const updateChatLogs = () => {
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.innerHTML = '';
+
+        logs.forEach(log => {
+
+            // Create the message container
+            const messageContainer = document.createElement('div');
+
+            messageContainer.className = messageContainerClass[log.user]
+                ? messageContainerClass[log.user]
+                : messageContainerClass['DEFAULT'];
+
+            // Determine message styling based on user type
+            const isSystem = log.user === "SYSTEM";
+
+            // Create player label if applicable
+            const playerLabel = `<p class="font-bold text-sm ${messageTitleClass[log.user] ? messageTitleClass[log.user] : messageTitleClass["DEFAULT"]}">${log.user === "MASTER" ? "GAME MASTER" : log.user}</p>`
+
+            // Build the message content
+            // Set the innerHTML of the message container
+            messageContainer.innerHTML = `
+                <div class="${messageCardClass[log.user] ? messageCardClass[log.user] : messageCardClass["DEFAULT"]}">
+                    ${playerLabel}
+                    <p>${log.message}</p>
+                </div>
+            `;
+
+            // Append the message container to the chat window
+            chatWindow.appendChild(messageContainer);
+
+            // Scroll to the latest message
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        });
+    }
 </script>
 
 <script>
@@ -575,37 +620,7 @@
 
             // Process each message in the response
             result.forEach(response => {
-                // Create the message container
-                const messageContainer = document.createElement('div');
-
-                messageContainer.className = messageContainerClass[response.user]
-                    ? messageContainerClass[response.user]
-                    : messageContainerClass['DEFAULT'];
-
-                // Determine message styling based on user type
-                const isSystem = response.user === "SYSTEM";
-
-                // Create player label if applicable
-                const playerLabel = `<p class="font-bold text-sm ${messageTitleClass[response.user] ? messageTitleClass[response.user] : messageTitleClass["DEFAULT"]}">${response.user === "MASTER" ? "GAME MASTER" : response.user}</p>`
-
-
-                // Build the message content
-                const messageContent = `
-                    <div class="${messageCardClass[response.user] ? messageCardClass[response.user] : messageCardClass["DEFAULT"]}">
-                        ${playerLabel}
-                        <p>${response.message}</p>
-                    </div>
-                `;
-
-                // Set the innerHTML of the message container
-                messageContainer.innerHTML = messageContent;
-
-                // Append the message container to the chat window
-                const chatWindow = document.getElementById('chat-window');
-                chatWindow.appendChild(messageContainer);
-
-                // Scroll to the latest message
-                chatWindow.scrollTop = chatWindow.scrollHeight;
+                updateChatLogs();
             });
 
             // Scroll to the bottom
