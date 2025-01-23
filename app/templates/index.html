@@ -277,14 +277,30 @@
             //
             playersItemEventListener();
             locationItemEventListener();
-
             updateMap();
+    }
+
+    /**
+     * Fetch game data from the backend.
+     */
+    async function fetchGameData(){
+        const gameInfo = await fetch('/fetch');
+            const gameData = await gameInfo.json();
+            players = gameData.players;
+            locations = gameData.locations;
+            locationsWithMonster = locations.filter(location => location.monstres);
+            pnjs = gameData.pnjs;
+            log = gameData.logs;
+            state = gameData.state;
+
+            updateDisplay();
     }
 
     /**
      * Update Map rendering.
      */
     const updateMap = () => {
+        mapGroup.selectAll(".location-dot").remove();
         // Create map markers for locations
         mapGroup.selectAll(".location-dot")
             .data(locations)
@@ -320,6 +336,7 @@
                     .style("filter", "none");  // Remove glow on mouse out
             });
 
+        mapGroup.selectAll(".player-dot").remove();
         // Create map markers for players
         mapGroup.selectAll(".player-dot")
             .data(players)
@@ -355,6 +372,7 @@
                     .style("filter", "none");  // Remove glow on mouse out
             });
 
+        mapGroup.selectAll(".pnj-dot").remove();
         // Create map markers for players
         mapGroup.selectAll(".pnj-dot")
             .data(pnjs)
