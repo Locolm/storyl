@@ -1,8 +1,9 @@
-from datetime import datetime
 import json
 import os
 import re
-import context
+
+from packages import context
+
 
 # Variables globales pour l'heure de la journée
 
@@ -59,7 +60,7 @@ def advance_time(n):
     #update characters
     update_sleep_status(n)
     
-    characters_dir = 'characters'
+    characters_dir = 'app/packages/characters'
 
     #destination_arrived = [{nom:nom_destination,characters:[]},.....]
     destination_arrived = []
@@ -99,7 +100,7 @@ def advance_time(n):
 
 
 def update_pnj_routines():
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     
     for filename in os.listdir(pnjs_dir):
         if filename.endswith('.json'):
@@ -116,7 +117,7 @@ def update_pnj_routines():
 
 
 def update_sleep_status(n):
-    characters_dir = 'characters'
+    characters_dir = 'app/packages/characters'
     for filename in os.listdir(characters_dir):
         if filename.endswith('.json'):
             file_path = os.path.join(characters_dir, filename)
@@ -138,7 +139,7 @@ def update_sleep_status(n):
 
 
 def get_const_value(key):
-    const_file = 'CONST.json'
+    const_file = 'app/packages/config/CONST.json'
     if not os.path.exists(const_file):
         return None
     
@@ -148,7 +149,7 @@ def get_const_value(key):
     return data.get(key, None)
 
 def update_const_value(key, value):
-    const_file = 'CONST.json'
+    const_file = 'app/packages/config/CONST.json'
     if not os.path.exists(const_file):
         data = {}
     else:
@@ -161,7 +162,7 @@ def update_const_value(key, value):
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 def next_all_state(k,n):
-    characters_dir = 'characters'
+    characters_dir = 'app/packages/characters'
     for filename in os.listdir(characters_dir):
         if filename.endswith('.json'):
             file_path = os.path.join(characters_dir, filename)

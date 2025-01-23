@@ -1,0 +1,83 @@
+[
+    {
+        "user": "SYSTEM",
+        "message": "Bienvenue dans le jeu, aventurier ! Préparez-vous à vivre une aventure épique pleine de mystères et de dangers."
+    },
+    {
+        "user": "MASTER",
+        "message": "Bienvenue dans cette aventure, aventurier ! Le monde s'ouvre devant vous, rempli de mystères et de périls. Que votre voyage commence maintenant !"
+    },
+    {
+        "user": "SYSTEM_ERROR",
+        "prompt": "/action /Tenzin le Fort/ Se repose dans le lieu actuel",
+        "message": "The file characters/characters_Tenzin le Fort.json does not exist."
+    },
+    {
+        "user": "SYSTEM_ERROR",
+        "prompt": "/action /Tenzin le Fort/ Se repose dans le lieu actuel"
+    },
+    {
+        "user": "SYSTEM_ERROR",
+        "prompt": "/action /Tenzin le Fort/ Se repose dans le lieu actuel",
+        "stack_trace": "Traceback (most recent call last):\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\app.py\", line 91, in submit\n    response = llm.completion(prompt)\n               ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\llm.py\", line 344, in completion\n    raise e\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\llm.py\", line 310, in completion\n    context.process_actions(_reponse_json)\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\context.py\", line 872, in process_actions\n    update_character_from_json(character_data)\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\context.py\", line 747, in update_character_from_json\n    raise FileNotFoundError(f\"The file {file_path} does not exist.\")\nFileNotFoundError: The file characters/characters_Tenzin le Fort.json does not exist.\n",
+        "output_error": "The file characters/characters_Tenzin le Fort.json does not exist."
+    },
+    {
+        "user": "SYSTEM_ERROR",
+        "prompt": "/action /Tenzin le Fort/ Se repose dans le lieu actuel",
+        "stack_trace": "Traceback (most recent call last):\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\app.py\", line 91, in submit\n    response = llm.completion(prompt)\n               ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\llm.py\", line 344, in completion\n    raise e\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\llm.py\", line 310, in completion\n    context.process_actions(_reponse_json)\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\context.py\", line 875, in process_actions\n    update_location_from_json(location_data)\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\context.py\", line 784, in update_location_from_json\n    raise FileNotFoundError(f\"The file {file_path} does not exist.\")\nFileNotFoundError: The file app/packages/locations/locations_Labytinthe des Ombres.json does not exist.\n",
+        "output_error": "The file app/packages/locations/locations_Labytinthe des Ombres.json does not exist."
+    },
+    {
+        "user": "SYSTEM_ERROR",
+        "prompt": "/action /Tenzin le Fort/ Se repose dans le lieu actuel",
+        "stack_trace": "Traceback (most recent call last):\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\app.py\", line 91, in submit\n    response = llm.completion(prompt)\n               ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\llm.py\", line 344, in completion\n    raise e\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\llm.py\", line 310, in completion\n    context.process_actions(_reponse_json)\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\context.py\", line 875, in process_actions\n    update_location_from_json(location_data)\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\context.py\", line 784, in update_location_from_json\n    raise FileNotFoundError(f\"The file {file_path} does not exist.\")\nFileNotFoundError: The file app/packages/locations/locations_Labytinthe des Ombres.json does not exist.\n",
+        "output_error": "The file app/packages/locations/locations_Labytinthe des Ombres.json does not exist."
+    },
+    {
+        "user": "MASTER",
+        "message": "Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance."
+    },
+    {
+        "user": "SYSTEM_ERROR",
+        "command": null,
+        "user_input": "/create-char Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance.",
+        "output": "Commande inconnue. Veuillez réessayer."
+    },
+    {
+        "user": "SYSTEM_ERROR",
+        "command": null,
+        "user_input": "/create-char Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance.",
+        "output_error": "Commande inconnue. Veuillez réessayer."
+    },
+    {
+        "timestamp": "2025-01-11T15:42:05.325276",
+        "user": "SYSTEM_ERROR",
+        "command": null,
+        "user_input": "/create-char Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance.",
+        "output_error": "Commande inconnue. Veuillez réessayer."
+    },
+    {
+        "timestamp": "2025-01-11T15:44:13.130507",
+        "user": "ADMIN",
+        "command": "create-char",
+        "user_input": "Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance.",
+        "prompt": "/create-char Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance.",
+        "output_error": "personnage sauvegardé"
+    },
+    {
+        "timestamp": "2025-01-11T15:48:17.354782",
+        "user": "ADMIN",
+        "command": "create-char",
+        "user_input": "Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance.",
+        "prompt": "/create-char Un moine sage et musclé dont la force incroyable est déployée à travers des techniques martiales ancestrales et manipulant une lance.",
+        "output_error": "personnage sauvegardé"
+    },
+    {
+        "timestamp": "2025-01-11T16:28:10.626204",
+        "user": "SYSTEM_ERROR",
+        "prompt": "/time None",
+        "stack_trace": "Traceback (most recent call last):\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\app.py\", line 116, in submit\n    response = llm.completion(prompt)\n               ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\llm.py\", line 216, in completion\n    _response = context.get_arrival_descriptions(time_of_day.advance_time(prompt.split(\" \")[1]))\n                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\randr\\OneDrive\\Bureau\\POLYTECH 5A\\S9\\M2IA\\LLM\\storyl\\app\\packages\\time_of_day.py\", line 44, in advance_time\n    CURRENT_HOUR = (get_const_value(\"CURRENT_HOUR\") + n) % 24\n                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~\nTypeError: unsupported operand type(s) for +: 'NoneType' and 'int'\n",
+        "output_error": "unsupported operand type(s) for +: 'NoneType' and 'int'"
+    }
+]

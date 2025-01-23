@@ -1,10 +1,9 @@
 import json
 import math
 import os
-from math import sqrt, floor
-
-import llm
 import re
+from math import sqrt
+
 
 # Charger un fichier JSON spécifique
 def load_json(file_path):
@@ -15,8 +14,8 @@ def load_json(file_path):
         return None
 
 def get_character_position(name):
-    file_path = f'characters/characters_{name}.json'
-    
+    file_path = f'app/packages/characters/characters_{name}.json'
+
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
     
@@ -33,7 +32,7 @@ def get_character_position(name):
 # print(f"Position: x={x}, y={y}")
 
 def get_location_position(name):
-    file_path = f'locations/locations_{name}.json'
+    file_path = f'app/packages/locations/locations_{name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -54,7 +53,7 @@ def get_item_from_location(location_name, item_name, item_type):
     if item_type not in ['monster', 'object']:
         raise ValueError("item_type must be either 'monster' or 'object'")
     
-    file_path = f'locations/locations_{location_name}.json'
+    file_path = f'app/packages/locations/locations_{location_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -114,7 +113,7 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
     travel_time_hours = get_travel_time(x, y, destination_x, destination_y, speed_m_s)
     
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
@@ -135,7 +134,7 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
 
 def is_moving(character_name):
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -156,7 +155,7 @@ def is_moving(character_name):
 def get_nearby_locations(x,y, radius_km=10):
     
     nearby_locations = []
-    locations_dir = 'locations'
+    locations_dir = 'app/packages/locations'
     
     # Iterate over all location files in the locations directory
     for filename in os.listdir(locations_dir):
@@ -174,7 +173,7 @@ def get_nearby_locations(x,y, radius_km=10):
     return nearby_locations
 
 def get_monsters_name_from_location(location_name):
-    file_path = f'locations/locations_{location_name}.json'
+    file_path = f'app/packages/locations/locations_{location_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -188,7 +187,7 @@ def get_monsters_name_from_location(location_name):
     return [monster['nom'] for monster in data.get("monstres", [])]
 
 def get_monster_from_location(location_name, monster_name):
-    file_path = f'locations/locations_{location_name}.json'
+    file_path = f'app/packages/locations/locations_{location_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -212,7 +211,7 @@ def get_monster_from_location(location_name, monster_name):
 
 def update_character_position(character_name, new_x, new_y):
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -236,7 +235,7 @@ def update_character_position(character_name, new_x, new_y):
 
 def check_location_exists(x, y):
     matching_locations = []
-    locations_dir = 'locations'
+    locations_dir = 'app/packages/locations'
     
     # Iterate over all location files in the locations directory
     for filename in os.listdir(locations_dir):
@@ -257,7 +256,7 @@ def check_location_exists(x, y):
 
 def update_character_inventory(character_name, new_inventory):
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -278,7 +277,7 @@ def update_character_inventory(character_name, new_inventory):
 
 def get_characters_in_location(location_name):
     characters = []
-    characters_dir = 'characters'
+    characters_dir = 'app/packages/characters'
     
     loc_x, loc_y = get_location_position(location_name)
     
@@ -301,7 +300,7 @@ def get_characters_in_location(location_name):
 
 def get_pnjs_in_location(location_name):
     pnjs = []
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     
     loc_x, loc_y = get_location_position(location_name)
     
@@ -321,7 +320,7 @@ def get_pnjs_in_location(location_name):
                 pnjs.append(pnj_name)
 
 def update_monster_state(location_name, monster_name, new_state):
-    file_path = f'locations/locations_{location_name}.json'
+    file_path = f'app/packages/locations/locations_{location_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -369,7 +368,7 @@ def moving_character_to_location(character_name, location_name, speed_m_s=2):
 
 def is_sleeping(character_name):
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file '{file_path}' does not exist.")
@@ -404,7 +403,7 @@ def update_character_state_with_sleep(character_name, sleep_hours):
         sleep_hours = 8
 
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -443,8 +442,72 @@ def update_character_state_with_sleep(character_name, sleep_hours):
 # Example usage:
 # print(update_character_state_with_sleep('Tenzin le fort', 8))
 
+def load_locations(path='locations'):
+    """
+    Load all location files from the specified directory.
+    """
+    locations = []
+
+    # Iterate over all location files in the locations directory
+    for filename in os.listdir(path):
+        if filename.endswith('.json'):
+            file_path = os.path.join(path, filename)
+            with open(file_path, 'r', encoding='utf-8') as file:
+                try:
+                    data = json.load(file)
+                    data['id'] = filename.replace('locations_', '').replace('.json', '')
+                    locations.append(data)
+                except :
+                    pass
+
+    return locations
+
+def load_pnjs(path='pnjs'):
+    """
+    Load all location files from the specified directory.
+    """
+    pnjs = []
+
+    # Iterate over all location files in the locations directory
+    for filename in os.listdir(path):
+        if filename.endswith('.json'):
+            file_path = os.path.join(path, filename)
+            with open(file_path, 'r', encoding='utf-8') as file:
+                try:
+                    data = json.load(file)
+                    data['id'] = filename.replace('pnjs_', '').replace('.json', '')
+                    pnjs.append(data)
+                except :
+                    pass
+
+    return pnjs
+
+def load_characters(path="characters"):
+    """
+    Load all character files from the specified relative directory.
+    """
+
+    characters = []
+
+    # Iterate over all character files in the characters directory
+    for filename in os.listdir(path):
+        if filename.endswith('.json'):
+            file_path = os.path.join(path, filename)
+            with open(file_path, 'r', encoding='utf-8') as file:
+                try :
+                    data = json.load(file)
+                    data['id'] = filename.replace('characters_', '').replace('.json', '')
+                    characters.append(data)
+                except :
+                    pass
+
+    return characters
+
+if __name__ == "__main__":
+    print(load_locations())
+    print(load_characters())
 def get_location_name(x, y):
-    locations_dir = 'locations'
+    locations_dir = 'app/packages/locations'
     
     # Iterate over all location files in the locations directory
     for filename in os.listdir(locations_dir):
@@ -465,7 +528,7 @@ def get_location_name(x, y):
 def update_all_pnj_routines():
     # Implement the function to update PNJ routines
     # For now, let's just return a message indicating the function was called
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     
     # Iterate over all PNJ files in the pnjs directory
     for filename in os.listdir(pnjs_dir):
@@ -506,7 +569,7 @@ def update_all_pnj_routines():
 # print(result)
 
 def update_pnj_routine(pnj_name):
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     file_path = os.path.join(pnjs_dir, f'pnjs_{pnj_name}.json')
     
     if not os.path.exists(file_path):
@@ -516,24 +579,27 @@ def update_pnj_routine(pnj_name):
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
     
-    if 'position' in data:
-        loc_x, loc_y = data['position']['x'], data['position']['y']
-        location_name = get_location_name(loc_x, loc_y)
-        
-        # Find the index of the current location in the PNJ's routine
-        if 'routine' in data and 'locations' in data['routine']:
-            locations = data['routine']['locations']
-            if location_name in locations:
-                current_index = locations.index(location_name)
-                next_index = (current_index + 1) % len(locations)
-                next_location_name = locations[next_index]
-                
-                # Get the position of the next location
-                next_loc_x, next_loc_y = get_location_position(next_location_name)
-                
-                # Update the PNJ's position to the next location's position
-                data['position']['x'] = next_loc_x
-                data['position']['y'] = next_loc_y
+    try:
+        if 'position' in data:
+            loc_x, loc_y = data['position']['x'], data['position']['y']
+            location_name = get_location_name(loc_x, loc_y)
+
+            # Find the index of the current location in the PNJ's routine
+            if 'routine' in data and 'locations' in data['routine']:
+                locations = data['routine']['locations']
+                if location_name in locations:
+                    current_index = locations.index(location_name)
+                    next_index = (current_index + 1) % len(locations)
+                    next_location_name = locations[next_index]
+
+                    # Get the position of the next location
+                    next_loc_x, next_loc_y = get_location_position(next_location_name)
+
+                    # Update the PNJ's position to the next location's position
+                    data['position']['x'] = next_loc_x
+                    data['position']['y'] = next_loc_y
+    except Exception as e:
+        raise e
     
     # Save the updated JSON file
     with open(file_path, "w", encoding="utf-8") as file:
@@ -543,7 +609,7 @@ def update_pnj_routine(pnj_name):
 # update_pnj_routine('test')
 
 def get_all_pnj_routine_times():
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     pnj_routine_times = {}
 
     # Iterate over all PNJ files in the pnjs directory
@@ -566,7 +632,7 @@ def get_all_pnj_routine_times():
 # print(routine_times)
 
 def get_pnj_routine_time(pnj_name):
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     file_path = os.path.join(pnjs_dir, f'pnjs_{pnj_name}.json')
     
     if not os.path.exists(file_path):
@@ -593,7 +659,7 @@ def get_arrival_descriptions(destination_arrived):
         characters = destination['characters']
         
         # Load the location's JSON file
-        file_path = f'locations/locations_{location_name}.json'
+        file_path = f'app/packages/locations/locations_{location_name}.json'
         
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -627,7 +693,7 @@ def get_locations_with_monsters(destination_arrived):
         location_name = destination['nom']
         
         # Load the location's JSON file
-        file_path = f'locations/locations_{location_name}.json'
+        file_path = f'app/packages/locations/locations_{location_name}.json'
         
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -646,7 +712,7 @@ def get_locations_with_monsters(destination_arrived):
 
 def get_pnjs_in_location(location_name):
     pnjs_in_location = []
-    pnjs_dir = 'pnjs'
+    pnjs_dir = 'app/packages/pnjs'
     
     # Get the position of the location
     loc_x, loc_y = get_location_position(location_name)
@@ -698,7 +764,7 @@ def update_character_from_json(input_json):
     character_name = input_json['nom']
     
     # Load the character's JSON file
-    file_path = f'characters/characters_{character_name}.json'
+    file_path = f'app/packages/characters/characters_{character_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -735,7 +801,7 @@ def update_location_from_json(input_json):
     new_objects = input_json['objets']
     
     # Load the location's JSON file
-    file_path = f'locations/locations_{location_name}.json'
+    file_path = f'app/packages/locations/locations_{location_name}.json'
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -762,7 +828,7 @@ def update_pnj_from_json(input_json, location_name):
         raise KeyError("Input JSON does not contain 'nom' key.")
     
     pnj_name = input_json['nom']
-    file_path = f'pnjs/pnjs_{pnj_name}.json'
+    file_path = f'app/packages/pnjs/pnjs_{pnj_name}.json'
     
     # Load the PNJ's JSON file if it exists, otherwise create a new one
     if os.path.exists(file_path):

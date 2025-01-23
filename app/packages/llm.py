@@ -1,14 +1,16 @@
 import random
 import re
 import openai
-import json
+
+from packages import context, util, time_of_day
 import os
-import context
-import time_of_day
-import util
+
+# read the API key from the env file
+from dotenv import load_dotenv
+load_dotenv()
 
 # Remplacez "YOUR_API_KEY" par votre clé API OpenAI : # Remplacez par votre clé API OpenAI accessible ici https://platform.openai.com/settings/organization/api-keys
-openai.api_key = "YOUR_API_KEY"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 count_time = 0
 
 # Fonction pour générer un personnage
@@ -32,11 +34,11 @@ def response(prompt, purpose, tokens=300, temp=0.7, ):
 
         # Nettoyer la réponse pour enlever d'éventuels espaces supplémentaires
         content = content.strip()
-        
+
         # Retourner la réponse nettoyée
         return content
     except Exception as e:
-        return f"Une erreur s'est produite : {e}"
+        raise e
 
 def completion(prompt):
     global count_time
@@ -80,7 +82,7 @@ def completion(prompt):
                 type = "locations"
                 locations_context = context.get_nearby_locations(x, y)
                 
-                locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]             
+                locations_data = [context.load_json(f"app/packages/locations/locations_{matching_location}.json") for matching_location in locations_context]
                 
                 prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x"""+str(x)+""", y"""+str(y)+""" en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le donjon est de type hostile). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
                 
@@ -99,7 +101,7 @@ def completion(prompt):
                     y = int(float(parts[2]))
                 locations_context = context.get_nearby_locations(x, y)
                 
-                locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]             
+                locations_data = [context.load_json(f"app/packages/locations/locations_{matching_location}.json") for matching_location in locations_context]
                 
                 prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x="""+str(x)+""", y="""+str(y)+""" en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le lieu est de type hostile comme un donjon, un lieu hanté ou autre). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
                 
@@ -116,14 +118,14 @@ def completion(prompt):
             type = "actions"
             prompt = prompt.replace("/action", "").replace(f"""/{character_name}/""", "").strip()
             
-            character_data = context.load_json(f"./characters/characters_{character_name}.json")
+            character_data = context.load_json(f"app/packages/characters/characters_{character_name}.json")
             character_position = character_data["position"]
             matching_location = context.check_location_exists(character_position["x"], character_position["y"])[0]
             characters_name = context.get_characters_in_location(matching_location)
             characters_data = [context.load_json(f"./characters/characters_{character_name}.json") for character_name in characters_name]
             
             if matching_location is not None:
-                location_data = context.load_json(f"./locations/locations_{matching_location}.json")
+                location_data = context.load_json(f"app/packages/locations/locations_{matching_location}.json")
             
             prompt =    f"""Moment de la journée : {time_of_day.get_const_value("TIME_OF_DAY")}\n"""\
                         f"Contexte des personnages : {characters_data}\n"\
@@ -206,9 +208,9 @@ Contexte spécifique :
 """
         
         characters_name = context.get_characters_in_location(location_name)
-        characters_data = [context.load_json(f"./characters/characters_{character_name}.json") for character_name in characters_name]
+        characters_data = [context.load_json(f"app/packages//characters/characters_{character_name}.json") for character_name in characters_name]
         
-        location_data = context.load_json(f"./locations/locations_{location_name}.json")
+        location_data = context.load_json(f"app/packages//locations/locations_{location_name}.json")
         
         pnjs_data = context.get_pnjs_in_location(location_name)
         
@@ -224,7 +226,7 @@ Contexte spécifique :
     elif prompt.startswith("/speed"):
         type = "speed"
         character_name = prompt.split("/")[2].strip()
-        character_data = context.load_json(f"./characters/characters_{character_name}.json")
+        character_data = context.load_json(f"app/packages/characters/characters_{character_name}.json")
         
         prompt = prompt.replace("/speed", "").strip() + """ "Estime la vitesse de déplacement du personnage en m/s en fonction de ses caractéristiques, en prenant comme base qu'un humain moyen se déplace à 2 m/s. Nous sommes dans dnd5. Répondez sous la forme d'un json qui contient les champs nom (du personnage) et vitesse."""
         prompt =    f"Contexte du personnage : {character_data}\n"\
@@ -239,13 +241,13 @@ Contexte spécifique :
     elif prompt.startswith("/create-pnj"):
         type = "pnjs"
         location_name = prompt.split("/")[2].strip()
-        current_location_data = context.load_json(f"./locations/locations_{location_name}.json")
+        current_location_data = context.load_json(f"app/packages/locations/locations_{location_name}.json")
         x = current_location_data["position"]["x"]
         y = current_location_data["position"]["y"]
         
         locations_context = context.get_nearby_locations(x, y)
                 
-        locations_data = [context.load_json(f"./locations/locations_{matching_location}.json") for matching_location in locations_context]   
+        locations_data = [context.load_json(f"app/packages/locations/locations_{matching_location}.json") for matching_location in locations_context]
         
         
         prompt = f"""Crée un personnage non-joueur. Répondez sous la forme d'un JSON contenant les champs suivants :
@@ -282,8 +284,8 @@ Contexte spécifique :
                 _response = response(prompt,"Tu es un assistant qui génère des personnages pour un jeu de rôle sous forme de JSON bien structuré.",tokens=300)
                 # Tentative de conversion en JSON
                 required_keys = ["nom","force","dextérité","constitution","sagesse","intelligence","charisme","pv","etat","description","inventaire","or","position"]
-                util.save_markdown_to_json(_response,required_keys,"characters")
-                return "personnage sauvegardé"
+                saved_file_path = util.save_markdown_to_json(_response,required_keys,"characters")
+                return f"personnage enregistrée en tant que {saved_file_path.split("characters_")[1].split(".json")[0]}"
         elif (type =="locations"):
                 _response = response(prompt,"Tu es un assistant qui génère des lieux pour un jeu de rôle sous forme de JSON bien structuré.",tokens=600)
                 # Tentative de conversion en JSON
@@ -321,7 +323,8 @@ Contexte spécifique :
                 #util.process_json_file(location_to_go) #modifie les données des monstres
 
                 location_name = location_to_go.split("locations_")[1].split(".json")[0]
-                return "Lieu créé"
+
+                return f"Lieu enregistrée en tant que {location_name}"
         elif (type =="actions"):
                 _response = response(prompt,"Tu es un assistant qui génère des actions pour un jeu de rôle sous forme de JSON.",tokens=950)
                 print("_response",_response)
@@ -357,8 +360,15 @@ Contexte spécifique :
                 # Tentative de conversion en JSON
                 required_keys = ["nom","puissance","description","inventaire","or","position"]
                 util.save_markdown_to_json(_response,required_keys,"pnjs")
+
     except Exception as e:
-        print(f"Une erreur s'est produite : {e}")
+        print("Error: ", e)
+        raise e
+
+    raise Exception("Command not recognized")
+
+def change_api_key(key):
+    openai.api_key = key
 
 # Exécution du script
 if __name__ == "__main__":

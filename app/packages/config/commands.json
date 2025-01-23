@@ -1,0 +1,51 @@
+[
+  {
+    "command": "action",
+    "description": "Perform an action",
+    "playable": true
+  },
+  {
+    "command": "create-char",
+    "description": "Create a new character"
+  },
+  {
+    "command": "create-loc",
+    "description": "Create a new location",
+    "coordinates": true
+  },
+  {
+    "command": "create-pnj",
+    "description": "crée un pnj à un lieu donné"
+  },
+  {
+    "command": "move-to",
+    "description": "Se déplacer vers",
+    "playable": true,
+    "coordinates": true
+  },
+  {
+    "command": "resolve-fight",
+    "description": "combattre un monstre",
+    "no_input": true,
+    "select_location_with_monsters": true
+  },
+  {
+    "command": "sleep",
+    "description": "Dormir",
+    "playable": true,
+    "no_input": true,
+    "time_input": true
+  },
+  {
+    "command": "speed",
+    "description": "obtenir la vitesse de déplacement en m/s",
+    "time_input": true,
+    "no_input": true
+  },
+  {
+    "command": "time",
+    "description": "Advance the time",
+    "time_input": true,
+    "no_input": true
+  }
+]
