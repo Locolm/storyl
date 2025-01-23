@@ -348,6 +348,9 @@ monstres : La liste des monstres mise à jour, en fonction de ceux encore en vie
 
     raise Exception("Command not recognized")
 
+def change_api_key(key):
+    openai.api_key = key
+
 # Exécution du script
 if __name__ == "__main__":
     if openai.api_key == "YOUR_API_KEY":
