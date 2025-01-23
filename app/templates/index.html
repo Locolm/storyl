@@ -239,22 +239,8 @@
     function updateDisplay() {
         document.getElementById('current-hour').textContent = `${state.CURRENT_HOUR}:00`;
         document.getElementById('time-of-day').textContent = state.TIME_OF_DAY;
-    }
 
-    /**
-     * Fetch game data from the backend.
-     */
-    async function fetchGameData(){
-        const gameInfo = await fetch('/fetch');
-            const gameData = await gameInfo.json();
-            players = gameData.players;
-            locations = gameData.locations;
-            locationsWithMonster = locations.filter(location => location.monstres);
-            log = gameData.logs;
-            state = gameData.state;
-
-            updateDisplay();
-            // Update element on the UI
+        // Update element on the UI
             const playerList = document.querySelector('.joueurs-list ul');
             playerList.innerHTML = '';
             players.forEach((player, index) => {
