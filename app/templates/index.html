@@ -212,8 +212,10 @@
 
                     {% endfor %}
 
+
                 </div>
 
+                <div class="loader hidden" id="loader"></div>
 
             </div>
             <div class="p-4 bg-white rounded-sm">
@@ -267,9 +269,6 @@
                             class="px-4 py-2 bg-gray-800 -blue-500 text-white rounded-md hover:bg-gray-700 focus:outline-none">
                         Valider
                     </button>
-                    <div id="loading-spinner" class="flex justify-center hidden">
-                          <div class="loader"></div>
-                      </div>
                 </form>
 
             </div>
@@ -654,6 +653,9 @@
         console.log('Form Data:', formData);
         const actionUrl = chatForm.dataset.action;
 
+        document.getElementById('loader').classList.remove('hidden');
+
+
         try {
             // Send POST request to the backend
             const response = await fetch(actionUrl, {
@@ -661,12 +663,10 @@
                 body: formData,
             });
 
-            document.getElementById("loading-spinner").classList.remove("hidden");
+
 
             const result = await response.json();
             console.log('Server Response:', result);
-
-            document.getElementById("loading-spinner").classList.add("hidden");
 
             // Process each message in the response
             result.forEach(response => {
@@ -682,8 +682,11 @@
             // fetch game information
             await fetchGameData();
 
+            document.getElementById('loader').classList.add('hidden');
+
         } catch (error) {
             console.error('Error:', error);
+            document.getElementById('loader').classList.add('hidden');
         }
     });
 </script>
