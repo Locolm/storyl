@@ -742,12 +742,12 @@ video {
   width: 18rem;
 }
 
-.w-full {
-  width: 100%;
-}
-
 .w-\[100px\] {
   width: 100px;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .max-w-4xl {

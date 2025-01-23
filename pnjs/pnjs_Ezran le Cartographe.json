@@ -1,0 +1,36 @@
+{
+    "nom": "Ezran le Cartographe",
+    "puissance": 30,
+    "etat": {
+        "santé": "en bonne santé",
+        "humeur": "inquiet"
+    },
+    "description": "Ezran est un vieil homme frêle, vêtu d'une robe de voyage usée mais soigneusement entretenue. Sa longue barbe grise est tressée en plusieurs petites mèches, et son visage est marqué par des années de concentration intense à dessiner des cartes. Il est le seul à avoir exploré une grande partie du labyrinthe, bien que ses souvenirs soient parfois confus. Ezran est méthodique et patient, toujours prêt à partager son savoir contre une récompense ou un objet rare.",
+    "inventaire": [
+        {
+            "nom": "Plume enchantée",
+            "description": "Une plume magique qui ne s'épuise jamais d'encre, parfaite pour dessiner des cartes."
+        },
+        {
+            "nom": "Carnet de cartographie",
+            "description": "Un carnet contenant des croquis détaillés de certaines parties du labyrinthe, bien que certaines zones soient incomplètes."
+        },
+        {
+            "nom": "Loupe d'observation",
+            "description": "Un outil précieux pour détecter les détails cachés sur les murs du labyrinthe."
+        }
+    ],
+    "or": 20,
+    "routine": {
+        "time": 10,
+        "locations": [
+            "L'Atelier des Elixirs",
+            "La Taverne de l'Aventurier",
+            "Labyrinthe des Ombres"
+        ]
+    },
+    "position": {
+        "x": 40,
+        "y": 70
+    }
+}

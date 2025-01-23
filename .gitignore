@@ -3,4 +3,6 @@ __pycache__/
 venv/
 app/node_modules/
 .idea/
+
+api_key.txt
 .env
