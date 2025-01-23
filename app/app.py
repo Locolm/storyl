@@ -222,6 +222,24 @@ def submit():
             path="app/packages/config/backend_logs.json"
         )
 
+        append_log(
+            {
+                "timestamp": datetime.now().isoformat(),
+                "user": "user",
+                "message": f"{prompt}",
+            },
+            path="app/packages/config/log.json"
+        )
+
+        append_log(
+            {
+                "timestamp": datetime.now().isoformat(),
+                "user": "SYSTEM",
+                "message": f"Une erreur est survenue. Veuillez réessayer.",
+            },
+            path="app/packages/config/log.json"
+        )
+
         return [
             {
                 "user": "user",
@@ -302,6 +320,28 @@ def reset():
     return {
         "response": True
     }
+
+@app.route("/change-api-key", methods=["POST"])
+def change_api_key():
+    """
+    Change the API key for the backend.
+    """
+    new_api_key = request.json.get("apiKey")
+
+    if not new_api_key:
+        return {
+            "response": False,
+            "message": "Veuillez entrer une clé API valide."
+        }
+
+    # Change OpenAI API key
+    llm.change_api_key(new_api_key)
+
+    return {
+        "success": True,
+        "message": "Clé API changée avec succès."
+    }
+
 
 if __name__ == '__main__':
     app.run(debug=True)

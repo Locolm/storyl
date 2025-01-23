@@ -104,10 +104,60 @@
                 STORYL
             </div>
             <!-- Settings Icon -->
-            <div id="reset" class="text-white text-2xl cursor-pointer hover:text-gray-400">
-                <i class="fa fa-cog" aria-hidden="true"></i>
+            <div id="setting" class="text-white text-2xl cursor-pointer hover:text-gray-400 relative">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 bg-white rounded-md shadow-lg z-20">
+                    <ul class="py-1 text-sm w-[100px]">
+                        <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100" onclick="confirmReset()">Reset</a></li>
+                        <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100" onclick="changeApiKey()">Change API key</a></li>
+                    </ul>
+                </div>
             </div>
         </nav>
+
+        <script>
+            document.getElementById('setting').addEventListener('click', function() {
+                const dropdownMenu = document.getElementById('dropdown-menu');
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            const confirmReset = async () => {
+                if (confirm('Êtes-vous sûr de vouloir réinitialiser le jeu?')) {
+                    // Send POST request to the backend
+                    const response = await fetch("/reset", {
+                        method: 'POST',
+                        body: {},
+                    });
+
+                    await fetchGameData()
+                }
+            }
+
+            function changeApiKey() {
+                const newApiKey = prompt("Please enter the new API key:");
+                if (newApiKey) {
+                    fetch('/change-api-key', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({apiKey: newApiKey})
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert("API key changed successfully.");
+                            } else {
+                                alert("Failed to change API key.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("An error occurred while changing the API key.");
+                        });
+                }
+            }
+        </script>
 
         <!-- Chat Panel -->
         <div id="chat" class="flex-1 flex flex-col relative">
@@ -957,25 +1007,6 @@
         locationItemEventListener();
     });
 </script>
-
-<script>
-    /**
-     * Reset the game state
-     */
-
-    document.getElementById("reset").addEventListener("click", async (event) => {
-        event.stopPropagation();
-
-         // Send POST request to the backend
-        const response = await fetch("/reset", {
-            method: 'POST',
-            body: {},
-        });
-
-        await fetchGameData()
-    })
-</script>
-
 
 <script>
     /**
