@@ -118,13 +118,13 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
         data = json.load(file)
     
     # Update the character's state
-    if 'etat' in data and data["etat"]["déplacement"].startswith("en déplacement"):
-        # Remove existing "en déplacement" state
-        data['etat']["déplacement"] = re.sub(r"en déplacement vers \(\d+, \d+\) reste \d+ heures", "", data['etat']["déplacement"]).strip()
-    
     if travel_time_hours != 0:
         data['etat']["déplacement"] = f"en déplacement vers ({destination_x}, {destination_y}) reste {travel_time_hours} heures".strip()
-    
+    else :
+        #se déplace instantanément
+        data['etat']["déplacement"] = "non"
+        data['position'] = {'x': destination_x, 'y': destination_y}
+
     # Save the updated JSON file
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
@@ -135,6 +135,7 @@ def update_character_state_with_travel_time(character_name, speed_m_s, destinati
 def is_moving(character_name):
     # Load the character's JSON file
     file_path = f'app/packages/characters/characters_{character_name}.json'
+    print(file_path)
     
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
@@ -349,10 +350,6 @@ def moving_character_to_location(character_name, location_name, speed_m_s=2):
         speed_m_s = int(float(speed_m_s))
     except ValueError:
         speed_m_s = 2
-
-    # Check if the character is already moving
-    if is_moving(character_name):
-        return "Impossible, le personnage est déjà en déplacement."
     
     # Get the destination location's position
     destination_x, destination_y = get_location_position(location_name)

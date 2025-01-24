@@ -44,3 +44,11 @@ Pour utiliser l'application, vous devez avoir une clé API OpenAI valide. Suivez
     - Vous pouvez vérifier l'état de votre facturation et les informations liées à votre clé API sur la [page de facturation](https://platform.openai.com/settings/organization/billing/overview) OpenAI.
     - Coût de base : L'API OpenAI coûte environ 6 \$ pour commencer (5 \$ + TVA), vous disposerez ensuite de 5 \$ de crédits pour utiliser n'importe quel modèle disponible.
 Ce projet utilise le modèle GPT-4 (GPT-4 o-mini) qui coûte 0,15 \$ par millions de token pour l'input et 0,60 \$ par millions de token en output.
+
+## 5. Utiliser l'interface
+
+Une fois la clé API obtenue, saisissez-la dans l’espace dédié en haut à droite, accessible via les trois traits horizontaux.
+Vous pourrez ensuite utiliser les commandes disponibles pour interagir avec le jeu.
+La carte des lieux et des PNJs est visible en haut à droite, tandis que la description des lieux et des personnages s’affiche à gauche.
+
+Lors de l’exécution d’une commande, un icône de chargement apparaît. Attendez la fin du chargement avant d’entrer une nouvelle commande, afin d’éviter l’envoi en double.

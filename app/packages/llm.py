@@ -57,6 +57,7 @@ def completion(prompt):
     #prompt = """/create-loc /x/ /y/"""
     #prompt = """/resolve-fight /location_name/"""
 
+
     #repérer la commande
     _response = "command not recognized"
     if prompt.startswith("/create-char"):
@@ -84,7 +85,7 @@ def completion(prompt):
                 
                 locations_data = [context.load_json(f"app/packages/locations/locations_{matching_location}.json") for matching_location in locations_context]
                 
-                prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x"""+str(x)+""", y"""+str(y)+""" en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le donjon est de type hostile). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
+                prompt = """Créer """ + util.extract_last_part(prompt) + """ Donne un nom, une description, une position (x = """+str(x)+""", y = """+str(y)+""" en entiers), une liste d'objets (avec nom, description et prix), et une liste de monstres (uniquement si le donjon est de type hostile). Les monstres doivent inclure nom, description, puissance, etat, nombre, et objets. Répondez sous la forme d'un JSON structuré contenant uniquement les champs suivants : nom, description, type(boutique, donjon, sauvage, confort) position, objets, et monstres."""
                 
                 prompt =    f"Contexte des lieux alentours : {locations_data}\n"\
                             f"Prompt : " + prompt.strip() + "\n"
