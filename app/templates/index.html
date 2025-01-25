@@ -582,10 +582,16 @@
                 playerDropdown.classList.add('hidden');
             }
 
-            if (selectedCommand.select_location_with_monsters) {
+            if (selectedCommand.select_location_with_monsters || selectedCommand.select_location) {
+
+                if (selectedCommand.select_location_with_monsters) {
+                    loc = locationsWithMonster;
+                } else {
+                    loc = locations;
+                }
                 // Populate the player dropdown with players
                 locationsDropdown.innerHTML = ''; // Clear existing options
-                locationsWithMonster.forEach(location => {
+                loc.forEach(location => {
                     const option = document.createElement('option');
                     option.value = location.id;
                     option.textContent = location.id;
